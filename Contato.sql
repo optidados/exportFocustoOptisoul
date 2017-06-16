@@ -1,4 +1,5 @@
 drop table if exists Contato;
+--teste de edição
 
 create table Contato
 (	
