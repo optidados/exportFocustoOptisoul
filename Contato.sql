@@ -1,6 +1,5 @@
 drop table if exists Contato;
---testando edição do maicon
---teste de edição
+
 create table Contato
 (	
 	CodigoContatoMatriz int, --an."codice titolare" CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
