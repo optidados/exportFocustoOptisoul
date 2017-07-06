@@ -1,3 +1,19 @@
+/*
+Exporta do FOCUS 10 os clientes, fornecedores, clientes atacado, laboratórios, oftalmologistas, optometristas, catálogo de endereços, 
+lojas (punto vendita, sede), transportadora, agentes, usuários
+30/01/2017 - Murilo
+
+PENDENCIAS:
+- TRATAR TUDO O QUE PRECISA SER JOGADO EM OBSERVAÇÃO, CAMPOS OS QUAIS O FOCUS POSSUI E O B15 NÃO - como nos conheceu, hobby, matrícula 
+- AVALIAR A NECESSIDADE DE SE CRIAR O CAMPO, JUNTO COM O ORLANDO
+- OPTOMETRISTA É O VERICADO POR? VALE A PENA?
+- CodigoContatoMatriz para as filiais (punto vendita), acho que tem que rodar um update depois procurando o Segmento 'Matriz'
+- CodigoContatoMatriz para a Matriz no cadastro de fornecedor do FOCUS
+- Laboratorio Externo não funciona - parte do código está comentada
+- Usuários
+- Tratamento do RTF para texto puro http://www.sqlteam.com/forums/topic.asp?TOPIC_ID=90034
+*/
+//NOSQLBDETOFF2
 drop table if exists Contato;
 
 create table Contato
@@ -58,7 +74,7 @@ create table Contato
 
 insert into Contato
 (
-	select	
+	select
 		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
 		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
 		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,

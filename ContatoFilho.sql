@@ -1,3 +1,15 @@
+/*
+Relação dos clientes com Empresa, Titular, Cônjuge, Pai, Mãe
+Relação dos agentes com Fornecedor
+10/02/2017 - Murilo
+
+PENDENCIAS
+- Colocar as outras informações da empresa na observação (matrícula, cargo, admissão, salário)
+- Colocar as outras informações do agente na observação (marca)
+- CAPO FAMIGLIA
+- Lista de Clientes Enviados
+*/
+//NOSQLBDETOFF2 
 drop table if exists ContatoFilho;
 
 create table ContatoFilho

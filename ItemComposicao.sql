@@ -1,3 +1,8 @@
+/*
+Ligar o tratamento com a respectiva lente onde é possível realizar o tratamento
+Murilo - 10/02/2017
+*/
+//NOSQLBDETOFF2
 drop table if exists ItemComposicao;
 
 create table ItemComposicao
