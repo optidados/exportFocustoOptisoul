@@ -775,15 +775,6 @@ insert into Documento
 		left join ContatoEndereco as filialEnd
 		on (filial."CodigoAntigo" = filialEnd."CodigoContato")
 
-		left join Contato as cliente
-		on (('clienti.' + car."codice cliente") = cliente."CodigoAntigo")
-
-		left join ContatoEndereco as clienteEnd
-		on (cliente."CodigoAntigo" = clienteEnd."CodigoContato") 
-
-		left join ContatoTelefone as clienteTel
-		on (cliente."CodigoAntigo" = clienteTel."CodigoContato")
-
 	group by
 		b."codice filiale",
 		car."codice filiale",
