@@ -58,7 +58,7 @@ create table Contato
 
 insert into Contato
 (
-	select	
+	select
 		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
 		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
 		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Apelido, --[varchar](255) NULL,
