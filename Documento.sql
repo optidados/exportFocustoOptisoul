@@ -168,7 +168,7 @@ insert into Documento
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
-		cliente."CodigoAntigo" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
+		'cliente.' + car."codice cliente" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
 		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
@@ -272,9 +272,6 @@ insert into Documento
 		left join Contato as filial
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
-		left join Contato as cliente
-		on (('clienti.' + car."codice cliente") = cliente."CodigoAntigo")
-
 	where
 		(car."tipo fornitura" <> 100)
 
@@ -309,7 +306,7 @@ insert into Documento
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
-		cliente."CodigoAntigo" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
+		'cliente.' + car."codice cliente" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
 		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
@@ -413,9 +410,6 @@ insert into Documento
 		left join Contato as filial
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
-		left join Contato as cliente
-		on (('clienti.' + car."codice cliente") = cliente."CodigoAntigo")
-
 	where
 		(car."tipo fornitura" <> 100)
 
@@ -442,7 +436,7 @@ insert into Documento
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
-		cliente."CodigoAntigo" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
+		'cliente.' + car."codice cliente" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
 		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
@@ -718,7 +712,7 @@ insert into Documento
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
-		cliente."CodigoAntigo" as CodigoContato, --varchar(255) (int->varhscar(255)) --not null
+		'cliente.' + scar."codice cliente" as CodigoContato, --varchar(255) (int->varhscar(255)) --not null
 		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
@@ -822,11 +816,9 @@ insert into Documento
 		left join Contato as filial
 		on (('puntovendita.' + scar."filiale") = filial."CodigoAntigo")
 
-		left join Contato as cliente
-		on (('clienti.' + scar."codice cliente") = cliente."CodigoAntigo")
-
 	where
-		(scar."tipo fornitura" <> 100)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
 	UNION
 
@@ -859,7 +851,7 @@ insert into Documento
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
-		cliente."CodigoAntigo" as CodigoContato, --varchar(255) (int->varhscar(255)) --not null
+		'cliente.' + scar."codice cliente" as CodigoContato, --varchar(255) (int->varhscar(255)) --not null
 		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
@@ -963,11 +955,9 @@ insert into Documento
 		left join Contato as filial
 		on (('puntovendita.' + scar."filiale") = filial."CodigoAntigo")
 
-		left join Contato as cliente
-		on (('clienti.' + scar."codice cliente") = cliente."CodigoAntigo")
-
 	where
-		(scar."tipo fornitura" <> 100)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
 	UNION
 
@@ -992,7 +982,7 @@ insert into Documento
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
-		cliente."CodigoAntigo" as CodigoContato, --varchar(255) (int->varhscar(255)) --not null
+		'cliente.' + scar."codice cliente" as CodigoContato, --varchar(255) (int->varhscar(255)) --not null
 		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
@@ -1102,14 +1092,12 @@ insert into Documento
 		left join Contato as filial
 		on (('puntovendita.' + scar."filiale") = filial."CodigoAntigo")
 
-		left join Contato as cliente
-		on (('clienti.' + scar."codice cliente") = cliente."CodigoAntigo")
-
 		join PrescricaoEnvelope as pe
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."Dias" = (CAST(b."data" as integer) - CAST(oc."data" as integer))))
 
 	where
-		(scar."tipo fornitura" <> 100)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
 	UNION
 
@@ -1242,5 +1230,6 @@ insert into Documento
 		on (('puntovendita.' + scar."filiale") = filial."CodigoAntigo")
 
 	where
-		(scar."tipo fornitura" <> 100)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 );
