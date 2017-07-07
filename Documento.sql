@@ -3,8 +3,8 @@
 drop table if exists PrescricaoEnvelope;
 create table PrescricaoEnvelope
 (
-	Dias int;
-	CodigoEnvelope varchar(12);
+	Dias int,
+	CodigoEnvelope varchar(12)
 );
 
 insert into PrescricaoEnvelope
