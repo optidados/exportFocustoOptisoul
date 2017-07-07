@@ -1,12 +1,3 @@
-/*
-Exporta do FOCUS 10 os endereços de clientes, fornecedores, clientes atacado, laboratórios, oftalmologistas, optometristas, catálogo de endereços, 
-lojas (puntovendita, sede), transportadora, agentes
-10/02/2017 - Murilo
-
-PENDENCIAS
-- Bairro da sede e puntovendita
-*/
-//NOSQLBDETOFF2 
 drop table if exists ContatoEndereco;
 
 create table ContatoEndereco
