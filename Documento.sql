@@ -67,8 +67,8 @@ create table Documento
 	ObservacaoEntrega varchar, --null
 	ObservacaoFaturamento varchar, --null
 	CodigoContatoComprador int, --null
-	CodigoContatoVendedor int, --null
-	CodigoContatoDigitador int, --null
+	CodigoContatoVendedor varchar(13), --null
+	CodigoContatoDigitador varchar(13), --null
 	CodigoContatoCobranca int, --null
 	CodigoContatoEnderecoEntrega int, --null
 	DescricaoContatoEnderecoEntrega	varchar, --null [varchar(max)]--> varchar(8000)
@@ -116,7 +116,7 @@ create table Documento
 	ValorIcms decimal(18,4), --null
 	ValorBaseIcmsSt	decimal(18,4), --null
 	ValorIcmsSt	decimal(18,4), --null
-	DocumentoCodigo	varchar, --null
+	DocumentoCodigo	varchar(20), --null
 	DocumentoTipo varchar(5), --null
 	NaturezaOperacao varchar, --null
 	DataCompra date, --null
@@ -315,7 +315,7 @@ insert into Documento
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
 		CAST(NULL as varchar) as TelefoneContato, --varchar(30)-> varchar(50) --null
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
-		CAST(NULL as varchar) as CodigoContatoEndereco, --int --null
+		CAST(NULL as int) as CodigoContatoEndereco, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
@@ -330,8 +330,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-		CAST(NULL as int) as CodigoContatoVendedor, --int --null
-		CAST(NULL as int) as CodigoContatoDigitador, --int --null
+		CAST(NULL as varchar) as CodigoContatoVendedor, --int --null
+		CAST(NULL as varchar) as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
@@ -448,7 +448,7 @@ insert into Documento
 		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
 		CAST(NULL as varchar) as TelefoneContato, --varchar(30)-> varchar(50) --null
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
-		CAST(NULL as varchar) as CodigoContatoEndereco, --int --null
+		CAST(NULL as int) as CodigoContatoEndereco, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
@@ -463,8 +463,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-		CAST(NULL as int) as CodigoContatoVendedor, --int --null
-		CAST(NULL as int) as CodigoContatoDigitador, --int --null
+		CAST(NULL as varchar) as CodigoContatoVendedor, --int --null
+		CAST(NULL as varchar) as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
@@ -556,7 +556,7 @@ insert into Documento
 		on (('clienti.' + car."codice cliente") = cliente."CodigoAntigo")
 
 		join PrescricaoEnvelope as pe
-		on ((b."codice filiale" = pe."codice filiale") and (pe."Dias" = (CAST(b."data" as integer) - CAST(oc."data" as integer))))
+		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."Dias" = (CAST(b."data" as integer) - CAST(oc."data" as integer))))
 
 	where
 		(car."tipo fornitura" <> 100)
@@ -605,8 +605,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-		CAST(NULL as int) as CodigoContatoVendedor, --int --null
-		CAST(NULL as int) as CodigoContatoDigitador, --int --null
+		CAST(NULL as varchar) as CodigoContatoVendedor, --int --null
+		CAST(NULL as varchar) as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
