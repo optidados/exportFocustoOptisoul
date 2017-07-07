@@ -3,9 +3,9 @@
 drop table if exists documentoitem;
 create table documentoitem
 (
-	CodigoDocumentoItem	varchar(20), --not null
-	CodigoDocumento	varchar(20), --not null
-	CodigoDocumentoAdicional int, --null
+	CodigoDocumentoItem	varchar(30), --not null
+	CodigoDocumento	varchar(30), --not null
+	CodigoDocumentoAdicional varchar(30), --null
 	CodigoPlanoContaEstoque	int, --null
 	CodigoPlanoContaDestino	int, --null
 	CodigoItem varchar(14), -- int->varchar(14) not null
@@ -123,10 +123,11 @@ create table documentoitem
 --Insert carrello2 -> documentoitem
 insert into documentoitem
 (
+	--produtos (CARRELLO2)
 	select
-		'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-		'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+		'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CASE
 			WHEN((COALESCE(it."tipo",it2."tipo") = 'Armação') or (COALESCE(it."tipo",it2."tipo") = 'Óculos')) THEN(146)
 			WHEN((COALESCE(it."tipo",it2."tipo") <> 'Armação') or (COALESCE(it."tipo",it2."tipo") <> 'Óculos')) THEN(0)
@@ -281,9 +282,12 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 			END
 		) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
-		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
+	from busta as b
+		left join occhiali as oc
+		on ( oc."codice cliente" = b."codice cliente" )
+
+		left join carrello2 as car2
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 		left join articoli as art
 		on ( (art."codice filiale" = car2."codice articolo") or (art."codice a barre" = car2."codice a barre") )
@@ -297,16 +301,19 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
     	left join item as it2
     	on ( it2."CodigoAntigo" = 'articoli_fornitore.'+ car2."codice a barre" )
 
+	where
+		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)
+
 
 
     UNION
 
 
-	--Prescrição (LONGE - OLHO DIREITO)
+	--Prescrição (LONGE - OLHO DIREITO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-	'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-		CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
@@ -426,7 +433,7 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		on ( cli."codice personale" = b."codice cliente" )
 
 		left join carrello2 as car2
-		on ( car2."codice cliente" = b."codice cliente")
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 	where
 		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)
@@ -435,11 +442,11 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 	UNION
 
 
-	--Prescrição (LONGE - OLHO ESQUERDO)
+	--Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-	'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-		CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
@@ -559,7 +566,7 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		on ( cli."codice personale" = b."codice cliente" )
 
 		left join carrello2 as car2
-		on ( car2."codice cliente" = b."codice cliente")
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 	where
 		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)
@@ -568,11 +575,11 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 	UNION
 
 
-	--Prescrição (MEDIO - OLHO DIREITO)
+	--Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
 	select
 	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-	'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-		CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
@@ -692,7 +699,7 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		on ( cli."codice personale" = b."codice cliente" )
 
 		left join carrello2 as car2
-		on ( car2."codice cliente" = b."codice cliente")
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 	where
 		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)
@@ -701,11 +708,11 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 	UNION
 
 
-    --Prescrição (MÉDIO - OLHO ESQUERDO)
+    --Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-	'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-		CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
@@ -825,7 +832,7 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		on ( cli."codice personale" = b."codice cliente" )
 
 		left join carrello2 as car2
-		on ( car2."codice cliente" = b."codice cliente")
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 	where
 		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)
@@ -834,11 +841,11 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 	UNION
 
 
-	--Prescrição (PERTO - OLHO DIREITO)
+	--Prescrição (PERTO - OLHO DIREITO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-	'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-		CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
@@ -958,7 +965,7 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		on ( cli."codice personale" = b."codice cliente" )
 
 		left join carrello2 as car2
-		on ( car2."codice cliente" = b."codice cliente")
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 	where
 		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)
@@ -967,11 +974,11 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 	UNION
 
 
-    --Prescrição (PERTO - OLHO ESQUERDO)
+    --Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-	'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --int (int->varchar(255)) --not null
-		CAST(NULL as int) as CodigoDocumentoAdicional, --int --null é o código da prescrição é o occhiali."codice filiale", mas isso não tem no carrinho, nem na busta, nem em nada, preciso pensar melhor, como faremos, ignora por enquanto, ok
+	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30)) --null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
@@ -1091,7 +1098,7 @@ CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		on ( cli."codice personale" = b."codice cliente" )
 
 		left join carrello2 as car2
-		on ( car2."codice cliente" = b."codice cliente")
+		on ( car2."codice fornitura" = b."codice filiale" )
 
 	where
 		(CAST(b."data" as integer) - CAST(oc."data" as integer) >= 0)

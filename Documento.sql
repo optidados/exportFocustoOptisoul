@@ -3,8 +3,8 @@
 drop table if exists documento;
 create table documento
 (
-	CodigoDocumento	varchar(20), --varchar(20) not null
-	CodigoDocumentoAdicional varchar(20), --varchar(20) null (int->varchar(20))
+	CodigoDocumento	varchar(30), --varchar(30) not null
+	CodigoDocumentoAdicional varchar(30), --varchar(30) null (int->varchar(30))
 	CodigoNFe int, --null
 	Numero int, --null
 	NotaNumero int, --null
@@ -127,8 +127,8 @@ insert into Documento
 (
 	/*venda - CARRELLO*/
 	select
-		'car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
-		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int
+		'car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30)) 
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -305,8 +305,8 @@ insert into Documento
 
 	/*Item venda - CARRELLO*/
 	select
-		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
-		'car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(20) (int->varchar(20))
+		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
+		'car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -469,8 +469,8 @@ insert into Documento
 
 	/*Prescrição - CARRELLO*/
 	select
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
-		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(20) (int->varchar(20))
+		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -637,8 +637,8 @@ insert into Documento
 
 	/*venda - CARRELLO*/
 	select
-		'busta.car.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
-		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
+		'busta.car.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
+		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -804,7 +804,7 @@ insert into Documento
 (
 	/*venda - STORICOCARRELLO*/
 	select
-		'scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
+		'scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
@@ -1314,7 +1314,7 @@ insert into Documento
 
 	/*venda - STORICOCARRELLO*/
 	select
-		'busta.scar.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
+		'busta.scar.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
 		'item.scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
