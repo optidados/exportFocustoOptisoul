@@ -247,9 +247,6 @@ insert into Documento
 		left join carrello2 as car2
 		on (car."codice filiale" = car2."codice carrello")
 
-		left join busta as b
-		on (b."codice filiale" = car2."codice fornitura")
-
 		left join Contato as matriz
 		on (('sede.' + car."filiale") = matriz."CodigoAntigo")
 
