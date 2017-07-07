@@ -1,7 +1,7 @@
 //NOSQLBDETOFF2
 --Create table documento (tabela principal)
-drop table if exists documento;
-create table documento
+drop table if exists Documento;
+create table Documento
 (
 	CodigoDocumento	varchar(20), --varchar(20) not null
 	CodigoDocumentoAdicional varchar(20), --varchar(20) null (int->varchar(20))
@@ -120,8 +120,6 @@ create table documento
 	TransferenciaCaixa int --null [bit]--> int
 );
 
-
-
 --Tipo Venda (carrello) quem vai pagar pela Venda, se tiver titular, puxar o titular?
 insert into Documento
 (
@@ -153,7 +151,7 @@ insert into Documento
 		MAX(clienteTel."Telefone") as TelefoneContato, --varchar(30)-> varchar(50) --null
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
 		CAST(NULL as int) as CodigoContatoEndereco, --int --null
-		(COALESCE(clienteEnd."Logradouro", '') +(CASE WHEN(clienteEnd."Numero" <> '') THEN(', ') ELSE('') END)+ TRIM(COALESCE(clienteEnd."Numero", '')) +' '+ COALESCE(clienteEnd."Bairro", '') +' '+ COALESCE(clienteEnd."Municipio", '') +'-'+ COALESCE(clienteEnd."UF", '') +' '+ COALESCE(clienteEnd."CEP", '')) as DescricaoContatoEndereco, --varchar(170) --null
+		TRIM(COALESCE(clienteEnd."Logradouro", '') +' '+ COALESCE(clienteEnd."Bairro", '') +' '+ COALESCE(clienteEnd."Municipio", '') +'-'+ COALESCE(clienteEnd."UF", '') +' '+ COALESCE(clienteEnd."CEP", '')) as DescricaoContatoEndereco, --varchar(170) --null
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		car."data" as DataHoraEmissao, --datetime (date) --null
@@ -247,9 +245,6 @@ insert into Documento
 		left join carrello2 as car2
 		on (car."codice filiale" = car2."codice carrello")
 
-		left join busta as b
-		on (b."codice filiale" = car2."codice fornitura")
-
 		left join Contato as matriz
 		on (('sede.' + car."filiale") = matriz."CodigoAntigo")
 
@@ -299,9 +294,7 @@ insert into Documento
 		car."sconto",
 		car."sconto percentuale"
 
-
 	UNION
-
 
 	/*Item venda - CARRELLO*/
 	select
@@ -315,7 +308,15 @@ insert into Documento
 		'Item Venda' as Tipo, --varchar(255) --null
 		car."descrizione" as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
-		'Óculos de Grau' as Operacao, --varchar(255) --null
+		CASE car."tipo fornitura"
+			WHEN 0 THEN 'Outro Produto/Serviço'
+			WHEN 1 THEN 'Óculos de Grau'
+			WHEN 2 THEN 'Óculos de Sol'
+			WHEN 3 THEN 'Óculos de Grau'
+			WHEN 4 THEN 'Armação'
+			WHEN 5 THEN 'Outro Produto/Serviço'
+			ELSE 'Outro Produto/Serviço'
+		END as Operacao, --varchar(255) --null
 		'Orçamento' as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
 		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
@@ -422,9 +423,6 @@ insert into Documento
 		0 as TransferenciaCaixa --int --null
 
 	from carrello as car
-		left join busta as b
-		on (b."codice filiale" = car."codice fornitura")
-
 		left join Contato as matriz
 		on (('sede.' + car."filiale") = matriz."CodigoAntigo")
 
