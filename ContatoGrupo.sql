@@ -1,12 +1,3 @@
-/*
-Classifica em grupo os clientes e fornecedores
-Classifica em grupos os problemas visuais
-10/01/2017 - Murilo
-
-PENDENCIAS
-
-*/
-//NOSQLBDETOFF2 
 drop table if exists ContatoGrupo;
 
 create table ContatoGrupo
