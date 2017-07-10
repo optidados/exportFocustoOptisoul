@@ -14,7 +14,7 @@ create table documentoitem
 	LoteEmpresa	varchar(50), --null
 	ReferenciaFornecedor varchar(30), --null
 	DescricaoItem varchar(255), --not null
-	TipoItem varchar(45), --null
+	TipoItem varchar(255), --null
 	NCM	varchar(8), --null
 	CodigoDocumentoItemPai int, --null
 	Operacao varchar(255), --not null
@@ -125,25 +125,25 @@ insert into documentoitem
 (
 	--produtos (CARRELLO2)
 	select
-		'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
-		'car2.'+ CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+		'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'scar2.'+ CAST(scar2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		car2."codice articolo", --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		scar2."codice articolo", --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
 		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
-		car2."descrizione" as DescricaoItem, --varchar(255) --not null
+		scar2."descrizione" as DescricaoItem, --varchar(255) --not null
 		CASE
-			WHEN((car2."magazzino" = 0) and (b."occhiale da sole" = False)) THEN('Armação')
-			WHEN((car2."magazzino" = 0) and (b."occhiale da sole" = True)) THEN('Óculos de Sol')
-			WHEN((car2."magazzino" = 1) and (car2."tipo fornitura dettaglio" = 2)) THEN('LOD')
-			WHEN((car2."magazzino" = 1) and (car2."tipo fornitura dettaglio" = 3)) THEN('LOE')
-			WHEN(car2."magazzino" = 2) THEN('Lente de Contato Pronta')
-			WHEN(car2."magazzino" = 3) THEN('Produto')
-			WHEN(car2."magazzino" = 4) THEN('Serviço')
+			WHEN((scar2."magazzino" = 0) and (b."occhiale da sole" = False)) THEN('Armação')
+			WHEN((scar2."magazzino" = 0) and (b."occhiale da sole" = True)) THEN('Óculos de Sol')
+			WHEN((scar2."magazzino" = 1) and (scar2."tipo fornitura dettaglio" = 2)) THEN('LOD')
+			WHEN((scar2."magazzino" = 1) and (scar2."tipo fornitura dettaglio" = 3)) THEN('LOE')
+			WHEN(scar2."magazzino" = 2) THEN('Lente de Contato Pronta')
+			WHEN(scar2."magazzino" = 3) THEN('Produto')
+			WHEN(scar2."magazzino" = 4) THEN('Serviço')
 			ELSE('Outro Produto')
 		END as TipoItem, --varchar(45) --null
 		CAST(NULL as varchar) as NCM, --varchar(8) --null
@@ -153,23 +153,23 @@ insert into documentoitem
 		'Orçamento' as Status, --varchar(255), --null
 		261 as CodigoCFOP, --int --null
 		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
-		CAST(car2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null "QUE VALOR SERIA ESSE?"
-		CAST(car2."prezzo" as decimal(18,4)) as ValorOriginal, --decimal(18,4) --not null "QUE VALOR SERIA ESSE?"
-		CAST(car2."totale" as decimal(18,4)) as ValorItemUltimo, --decimal(18,4), --not null "QUE VALOR SERIA ESSE?"
-		CAST(car2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
-		CAST(car2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
+		CAST(scar2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null "QUE VALOR SERIA ESSE?"
+		CAST(scar2."prezzo" as decimal(18,4)) as ValorOriginal, --decimal(18,4) --not null "QUE VALOR SERIA ESSE?"
+		CAST(scar2."totale" as decimal(18,4)) as ValorItemUltimo, --decimal(18,4), --not null "QUE VALOR SERIA ESSE?"
+		CAST(scar2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
+		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
 		0.0000 as DescontoTotalRateado, --decimal(18,4), --not null
 		0.0000 as ValorFreteRateado, --decimal(18,4), --not null
 		0.0000 as ValorSeguroRateado, --decimal(18,4), --not null
 		0.0000 as ValorOutrasDespesasRateado, --decimal(18,4), --not null
-		CAST(car2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
+		CAST(scar2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
 		0.0000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
 		CAST(NULL as varchar) as Unidade, --varchar(10) --null
-		CAST((car2."prezzo" * car2."quantita") as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
-		CAST((car2."sconto" * car2."quantita") as decimal(18,4)) as DescontoSubTotal, --decimal(18,4) --not null
-		CAST(car2."sconto percentuale" as decimal(18,4)) as DescontoPercentualSubTotal, --decimal(18,4) --not null
-		CAST(car2."totale" as decimal(18,4)) as Total, --decimal(18,4) --not null
+		CAST((scar2."prezzo" * scar2."quantita") as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
+		CAST((scar2."sconto" * scar2."quantita") as decimal(18,4)) as DescontoSubTotal, --decimal(18,4) --not null
+		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualSubTotal, --decimal(18,4) --not null
+		CAST(scar2."totale" as decimal(18,4)) as Total, --decimal(18,4) --not null
 		CAST(b."note" as varchar(8000)) as Observacao, --varchar(8000) --null
 		CAST(NULL as decimal(18,4))as ValorReal, --decimal(18,4) --not null
 		CAST(NULL as decimal(18,4))as ValorRealTotal, --decimal(18,4) --not null
@@ -179,8 +179,8 @@ insert into documentoitem
 		CAST(NULL as decimal(18,4)) as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		CAST(NULL as decimal(18,4)) as ValorCustoReposicao, --decimal(18,4) --not null
-		car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
-		car2."data pagamento" as DataHoraFinalizado, --datetime (datetime->date) --null
+		scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+		scar2."data pagamento" as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
 		CAST(NULL as decimal(18,4)) as ValorBaseICMS, --decimal(18,4) --null
@@ -252,8 +252,8 @@ insert into documentoitem
 			ELSE(CAST(NULL as varchar))
 		END) as Oculos, --varchar(100) --null
 		(CASE
-			WHEN((car2."magazzino" = 0) and (b."occhiale da sole" = False)) THEN('Vista')
-			WHEN((car2."magazzino" = 0) and (b."occhiale da sole" = True)) THEN('Óculos de Sol')
+			WHEN((scar2."magazzino" = 0) and (b."occhiale da sole" = False)) THEN('Vista')
+			WHEN((scar2."magazzino" = 0) and (b."occhiale da sole" = True)) THEN('Óculos de Sol')
 			ELSE(CAST(NULL as varchar))
 		END) as TipoOculos, --varchar(100) --null
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
@@ -276,18 +276,19 @@ insert into documentoitem
 			END
 		) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 
 
     UNION
@@ -295,12 +296,12 @@ insert into documentoitem
 
 	--Prescrição (LONGE - OLHO DIREITO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+	'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		CAST(NULL as varchar) as CodigoItem, --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
@@ -340,7 +341,7 @@ insert into documentoitem
 		0.0000 as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		0.0000 as ValorCustoReposicao, --decimal(18,4) --not null
-	car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+	scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
@@ -409,18 +410,19 @@ insert into documentoitem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 
 
 	UNION
@@ -428,12 +430,12 @@ insert into documentoitem
 
 	--Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+	'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		CAST(NULL as varchar) as CodigoItem, --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
@@ -473,7 +475,7 @@ insert into documentoitem
 		0.0000 as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		0.0000 as ValorCustoReposicao, --decimal(18,4) --not null
-	car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+	scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
@@ -542,18 +544,19 @@ insert into documentoitem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 
 
 	UNION
@@ -561,12 +564,12 @@ insert into documentoitem
 
 	--Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
+	'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(255) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		CAST(NULL as varchar) as CodigoItem, --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
@@ -606,7 +609,7 @@ insert into documentoitem
 		0.0000 as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		0.0000 as ValorCustoReposicao, --decimal(18,4) --not null
-	car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+	scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
@@ -675,18 +678,19 @@ insert into documentoitem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 
 
 	UNION
@@ -694,12 +698,12 @@ insert into documentoitem
 
     --Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
+	'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		CAST(NULL as varchar) as CodigoItem, --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
@@ -739,7 +743,7 @@ insert into documentoitem
 		0.0000 as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		0.0000 as ValorCustoReposicao, --decimal(18,4) --not null
-	car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+	scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
@@ -808,18 +812,19 @@ insert into documentoitem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 
 
 	UNION
@@ -827,12 +832,12 @@ insert into documentoitem
 
 	--Prescrição (PERTO - OLHO DIREITO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
+	'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		CAST(NULL as varchar) as CodigoItem, --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
@@ -872,7 +877,7 @@ insert into documentoitem
 		0.0000 as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		0.0000 as ValorCustoReposicao, --decimal(18,4) --not null
-	car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+	scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
@@ -941,18 +946,19 @@ insert into documentoitem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 
 
 	UNION
@@ -960,12 +966,12 @@ insert into documentoitem
 
     --Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
 	select
-	'car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
-		'presc.car.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
+	'scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoItem, --varchar(30) --not null
+		'presc.scar.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30)) --null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
-		CAST(NULL as varchar) as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
+		CAST(NULL as varchar) as CodigoItem, --scar2."codice a barre" ou scar2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
@@ -1005,7 +1011,7 @@ insert into documentoitem
 		0.0000 as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
 		0.0000 as ValorCustoReposicao, --decimal(18,4) --not null
-	car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+	scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
 		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
@@ -1074,16 +1080,17 @@ insert into documentoitem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from storicocarrello2 as scar2
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
-		
+		on ( b."codice filiale" = scar2."codice fornitura" )
+
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
 
 		join PrescricaoEnvelope pe
-		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
+		on (( pe."CodigoEnvelope" = b."codice filiale" ) and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(scar2."tipo fornitura" <> 100)
+		and(scar2."tipo fornitura" <> 101)
 );
