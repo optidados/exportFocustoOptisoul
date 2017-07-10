@@ -1,8 +1,3 @@
-/*
-LIGA O ITEM AOS SEUS FORNECEDORES
-Murilo - 10/02/2016
-*/	
-//NOSQLBDETOFF2 
 drop table if exists ItemFornecedor;
 
 create table ItemFornecedor

@@ -1,26 +1,10 @@
-/*
-Exporta do FOCUS 10 os clientes, fornecedores, clientes atacado, laboratórios, oftalmologistas, optometristas, catálogo de endereços, 
-lojas (punto vendita, sede), transportadora, agentes, usuários
-30/01/2017 - Murilo
-
-PENDENCIAS:
-- TRATAR TUDO O QUE PRECISA SER JOGADO EM OBSERVAÇÃO, CAMPOS OS QUAIS O FOCUS POSSUI E O B15 NÃO - como nos conheceu, hobby, matrícula 
-- AVALIAR A NECESSIDADE DE SE CRIAR O CAMPO, JUNTO COM O ORLANDO
-- OPTOMETRISTA É O VERICADO POR? VALE A PENA?
-- CodigoContatoMatriz para as filiais (punto vendita), acho que tem que rodar um update depois procurando o Segmento 'Matriz'
-- CodigoContatoMatriz para a Matriz no cadastro de fornecedor do FOCUS
-- Laboratorio Externo não funciona - parte do código está comentada
-- Usuários
-- Tratamento do RTF para texto puro http://www.sqlteam.com/forums/topic.asp?TOPIC_ID=90034
-*/
-//NOSQLBDETOFF2
 drop table if exists Contato;
 
 create table Contato
 (	
 	CodigoContatoMatriz int, --an."codice titolare" CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
 	Nome varchar(60), --[varchar](255) NOT NULL,
-	Apelido varchar(40), --[varchar](255) NULL,
+	Apelido varchar(60), --[varchar](255) NULL,
 	NumeroDocumentoNacional varchar(18), --[varchar](150) NULL,
 	TipoDocumentoNacional varchar(4), --[varchar](4) NULL,
 	NumeroDocumentoEstadual varchar(20), --[varchar](150) NULL,
@@ -72,12 +56,15 @@ create table Contato
 	CobrancaDataPrevisao date --[date] NULL,
 );
 
+create index CodAntigoIdx
+	on Contato ("CodigoAntigo");
+
 insert into Contato
 (
 	select
 		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
 		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Apelido, --[varchar](255) NULL,
 		c."codfiva" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE
 			WHEN c."codfiva" IS NOT NULL and c."codfiva" <> ''
@@ -147,7 +134,7 @@ insert into Contato
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		f."ragione sociale" as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		f."ragione sociale" as Apelido, --[varchar](255) NULL,
 		f."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE 
 			WHEN f."codice fiscale" IS NOT NULL and f."codice fiscale" <> ''
@@ -215,7 +202,7 @@ insert into Contato
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		ci."ragione sociale" as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		ci."ragione sociale" as Apelido, --[varchar](255) NULL,
 		ci."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE 
 			WHEN ci."codice fiscale" IS NOT NULL and ci."codice fiscale" <> ''
@@ -336,7 +323,7 @@ insert into Contato
 	select
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		o."denominazione" as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		o."denominazione" as Apelido, --[varchar](255) NULL,
 		o."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE 
 			WHEN o."codice fiscale" IS NOT NULL and o."codice fiscale" <> ''
@@ -396,7 +383,7 @@ insert into Contato
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		TRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		TRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Apelido, --[varchar](255) NULL,
 		r."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE 
 			WHEN r."codice fiscale" IS NOT NULL and r."codice fiscale" <> ''
@@ -576,7 +563,7 @@ insert into Contato
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		v."ragione sociale" as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		v."ragione sociale" as Apelido, --[varchar](255) NULL,
 		v."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE 
 			WHEN v."codice fiscale" IS NOT NULL and v."codice fiscale" <> ''
@@ -636,7 +623,7 @@ insert into Contato
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		ag."nome agente" as Nome, --[varchar](255) NOT NULL,
-		CAST(NULL as varchar(40)) as Apelido, --[varchar](255) NULL,
+		ag."nome agente" as Apelido, --[varchar](255) NULL,
 		CAST(NULL as varchar) as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CAST(NULL as varchar(4)) as TipoDocumentoNacional, --[varchar](4) NULL,
 		CAST(NULL as varchar(20)) as NumeroDocumentoEstadual, --[varchar](150) NULL,
