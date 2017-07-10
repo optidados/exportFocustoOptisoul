@@ -189,8 +189,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-		'utenti.' + car."operatore" as CodigoContatoVendedor, --int --null
-		'utenti.' + car."operatore" as CodigoContatoDigitador, --int --null
+		'utente.' + car."operatore" as CodigoContatoVendedor, --int --null
+		'utente.' + car."operatore" as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
@@ -734,8 +734,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-		'utenti.' + scar."operatore" as CodigoContatoVendedor, --int --null
-		'utenti.' + scar."operatore" as CodigoContatoDigitador, --int --null
+		'utente.' + scar."operatore" as CodigoContatoVendedor, --int --null
+		'utente.' + scar."operatore" as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null

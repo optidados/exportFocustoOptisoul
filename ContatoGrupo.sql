@@ -18,6 +18,14 @@ insert into ContatoGrupo
 	UNION
 
 	select
+		'utente.' + ut."sigla" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
+		'Vendedor' as Descricao --[varchar](255) NOT NULL,
+	from utente as ut
+
+	UNION
+
+	select
 		'clienti ingrosso.' + ci."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
 		'Clientes' as Descricao --[varchar](255) NOT NULL,
