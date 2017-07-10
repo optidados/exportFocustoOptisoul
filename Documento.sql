@@ -144,7 +144,7 @@ create table Documento
 	TransferenciaCaixa int --null [bit]--> int
 );
 
---Tipo Venda (carrello) quem vai pagar pela Venda, se tiver titular, puxar o titular?
+--Tipo Venda (carrello) quem vai pagar pela Venda, se tiver titular, puxar o titular
 insert into Documento
 (
 	/*venda - CARRELLO*/
@@ -189,8 +189,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-'utenti.' + car."operatore" as CodigoContatoVendedor, --int --null
-'utenti.' + car."operatore" as CodigoContatoDigitador, --int --null
+		'utenti.' + car."operatore" as CodigoContatoVendedor, --int --null
+		'utenti.' + car."operatore" as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
@@ -411,7 +411,8 @@ insert into Documento
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
 	where
-		(car."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100) and
+		(car."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
 
 	UNION
 
@@ -537,7 +538,7 @@ insert into Documento
 		left join busta as b
 		on (b."codice filiale" = car."codice fornitura")
 
-		left join occhiali as oc
+		join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
 
 		left join Contato as matriz
@@ -559,7 +560,7 @@ insert into Documento
 
 	/*venda - CARRELLO*/
 	select
-		'busta' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
+		'busta.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
 		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
@@ -676,7 +677,7 @@ insert into Documento
 		0 as TransferenciaCaixa --int --null
 
 	from carrello as car
-		left join busta as b
+		join busta as b
 		on (b."codice filiale" = car."codice fornitura")
 
 		left join Contato as matriz
@@ -733,8 +734,8 @@ insert into Documento
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
 		CAST(NULL as int) as CodigoContatoComprador, --int --null
-'utenti.' + scar."operatore" as CodigoContatoVendedor, --int --null
-'utenti.' + scar."operatore" as CodigoContatoDigitador, --int --null
+		'utenti.' + scar."operatore" as CodigoContatoVendedor, --int --null
+		'utenti.' + scar."operatore" as CodigoContatoDigitador, --int --null
 		CAST(NULL as int) as CodigoContatoCobranca, --int --null
 		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
@@ -957,7 +958,8 @@ insert into Documento
 
 	where
 		(scar."tipo fornitura" <> 100) and
-		(scar."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 101) and
+		(scar."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
 
 	UNION
 
@@ -1083,7 +1085,7 @@ insert into Documento
 		left join busta as b
 		on (b."codice filiale" = scar."codice fornitura")
 
-		left join occhiali as oc
+		join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
 
 		left join Contato as matriz
@@ -1103,7 +1105,7 @@ insert into Documento
 
 	/*venda - storicoCARRELLO*/
 	select
-		'busta' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
+		'busta.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
 		'item.scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
@@ -1220,7 +1222,7 @@ insert into Documento
 		0 as TransferenciaCaixa --int --null
 
 	from storicocarrello as scar
-		left join busta as b
+		join busta as b
 		on (b."codice filiale" = scar."codice fornitura")
 
 		left join Contato as matriz
