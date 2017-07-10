@@ -56,6 +56,9 @@ create table Contato
 	CobrancaDataPrevisao date --[date] NULL,
 );
 
+create index CodAntigoIdx
+	on Contato ("CodigoAntigo");
+
 insert into Contato
 (
 	select
