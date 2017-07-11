@@ -46,13 +46,11 @@ insert into documentostatus
 		'Venda de Mercadoria' as Operacao, -- varchar(20) null
 		'Orçamento' as StatusOriginal, --varchar(10) null
 		'Aguardando Faturamento' as StatusFinalizado, --varchar(255) null
-		car2."data pagamento" as DataHoraEmissao, --datetime not null
+		car."data" as DataHoraEmissao, --datetime not null
 		'utenti' + car."operatore" as CodigoUsuarioAlterou, --varchar(10) (int->varchar(10)) null
 		CAST(NULL as int) as CodigoDocumentoCaixa --int null
 
 	from carrello as car
-		left join carrello2 as car2
-		on (car."codice filiale" = car2."codice carrello")
 );
 
 
@@ -87,11 +85,9 @@ insert into documentostatus
 		'Venda de Mercadoria' as Operacao, -- varchar(20) null
 		'Orçamento' as StatusOriginal, --varchar(10) null
 		'Aguardando Faturamento' as StatusFinalizado, --varchar(255) null
-		scar2."data pagamento" as DataHoraEmissao, --datetime not null
+		scar."data" as DataHoraEmissao, --datetime not null
 		'utenti' + scar."operatore" as CodigoUsuarioAlterou, --varchar(10) (int->varchar(10)) null
 		CAST(NULL as int) as CodigoDocumentoCaixa --int null
 
 	from storicocarrello as scar
-		left join storicocarrello2 as scar2
-		on (scar."codice filiale" = scar2."codice carrello")
 );
