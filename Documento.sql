@@ -538,7 +538,7 @@ insert into Documento
 		left join busta as b
 		on (b."codice filiale" = car."codice fornitura")
 
-		join occhiali as oc
+		left join occhiali as oc --ser left join aqui tem algum problema? acho que não, pois faz join com a PrescricaoEnvelope
 		on (oc."codice cliente" = b."codice cliente")
 
 		left join Contato as matriz
@@ -1085,7 +1085,7 @@ insert into Documento
 		left join busta as b
 		on (b."codice filiale" = scar."codice fornitura")
 
-		join occhiali as oc
+		left join occhiali as oc --ser left join aqui tem algum problema? acho que não, pois faz join com a PrescricaoEnvelope
 		on (oc."codice cliente" = b."codice cliente")
 
 		left join Contato as matriz
