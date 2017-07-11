@@ -538,7 +538,7 @@ insert into Documento
 		left join busta as b
 		on (b."codice filiale" = car."codice fornitura")
 
-		join occhiali as oc
+		left join occhiali as oc --ser left join aqui tem algum problema? acho que não, pois faz join com a PrescricaoEnvelope
 		on (oc."codice cliente" = b."codice cliente")
 
 		left join Contato as matriz
@@ -595,7 +595,7 @@ insert into Documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
-		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
+		CAST(b."note" as varchar(8000)) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
@@ -1085,7 +1085,7 @@ insert into Documento
 		left join busta as b
 		on (b."codice filiale" = scar."codice fornitura")
 
-		join occhiali as oc
+		left join occhiali as oc --ser left join aqui tem algum problema? acho que não, pois faz join com a PrescricaoEnvelope
 		on (oc."codice cliente" = b."codice cliente")
 
 		left join Contato as matriz
