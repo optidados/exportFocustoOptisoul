@@ -595,7 +595,7 @@ insert into Documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
-		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
+		CAST(b."note" as varchar(8000)) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
