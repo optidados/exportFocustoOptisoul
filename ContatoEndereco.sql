@@ -2,7 +2,7 @@ drop table if exists ContatoEndereco;
 
 create table ContatoEndereco
 (
-	CodigoContato varchar(255), --[int] NOT NULL,
+	CodigoContato varchar(30), --[int] NOT NULL,
 	Logradouro varchar(255), --[varchar](255) NULL,
 	Numero varchar, --[varchar](15) NULL,
 	Complemento varchar, --[varchar](255) NULL,
@@ -23,7 +23,7 @@ create table ContatoEndereco
 insert into ContatoEndereco
 (
 	select
-		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		c."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -46,7 +46,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		c."indirizzo 2" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -69,7 +69,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'fornitor.' + f."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'fornitor.' + CAST(f."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		f."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -92,7 +92,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'fornitor.' + f."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'fornitor.' + CAST(f."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		f."indirizzo2" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -115,7 +115,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'clienti ingrosso.' + ci."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'clienti ingrosso.' + CAST(ci."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		ci."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -138,7 +138,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'oculisti.' + o."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'oculisti.' + CAST(o."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		o."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -161,7 +161,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'rubrica.' + CAST(r."codice" as varchar(192)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'rubrica.' + CAST(r."codice" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		r."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -184,7 +184,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'sede.' + s."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'sede.' + CAST(s."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		s."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -207,7 +207,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'puntovendita.' + pv."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'puntovendita.' + CAST(pv."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		pv."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
@@ -230,7 +230,7 @@ insert into ContatoEndereco
 	UNION
 
 	select
-		'vettori.' + CAST(v."codice" as varchar(192)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'vettori.' + CAST(v."codice" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		v."indirizzo" as Logradouro, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Numero, --[varchar](15) NULL,
 		CAST(NULL as varchar) as Complemento, --[varchar](255) NULL,
