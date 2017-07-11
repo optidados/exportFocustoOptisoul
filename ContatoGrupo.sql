@@ -2,7 +2,7 @@ drop table if exists ContatoGrupo;
 
 create table ContatoGrupo
 (
-	CodigoContato varchar(255), --[int] NOT NULL,
+	CodigoContato varchar(30), --[int] NOT NULL,
 	CodigoGrupo int, --[int] NULL,
 	Descricao varchar(255) --[varchar](255) NOT NULL,
 );
@@ -10,7 +10,7 @@ create table ContatoGrupo
 insert into ContatoGrupo
 (
 	select
-		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
 		'Clientes' as Descricao --[varchar](255) NOT NULL,
 	from clienti as c
@@ -18,7 +18,7 @@ insert into ContatoGrupo
 	UNION
 
 	select
-		'utente.' + ut."sigla" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'utente.' + CAST(ut."sigla" as varchar(6)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
 		'Vendedor' as Descricao --[varchar](255) NOT NULL,
 	from utente as ut
@@ -26,7 +26,7 @@ insert into ContatoGrupo
 	UNION
 
 	select
-		'clienti ingrosso.' + ci."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'clienti ingrosso.' + CAST(ci."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
 		'Clientes' as Descricao --[varchar](255) NOT NULL,
 	from "clienti ingrosso" as ci
@@ -34,7 +34,7 @@ insert into ContatoGrupo
 	UNION
 
 	select
-		'fornitor.' + f."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'fornitor.' + CAST(f."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
 		'Fornecedores' as Descricao --[varchar](255) NOT NULL,
 	from fornitor as f
@@ -42,7 +42,15 @@ insert into ContatoGrupo
 	UNION
 
 	select
-		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		'oculisti.' + CAST(o."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
+		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
+		'Médico' as Descricao --[varchar](255) NOT NULL,
+	from oculisti as o
+
+	UNION
+
+	select
+		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
 		c."problema visivo" as Descricao --[varchar](255) NOT NULL,
 	from clienti as c
