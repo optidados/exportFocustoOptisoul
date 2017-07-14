@@ -1,3 +1,4 @@
+//NOSQLBDETOFF2
 drop table if exists DocumentoItem;
 --Create table documentoitem (principal)
 create table DocumentoItem
@@ -116,10 +117,10 @@ create table DocumentoItem
 	LenteTipo varchar(100) --null
 );
 
---Insert carrello2 -> documentoitem
+
+--produtos (CARRELLO2)
 insert into DocumentoItem
 (
-	--produtos (CARRELLO2)
 	select
 		'item.car.' + CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
@@ -438,10 +439,12 @@ insert into DocumentoItem
 
 	where
 		(car2."tipo fornitura" <> 100)
+);
 
-    UNION
 
-	--Prescrição (LONGE - OLHO DIREITO CARRELLO2)
+--Prescrição (LONGE - OLHO DIREITO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
@@ -513,7 +516,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'odl.car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('odl.car.'+ CAST(car."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -556,9 +559,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from carrello as car
 		left join busta as b
-		on (b."codice filiale" = car2."codice fornitura")
+		on (b."codice filiale" = car."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -567,11 +570,25 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 L DX",
+		oc."Cilindro L DX",
+		oc."Sfera L DX",
+		oc."Prisma L DX",
+		oc."Base L DX",
+		oc."DI L",
+		oc."DI L DX",
+		oc."DI L SX"
+);
 
-	--Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
+
+--Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30))--null
@@ -643,7 +660,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'oel.car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('oel.car.'+ CAST(car."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -686,9 +703,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from carrello as car
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
+		on ( b."codice filiale" = car."codice fornitura" )
 		
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
@@ -697,11 +714,22 @@ insert into DocumentoItem
 		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 L SX",
+		oc."Cilindro L SX",
+		oc."Sfera L SX",
+		oc."Prisma L SX",
+		oc."Base L SX"
+);
 
-	--Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
+
+--Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
@@ -773,7 +801,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'odm.car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('odm.car.'+ CAST(car."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -816,9 +844,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from carrello as car
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
+		on ( b."codice filiale" = car."codice fornitura" )
 		
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
@@ -827,11 +855,25 @@ insert into DocumentoItem
 		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 M DX",
+		oc."Cilindro M DX",
+		oc."Sfera M DX",
+		oc."Prisma M DX",
+		oc."Base M DX",
+		oc."DI M",
+		oc."DI M DX",
+		oc."DI M SX"
+);
 
-    --Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
+
+--Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
@@ -903,7 +945,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'oem.car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('oem.car.'+ CAST(car."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -946,9 +988,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from carrello as car
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
+		on ( b."codice filiale" = car."codice fornitura" )
 		
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
@@ -957,11 +999,22 @@ insert into DocumentoItem
 		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 M SX",
+		oc."Cilindro M SX",
+		oc."Sfera M SX",
+		oc."Prisma M SX",
+		oc."Base M SX"
+);
 
-	--Prescrição (PERTO - OLHO DIREITO CARRELLO2)
+
+--Prescrição (PERTO - OLHO DIREITO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
@@ -1033,7 +1086,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'odp.car2.'+ CAST(car2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('odp.car.'+ CAST(car."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -1076,9 +1129,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from carrello as car
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
+		on ( b."codice filiale" = car."codice fornitura" )
 		
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
@@ -1087,11 +1140,25 @@ insert into DocumentoItem
 		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 V DX",
+		oc."Cilindro V DX",
+		oc."Sfera V DX",
+		oc."Prisma V DX",
+		oc."Base V DX",
+		oc."DI V",
+		oc."DI V DX",
+		oc."DI V SX"
+);
 
-    --Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
+
+--Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30)) --null
@@ -1163,7 +1230,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'oep.car2.'+ CAST(car2."codice filiale" as varchar(12))  as CodigoAntigo, --varchar(150) --null
+		MIN('oep.car.'+ CAST(car."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -1206,9 +1273,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from carrello2 as car2
+	from carrello as car
 		left join busta as b
-		on ( b."codice filiale" = car2."codice fornitura" )
+		on ( b."codice filiale" = car."codice fornitura" )
 		
 		left join occhiali as oc
 		on ( oc."codice cliente" = b."codice cliente" )
@@ -1217,13 +1284,22 @@ insert into DocumentoItem
 		on (( b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(car2."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100)
+
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 V SX",
+		oc."Cilindro V SX",
+		oc."Sfera V SX",
+		oc."Prisma V SX",
+		oc."Base V SX"
 );
 
---Insert storicocarrello2 -> documentoitem
+
+--produtos (STORICOCARRELLO2)
 insert into DocumentoItem
 (
-	--produtos (STORICOCARRELLO2)
 	select
 		'item.scar.' + CAST(scar2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
@@ -1543,10 +1619,12 @@ insert into DocumentoItem
 	where
 		(scar2."tipo fornitura" <> 100) and
 		(scar2."tipo fornitura" <> 101)
+);
 
-    UNION
 
-	--Prescrição (LONGE - OLHO DIREITO CARRELLO2)
+--Prescrição (LONGE - OLHO DIREITO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
@@ -1618,7 +1696,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'odl.scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('odl.scar.'+ CAST(scar."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -1661,9 +1739,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from storicocarrello2 as scar2
+	from storicocarrello as scar
 		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
+		on (b."codice filiale" = scar."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -1672,12 +1750,26 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(scar2."tipo fornitura" <> 100) and
-		(scar2."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 L DX",
+		oc."Cilindro L DX",
+		oc."Sfera L DX",
+		oc."Prisma L DX",
+		oc."Base L DX",
+		oc."DI L",
+		oc."DI L DX",
+		oc."DI L SX"
+);
 
-	--Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
+
+--Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30))--null
@@ -1749,7 +1841,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'oel.scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('oel.scar.'+ CAST(scar."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -1792,9 +1884,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from storicocarrello2 as scar2
+	from storicocarrello as scar
 		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
+		on (b."codice filiale" = scar."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -1803,12 +1895,23 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(scar2."tipo fornitura" <> 100) and
-		(scar2."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 L SX",
+		oc."Cilindro L SX",
+		oc."Sfera L SX",
+		oc."Prisma L SX",
+		oc."Base L SX"
+);
 
-	--Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
+
+--Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
@@ -1880,7 +1983,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'odm.scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('odm.scar.'+ CAST(scar."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -1923,9 +2026,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from storicocarrello2 as scar2
+	from storicocarrello as scar
 		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
+		on (b."codice filiale" = scar."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -1934,12 +2037,26 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(scar2."tipo fornitura" <> 100) and
-		(scar2."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 M DX",
+		oc."Cilindro M DX",
+		oc."Sfera M DX",
+		oc."Prisma M DX",
+		oc."Base M DX",
+		oc."DI M",
+		oc."DI M DX",
+		oc."DI M SX"
+);
 
-    --Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
+
+--Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
@@ -2011,7 +2128,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'oem.scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('oem.scar.'+ CAST(scar."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -2054,9 +2171,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from storicocarrello2 as scar2
+	from storicocarrello as scar
 		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
+		on (b."codice filiale" = scar."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -2065,12 +2182,23 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(scar2."tipo fornitura" <> 100) and
-		(scar2."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 M SX",
+		oc."Cilindro M SX",
+		oc."Sfera M SX",
+		oc."Prisma M SX",
+		oc."Base M SX"
+);
 
-	--Prescrição (PERTO - OLHO DIREITO CARRELLO2)
+
+--Prescrição (PERTO - OLHO DIREITO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
@@ -2142,7 +2270,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'odp.scar2.'+ CAST(scar2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		MIN('odp.scar.'+ CAST(scar."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -2185,9 +2313,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from storicocarrello2 as scar2
+	from storicocarrello as scar
 		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
+		on (b."codice filiale" = scar."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -2196,12 +2324,26 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(scar2."tipo fornitura" <> 100) and
-		(scar2."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
 
-	UNION
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 V DX",
+		oc."Cilindro V DX",
+		oc."Sfera V DX",
+		oc."Prisma V DX",
+		oc."Base V DX",
+		oc."DI V",
+		oc."DI V DX",
+		oc."DI V SX"
+);
 
-    --Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
+
+--Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
+insert into DocumentoItem
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30)) --null
@@ -2273,7 +2415,7 @@ insert into DocumentoItem
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
-		'oep.scar2.'+ CAST(scar2."codice filiale" as varchar(12))  as CodigoAntigo, --varchar(150) --null
+		MIN('oep.scar.'+ CAST(scar."codice filiale" as varchar(12))) as CodigoAntigo, --varchar(150) --null
 		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
 		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
 		CAST(NULL as int) as CRMItemNovo, --int --null
@@ -2316,9 +2458,9 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
 		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
-	from storicocarrello2 as scar2
+	from storicocarrello as scar
 		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
+		on (b."codice filiale" = scar."codice fornitura")
 		
 		left join occhiali as oc
 		on (oc."codice cliente" = b."codice cliente")
@@ -2327,6 +2469,15 @@ insert into DocumentoItem
 		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."dias" = (CAST(b."data" as int) - CAST(oc."data" as int))))
 
 	where
-		(scar2."tipo fornitura" <> 100) and
-		(scar2."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 100) and
+		(scar."tipo fornitura" <> 101)
+
+	group by
+		oc."codice filiale",
+		oc."data",
+		oc."Asse1 V SX",
+		oc."Cilindro V SX",
+		oc."Sfera V SX",
+		oc."Prisma V SX",
+		oc."Base V SX"
 );
