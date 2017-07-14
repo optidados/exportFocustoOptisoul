@@ -1,29 +1,4 @@
 //NOSQLBDETOFF2
---Create table documento (tabela principal)
-drop table if exists PrescricaoEnvelope;
-create table PrescricaoEnvelope
-(
-	Dias int,
-	CodigoEnvelope varchar(12)
-);
-
-insert into PrescricaoEnvelope
-(
-	select
-		MIN(t2."conta"),
-		t2."codice filiale"
-	from 
-	(
-		select 
-			CAST(b."data" as int) - CAST(oc."data" as int) as conta,
-			b."codice filiale"
-		from busta b
-			left join occhiali oc
-			on ((b."codice cliente" = oc."codice cliente") and ((CAST(b."data" as int) - CAST(oc."data" as int) >= 0)))
-	) as t2
-	group by t2."codice filiale"
-);
-
 drop table if exists Documento;
 create table Documento
 (
@@ -144,10 +119,10 @@ create table Documento
 	TransferenciaCaixa int --null [bit]--> int
 );
 
---Tipo Venda (carrello) quem vai pagar pela Venda, se tiver titular, puxar o titular
+
+/*venda - CARRELLO (quem vai pagar pela Venda, se tiver titular, puxar o titular)*/
 insert into Documento
 (
-	/*venda - CARRELLO*/
 	select
 		'car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30)) 
@@ -274,10 +249,12 @@ insert into Documento
 
 	where
 		(car."tipo fornitura" <> 100)
+);
 
-	UNION
 
-	/*Item venda - CARRELLO*/
+/*Item venda - CARRELLO*/
+insert into Documento
+(
 	select
 		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
 		'car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
@@ -413,10 +390,12 @@ insert into Documento
 	where
 		(car."tipo fornitura" <> 100) and
 		(car."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
+);
 
-	UNION
 
-	/*Prescrição - CARRELLO*/
+/*Prescrição - CARRELLO*/
+insert into Documento
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(20) (int->varchar(20))
@@ -555,10 +534,12 @@ insert into Documento
 
 	where
 		(car."tipo fornitura" <> 100)
+);
 
-	UNION
 
-	/*venda - CARRELLO*/
+/*venda - CARRELLO*/
+insert into Documento
+(
 	select
 		'busta.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
 		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
@@ -690,9 +671,11 @@ insert into Documento
 		(car."tipo fornitura" <> 100)
 );
 
+
+
+/*venda - STORICOCARRELLO*/
 insert into Documento
 (
-	/*venda - storicoCARRELLO*/
 	select
 		'scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int
@@ -820,10 +803,12 @@ insert into Documento
 	where
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101)
+);
 
-	UNION
 
-	/*Item venda - storicoCARRELLO*/
+/*Item venda - STORICOCARRELLO*/
+insert into documento
+(
 	select
 		'item.scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
 		'scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(20) (int->varchar(20))
@@ -960,10 +945,12 @@ insert into Documento
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101) and
 		(scar."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
+);
 
-	UNION
 
-	/*Prescrição - storicoCARRELLO*/
+/*Prescrição - STORICOCARRELLO*/
+insert into documento
+(
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(20) (int->varchar(20))
@@ -1100,10 +1087,12 @@ insert into Documento
 	where
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101)
+);
 
-	UNION
 
-	/*venda - storicoCARRELLO*/
+/*venda - STORICOCARRELLO*/
+insert into documento
+(
 	select
 		'busta.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
 		'item.scar.' + CAST(scar."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
