@@ -8,6 +8,7 @@ create table ContatoTelefone
 	CodigoContato varchar(30) --[int] NOT NULL
 );
 
+
 insert into ContatoTelefone
 (
 	select
@@ -18,9 +19,11 @@ insert into ContatoTelefone
 	from clienti as c
 	where
 		c."telefono" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone 2' as TipoTelefone, --[varchar](100) NULL,
 		c."telefono2" as Telefone, --[varchar](50) NULL,
@@ -29,9 +32,11 @@ insert into ContatoTelefone
 	from clienti as c
 	where
 		c."telefono2" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Celular' as TipoTelefone, --[varchar](100) NULL,
 		c."telefonino gsm" as Telefone, --[varchar](50) NULL,
@@ -40,9 +45,11 @@ insert into ContatoTelefone
 	from clienti as c
 	where
 		c."telefonino gsm" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone' as TipoTelefone, --[varchar](100) NULL,
 		f."telefono" as Telefone, --[varchar](50) NULL,
@@ -51,9 +58,12 @@ insert into ContatoTelefone
 	from fornitor as f
 	where
 		f."telefono" <> ''
+);
 
-	UNION
 
+--
+insert into ContatoTelefone
+(
 	select
 		'Fax' as TipoTelefone, --[varchar](100) NULL,
 		f."fax" as Telefone, --[varchar](50) NULL,
@@ -62,9 +72,11 @@ insert into ContatoTelefone
 	from fornitor as f
 	where
 		f."fax" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'0800' as TipoTelefone, --[varchar](100) NULL,
 		f."linea verde" as Telefone, --[varchar](50) NULL,
@@ -73,9 +85,11 @@ insert into ContatoTelefone
 	from fornitor as f
 	where
 		f."linea verde" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone Matriz' as TipoTelefone, --[varchar](100) NULL,
 		f."telefono2" as Telefone, --[varchar](50) NULL,
@@ -84,9 +98,11 @@ insert into ContatoTelefone
 	from fornitor as f
 	where
 		f."telefono2" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Fax Matriz' as TipoTelefone, --[varchar](100) NULL,
 		f."fax2" as Telefone, --[varchar](50) NULL,
@@ -95,9 +111,11 @@ insert into ContatoTelefone
 	from fornitor as f
 	where
 		f."fax2" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'0800 Matriz' as TipoTelefone, --[varchar](100) NULL,
 		f."linea verde2" as Telefone, --[varchar](50) NULL,
@@ -106,9 +124,11 @@ insert into ContatoTelefone
 	from fornitor as f
 	where
 		f."linea verde2" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone' as TipoTelefone, --[varchar](100) NULL,
 		ci."telefono" as Telefone, --[varchar](50) NULL,
@@ -117,9 +137,11 @@ insert into ContatoTelefone
 	from "clienti ingrosso" as ci
 	where
 		ci."telefono" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone 2' as TipoTelefone, --[varchar](100) NULL,
 		ci."telefono1" as Telefone, --[varchar](50) NULL,
@@ -128,9 +150,11 @@ insert into ContatoTelefone
 	from "clienti ingrosso" as ci
 	where
 		ci."telefono1" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Fax' as TipoTelefone, --[varchar](100) NULL,
 		ci."fax" as Telefone, --[varchar](50) NULL,
@@ -139,9 +163,11 @@ insert into ContatoTelefone
 	from "clienti ingrosso" as ci
 	where
 		ci."fax" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone' as TipoTelefone, --[varchar](100) NULL,
 		o."telefono" as Telefone, --[varchar](50) NULL,
@@ -150,9 +176,11 @@ insert into ContatoTelefone
 	from oculisti as o
 	where
 		o."telefono" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Celular' as TipoTelefone, --[varchar](100) NULL,
 		o."telefono2" as Telefone, --[varchar](50) NULL,
@@ -161,9 +189,11 @@ insert into ContatoTelefone
 	from oculisti as o
 	where
 		o."telefono2" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Fax' as TipoTelefone, --[varchar](100) NULL,
 		o."fax" as Telefone, --[varchar](50) NULL,
@@ -172,9 +202,11 @@ insert into ContatoTelefone
 	from oculisti as o
 	where
 		o."fax" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone' as TipoTelefone, --[varchar](100) NULL,
 		r."telefono" as Telefone, --[varchar](50) NULL,
@@ -183,9 +215,11 @@ insert into ContatoTelefone
 	from rubrica as r
 	where
 		r."telefono" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Celular' as TipoTelefone, --[varchar](100) NULL,
 		r."telefono2" as Telefone, --[varchar](50) NULL,
@@ -194,9 +228,11 @@ insert into ContatoTelefone
 	from rubrica as r
 	where
 		r."telefono2" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Fax' as TipoTelefone, --[varchar](100) NULL,
 		r."fax" as Telefone, --[varchar](50) NULL,
@@ -205,9 +241,11 @@ insert into ContatoTelefone
 	from rubrica as r
 	where
 		r."fax" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone' as TipoTelefone, --[varchar](100) NULL,
 		v."telefono" as Telefone, --[varchar](50) NULL,
@@ -216,9 +254,11 @@ insert into ContatoTelefone
 	from vettori as v
 	where
 		v."telefono" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Fax' as TipoTelefone, --[varchar](100) NULL,
 		v."fax" as Telefone, --[varchar](50) NULL,
@@ -227,9 +267,11 @@ insert into ContatoTelefone
 	from vettori as v
 	where
 		v."fax" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Telefone' as TipoTelefone, --[varchar](100) NULL,
 		ag."tel agente" as Telefone, --[varchar](50) NULL,
@@ -238,9 +280,11 @@ insert into ContatoTelefone
 	from agente as ag
 	where
 		ag."tel agente" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Celular' as TipoTelefone, --[varchar](100) NULL,
 		ag."cel agente" as Telefone, --[varchar](50) NULL,
@@ -249,9 +293,11 @@ insert into ContatoTelefone
 	from agente as ag
 	where
 		ag."cel agente" <> ''
+);
 
-	UNION
 
+insert into ContatoTelefone
+(
 	select
 		'Fax' as TipoTelefone, --[varchar](100) NULL,
 		ag."fax agente" as Telefone, --[varchar](50) NULL,

@@ -1,5 +1,5 @@
+//NOSQLBDETOFF2
 drop table if exists ItemFornecedor;
-
 create table ItemFornecedor
 (
 	CodigoItem varchar(200), --[bigint] NOT NULL,
@@ -7,6 +7,7 @@ create table ItemFornecedor
 	Descricao varchar(50), --[varchar](50) NULL,
 	Referencia varchar(30) --[varchar](30) NULL
 );
+
 
 insert into ItemFornecedor
 (	
@@ -20,9 +21,11 @@ insert into ItemFornecedor
 			on (a."codice a barre" = t."codice a barre")
 	where
 		COALESCE(a."codice fornitore", t."codice fornitore") <> ''
+);
 
-	UNION
 
+insert into ItemFornecedor
+(
 	select
 		'c.' + c."codice filiale" + 
 			COALESCE('.d.' + d."codice filiale", '') +
@@ -45,9 +48,11 @@ insert into ItemFornecedor
 			on (p."codice articolo" = c."codice filiale")
 
 	where (c."magazzino" = 1)
+);
 
-	UNION
 
+insert into ItemFornecedor
+(
 	select distinct
 		't.' + SUBSTRING(t."descrizione" from 0 for 33) + '.f.' + f."codice filiale" as CodigoItem, --[bigint] NOT NULL,
 		'fornitor.' + COALESCE(f."codice filiale", '') as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
@@ -60,9 +65,11 @@ insert into ItemFornecedor
 			on (f."ragione sociale" = c."fornitore")
 
 	where (c."magazzino" = 1)
+);
 
-	UNION
 
+insert into ItemFornecedor
+(
 	select distinct
 		's.' + SUBSTRING(s."descrizione" from 0 for 33) + '.f.' + f."codice filiale" as CodigoItem, --[bigint] NOT NULL,
 		'fornitor.' + COALESCE(f."codice filiale", '') as CodigoContato, --[int] (int->varchar(255)) NOT NULL,

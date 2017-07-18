@@ -1,5 +1,5 @@
+//NOSQLBDETOFF2
 drop table if exists Item;
-
 create table Item
 (
 	Referencia varchar(25), --[varchar](20) NULL,
@@ -93,6 +93,8 @@ create table Item
 	PAF_IPPT varchar(1), --[varchar](1) NULL,
 	UtilizaComposicaoValorReposicao varchar
 );
+
+create index codantigo on item("CodigoAntigo");
 
 insert into Item
 (
@@ -274,9 +276,11 @@ insert into Item
 			on (af."codice articolo" = am."codice articolo") and (af."filiale" = am."filiale")
 	where
 		(am."filiale" = GetFiliale) --PEGANDO SÓ DE UMA FILIAL PRA NÃO DAR PROBLEMA DE DUPLICAÇÃO
+);
 
-	UNION
 
+insert into Item
+(
 	select 
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		c."codice a barre" as CodigoBarras, --[varchar](50) NULL,
@@ -404,9 +408,11 @@ insert into Item
 			on (p."codice articolo" = c."codice filiale")
 
 	where (c."magazzino" = 1)
+);
 
-	UNION
 
+insert into Item
+(
 	select distinct 
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		CAST(NULL as varchar(50)) as CodigoBarras, --[varchar](50) NULL,
@@ -505,9 +511,11 @@ insert into Item
 			on (f."ragione sociale" = c."fornitore")
 
 	where (c."magazzino" = 1)
+);
 
-	UNION
 
+insert into Item
+(
 	select distinct 
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		CAST(NULL as varchar(50)) as CodigoBarras, --[varchar](50) NULL,
