@@ -1,5 +1,5 @@
+//NOSQLBDETOFF2
 drop table if exists ItemComposicao;
-
 create table ItemComposicao
 (
 	CodigoItem varchar(200), --[int] NOT NULL,
@@ -7,6 +7,7 @@ create table ItemComposicao
 	Quantidade decimal(18, 6), --[decimal](18, 6) NOT NULL,
 	Ordem int --[int] NULL	
 );
+
 
 insert into ItemComposicao
 (
