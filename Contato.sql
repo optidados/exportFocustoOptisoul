@@ -59,6 +59,7 @@ create table Contato
 create index CodAntigoIdx
 	on Contato ("CodigoAntigo");
 
+--CLIENTI
 insert into Contato
 (
 	select
@@ -128,10 +129,13 @@ insert into Contato
 	from clienti as c
 		left join anag_ext5 as an
 		on (an."codice cliente" = c."codice personale")
+);
 
-	UNION
 
-		select
+--UTENTE
+insert into Contato
+(
+	select
 		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
 		TRIM(COALESCE(ut."utente", '')) as Nome, --[varchar](255) NOT NULL,
 		TRIM(COALESCE(ut."utente", '')) as Apelido, --[varchar](255) NULL,
@@ -185,9 +189,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from utente as ut
+);
 
-	UNION
 
+--FONITOR
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		f."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -253,9 +260,12 @@ insert into Contato
 	from fornitor as f
 		left join tipopagamento as tp
 		on (tp."codice filiale" = f."codice pagamento")
+);
 
-	UNION
 
+--CLIENTE INGROSSO
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		ci."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -313,9 +323,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from "clienti ingrosso" as ci
+);
 
-	UNION
 	/*
+--LABORATORIOEST
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContato, --[int] IDENTITY(1,1) NOT NULL,
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
@@ -374,9 +387,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from laboratorioest as l
+);*/
 
-	UNION
-	*/
+
+--OCULISTI
+insert into Contato
+(
 	select
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		o."denominazione" as Nome, --[varchar](255) NOT NULL,
@@ -434,9 +450,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from oculisti as o
+);
 
-	UNION
 
+--RUBRICA
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		TRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Nome, --[varchar](255) NOT NULL,
@@ -494,9 +513,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from rubrica as r
+);
 
-	UNION
 
+--SEDE
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		s."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -554,9 +576,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from sede as s
+);
 
-	UNION
 
+--PUNTOVENDITA
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		pv."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -614,9 +639,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from puntovendita as pv
+);
 
-	UNION
 
+--VETTORI
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		v."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -674,9 +702,12 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from vettori as v
+);
 
-	UNION
 
+--AGENTE
+insert into Contato
+(
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		ag."nome agente" as Nome, --[varchar](255) NOT NULL,

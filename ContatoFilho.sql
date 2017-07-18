@@ -2,14 +2,15 @@ drop table if exists ContatoFilho;
 
 create table ContatoFilho
 (
-	CodigoContato varchar(255), --[int] NOT NULL,
-	CodigoContatoRelacionado varchar(200), --[int] NOT NULL,
-	Observacao varchar(8000) --[varchar](max) NULL,
+	CodigoContato varchar(30), --[int] NOT NULL,
+	CodigoContatoRelacionado varchar(30), --[int] NOT NULL,
+	Observacao varchar(13) --[varchar](max) NULL,
 );
 
+
+--EMPRESSA
 insert into ContatoFilho
 (
-	--EMPRESA
 	select
 		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'fornitor.' + an."codice azienda" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -19,9 +20,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice azienda" <> ''
+);
 
-	UNION
 
+--EMPRESA
+insert into ContatoFilho
+(
 	select
 		'fornitor.' + an."codice azienda" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + c."codice personale" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -31,10 +35,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice azienda" <> ''
+);
 
-	UNION
 
-	--TITULAR
+--TITULAR
+insert into ContatoFilho
+(
 	select
 		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + an."codice titolare" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -44,9 +50,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice titolare" <> ''
+);
 
-	UNION
 
+--TITULAR
+insert into ContatoFilho
+(
 	select
 		'clienti.' + an."codice titolare" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + c."codice personale" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -56,10 +65,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice titolare" <> ''
+);
 
-	UNION
 
-	--CONJUGE
+--CONJUGE
+insert into ContatoFilho
+(
 	select
 		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + an."codice coniuge" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -69,9 +80,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice coniuge" <> ''
+);
 
-	UNION
 
+--CONJUGE
+insert into ContatoFilho
+(
 	select
 		'clienti.' + an."codice coniuge" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + c."codice personale" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -81,10 +95,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice coniuge" <> ''
+);
 
-	UNION
 
-	--PAI
+--PAI
+insert into ContatoFilho
+(
 	select
 		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + an."codice padre" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -94,9 +110,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice padre" <> ''
+);
 
-	UNION
 
+--PAI
+insert into ContatoFilho
+(
 	select
 		'clienti.' + an."codice padre" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + c."codice personale" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -106,10 +125,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice padre" <> ''
+);
 
-	UNION
 
-	--MAE
+--MAE
+insert into ContatoFilho
+(
 	select
 		'clienti.' + c."codice personale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + an."codice madre" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -119,9 +140,12 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice madre" <> ''
+);
 
-	UNION
 
+--MAE
+insert into ContatoFilho
+(
 	select
 		'clienti.' + an."codice madre" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'clienti.' + c."codice personale" as CodigoContatoRelacionado, --[int] NOT NULL,
@@ -131,18 +155,23 @@ insert into ContatoFilho
 			on (an."codice cliente" = c."codice personale")
 	where
 		an."codice madre" <> ''
+);
 
-	UNION
 
-	--AGENTE
+--AGENTE
+insert into ContatoFilho
+(
 	select
 		'agente.' + a."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'fornitor.' + a."codice fornitore" as CodigoContatoRelacionado, --[int] NOT NULL,
 		'Empresa' as Observacao --[varchar](max) NULL,
 	from agente as a
+);
 
-	UNION
 
+--AGENTE
+insert into ContatoFilho
+(
 	select
 		'fornitor.' + a."codice fornitore" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
 		'agente.' + a."codice filiale" as CodigoContatoRelacionado, --[int] NOT NULL,
