@@ -569,7 +569,7 @@ insert into Documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
-		CAST(oc."note" as varchar(8000)) as Observacao, --varchar(8000) --null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
@@ -623,7 +623,7 @@ insert into Documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		'item.car.' + CAST(car."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		MIN('item.car.' + CAST(car."codice filiale" as varchar(12))) as DocumentoCodigo, --varchar(100) --null
 		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
@@ -671,6 +671,13 @@ insert into Documento
 
 	where
 		(car."tipo fornitura" <> 100)
+
+	group by
+		oc."codice filiale",
+		matriz."CodigoAntigo",
+		filial."CodigoAntigo",
+		car."codice cliente",
+		oc."data"
 );
 
 
@@ -1261,7 +1268,7 @@ insert into documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
-		CAST(oc."note" as varchar(8000)) as Observacao, --varchar(8000) --null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
@@ -1315,7 +1322,7 @@ insert into documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		'item.scar.' + CAST(scar."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		MIN('item.scar.' + CAST(scar."codice filiale" as varchar(12))) as DocumentoCodigo, --varchar(100) --null
 		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
@@ -1361,6 +1368,13 @@ insert into documento
 	where
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101)
+
+	group by
+		oc."codice filiale",
+		matriz."CodigoAntigo",
+		filial."CodigoAntigo",
+		scar."codice cliente",
+		oc."data"
 );
 
 
@@ -1497,6 +1511,17 @@ insert into documento
 	where
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101)
+);
+
+
+--UPDATE OBSERVAÇÃO (PRESCRIÇÃO)
+update Documento
+set Documento."Observacao" = 
+(
+	select
+		CAST(oc."note" as varchar(8000))
+	from occhiali as oc
+	where(Documento."CodigoDocumento" = 'occhiali.'+oc."codice filiale")
 );
 
 
