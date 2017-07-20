@@ -1,7 +1,7 @@
 //NOSQLBDETOFF2
-drop table if exists documentostatus;
+drop table if exists DocumentoStatus;
 
-create table documentostatus
+create table DocumentoStatus
 (
 	CodigoDocumentoStatus int, --not null
 	CodigoDocumento	varchar(30), --not null
@@ -17,7 +17,7 @@ create table documentostatus
 
 
 --insert carrello (ORÇAMENTO)
-insert into documentostatus
+insert into DocumentoStatus
 (
 	select
 		CAST(NULL as int) as CodigoDocumentoStatus, --int not null
@@ -36,7 +36,7 @@ insert into documentostatus
 
 
 --insert storicocarrello (Aguardando Faturamento)
-insert into documentostatus
+insert into DocumentoStatus
 (
 	select
 		CAST(NULL as int) as CodigoDocumentoStatus, --int not null
@@ -56,7 +56,7 @@ insert into documentostatus
 
 
 --insert storicocarrello
-insert into documentostatus
+insert into DocumentoStatus
 (
 	select
 		CAST(NULL as int) as CodigoDocumentoStatus, --int not null
@@ -75,7 +75,7 @@ insert into documentostatus
 
 
 --insert storicocarrello (Aguardando Faturamento)
-insert into documentostatus
+insert into DocumentoStatus
 (
 	select
 		CAST(NULL as int) as CodigoDocumentoStatus, --int not null
