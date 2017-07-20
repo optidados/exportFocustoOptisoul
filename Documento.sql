@@ -119,6 +119,8 @@ create table Documento
 	TransferenciaCaixa int --null [bit]--> int
 );
 
+create index CodDocIdx on Documento("CodigoDocumento");
+create index CodDocAdcIdx on Documento("CodigoDocumentoAdicional");
 
 /*venda - CARRELLO (quem vai pagar pela Venda, se tiver titular, puxar o titular)*/
 insert into Documento
@@ -250,7 +252,6 @@ insert into Documento
 	where
 		(car."tipo fornitura" <> 100)
 );
-
 
 /*Item venda - CARRELLO*/
 insert into Documento
@@ -394,7 +395,7 @@ insert into Documento
 );
 
 
-/*Item venda - CARRELLO2*/
+/*Item venda - CARRELLO2 - para itens jogados direto no carrinho*/
 insert into Documento
 (
 	select
@@ -529,7 +530,7 @@ insert into Documento
 		and((car2."magazzino" = 0) or (car2."magazzino" = 2))
 );
 
-/*Devolução - Item Venda*/
+/*Devolução - CARRELLO - Item Venda*/
 insert into Documento
 (
 	select
@@ -822,7 +823,6 @@ insert into Documento
 		car."codice cliente",
 		oc."data"
 );
-
 
 /*Envelope - CARRELLO*/
 insert into Documento
@@ -1240,7 +1240,7 @@ insert into documento
 );
 
 
-/*Item venda - STORICOCARRELLO2*/
+/*Item venda - STORICOCARRELLO2 - para Vendas direto no carrinho*/
 insert into Documento
 (
 	select
@@ -1818,24 +1818,5 @@ set Documento."Observacao" =
 	select
 		CAST(oc."note" as varchar(8000))
 	from occhiali as oc
-	where(Documento."CodigoDocumento" = 'occhiali.'+oc."codice filiale")
+	where (Documento."CodigoDocumento" = 'occhiali.'+ oc."codice filiale")
 );
-
-
---UPDATE COLUNA OPERAÇÃO = ÓCULOS DE SOL
-update Documento
-set Documento."Operacao" = 'Óculos de Sol'
-where
-	EXISTS
-	(
-		SELECT DocumentoItem."CodigoDocumento", COUNT(*) 
-		FROM DocumentoItem
-		JOIN Item
-		ON (Item."CodigoAntigo" = DocumentoItem."CodigoItem")
-		WHERE
-			Documento."CodigoDocumento" = DocumentoItem."CodigoDocumento"
-			and DocumentoItem."TipoItem" = 'Armação'
-			and Item."Tipo" = 'Óculos Sol'
-		GROUP BY DocumentoItem."CodigoDocumento"
-		HAVING COUNT(*) = 1
-	);

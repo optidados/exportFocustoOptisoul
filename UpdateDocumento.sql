@@ -92,22 +92,25 @@ WHILE @@FETCH_STATUS = 0 DO
                 );
     END IF;
 
-    update #temp_devolvido as td //NOMODIFICA
-    set td."Usado" = True
-    where td."CodigoCarrinhoItem" = vCodigoCarrinhoItem;
+    IF vCodigoCarrinhoItem IS NOT NULL
+        THEN
+            update #temp_devolvido as td //NOMODIFICA
+            set td."Usado" = True
+            where td."CodigoCarrinhoItem" = vCodigoCarrinhoItem;
 
-    update DocumentoItem as di
-    set 
-        di."CodigoDocumentoVenda" = 
-            (
-                select MAX(di2."CodigoDocumento")
-                from DocumentoItem as di2
-                where
-                    (di2."CodigoAntigo" = 'scar2.' + vCodigoCarrinhoItem)
-            ), 
-        di."CodigoDocumentoItemVenda" = 'scar2.' + vCodigoCarrinhoItem
-    where
-        (di."CodigoAntigo" = vCodigoAntigo);
+            update DocumentoItem as di
+            set 
+                di."CodigoDocumentoVenda" = 
+                    (
+                        select MAX(di2."CodigoDocumento")
+                        from DocumentoItem as di2
+                        where
+                            (di2."CodigoAntigo" = 'scar2.' + vCodigoCarrinhoItem)
+                    ), 
+                di."CodigoDocumentoItemVenda" = 'scar2.' + vCodigoCarrinhoItem
+            where
+                (di."CodigoAntigo" = vCodigoAntigo);
+    END IF;
 
     FETCH NEXT FROM DevolucaoCursor INTO vCodigoAntigo, vCodigoItem, vCodigoTransacaoDevolucao, vData, vDescricao;
 END WHILE;
@@ -136,22 +139,44 @@ set
             where doc2."CodigoDocumentoAdicional" = doc."CodigoDocumento"
         )
 where
-    doc."CodigoDocumento" IN
-        (
-            select doc2."CodigoDocumentoAdicional"
-            from Documento as doc2
-            where doc2."NaturezaOperacao" = 'Devolução'
-        );
+    EXISTS
+    (
+        select *
+        from Documento as doc2
+        where
+            doc."CodigoDocumento" = doc2."CodigoDocumentoAdicional" and
+            doc2."NaturezaOperacao" = 'Devolução'
+    );
 
 update Documento as doc
 set 
     doc."SubTotal" = doc."TotalDocumento",
-    doc."PercentualDescontoProduto" = (doc."ValorDescontoProduto"/doc."SubTotal")*100,
+    doc."PercentualDescontoProduto" = (doc."ValorDescontoProduto"/(CASE WHEN doc."SubTotal" = 0 THEN 1 ELSE doc."SubTotal" END))*100,
     doc."TotalProduto" = doc."TotalDocumento"
 where
-    doc."CodigoDocumento" IN
-        (
-            select doc2."CodigoDocumentoAdicional"
-            from Documento as doc2
-            where doc2."NaturezaOperacao" = 'Devolução'
-        );
+    EXISTS
+    (
+        select *
+        from Documento as doc2
+        where
+            doc."CodigoDocumento" = doc2."CodigoDocumentoAdicional" and
+            doc2."NaturezaOperacao" = 'Devolução'
+    );
+-----------------------------------aqui já é outra coisa---------------------------------------------
+--UPDATE COLUNA OPERAÇÃO = ÓCULOS DE SOL
+update Documento
+set Documento."Operacao" = 'Óculos de Sol'
+where
+    EXISTS
+    (
+        SELECT DocumentoItem."CodigoDocumento", COUNT(*) 
+        FROM DocumentoItem
+        JOIN Item
+        ON (Item."CodigoAntigo" = DocumentoItem."CodigoItem")
+        WHERE
+            Documento."CodigoDocumento" = DocumentoItem."CodigoDocumento"
+            and DocumentoItem."TipoItem" = 'Armação'
+            and Item."Tipo" = 'Óculos Sol'
+        GROUP BY DocumentoItem."CodigoDocumento"
+        HAVING COUNT(*) = 1
+    );

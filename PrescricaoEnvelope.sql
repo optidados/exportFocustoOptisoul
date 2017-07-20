@@ -7,6 +7,8 @@ create table PrescricaoEnvelope
 	CodigoEnvelope varchar(12)
 );
 
+create index PrescEnvIdx on PrescricaoEnvelope("Dias", "CodigoEnvelope");
+
 insert into PrescricaoEnvelope
 (
 	select
