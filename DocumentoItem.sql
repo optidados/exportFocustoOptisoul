@@ -120,6 +120,9 @@ create table DocumentoItem
 	LenteTipo varchar(100) --null
 );
 
+create index CodDocItIdx on DocumentoItem("CodigoDocumento");
+create index CodDocItAntIdx on DocumentoItem("CodigoAntigo");	
+create index CodDocItItIdx on DocumentoItem("CodigoItem");
 
 --produtos (CARRELLO2)
 insert into DocumentoItem
@@ -448,7 +451,6 @@ insert into DocumentoItem
 		and(car2."tipo fornitura" <> 0)
 );
 
-
 --produtos (CARRELLO2)
 insert into DocumentoItem
 (
@@ -483,6 +485,7 @@ insert into DocumentoItem
 		CAST(car2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(car2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
 		0.0000 as DescontoTotalRateado, --decimal(18,4), --not null
+		0.0000 as DescontoFaturaRateado, --decimal(18,4), --not null
 		0.0000 as ValorFreteRateado, --decimal(18,4), --not null
 		0.0000 as ValorSeguroRateado, --decimal(18,4), --not null
 		0.0000 as ValorOutrasDespesasRateado, --decimal(18,4), --not null
@@ -526,6 +529,7 @@ insert into DocumentoItem
 		CAST(NULL as decimal(18,4)) as PercentualIcmsSt, --decimal(18,4), --null
 		CAST(NULL as decimal(18,4)) as ValorIcmsSt, --decimal(18,4), --null
 		CAST(NULL as int) as CodigoDocumentoVenda, --int, --null
+		CAST(NULL as varchar) as CodigoDocumentoItemVenda,
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
@@ -635,6 +639,7 @@ insert into DocumentoItem
 				END		    		
 	    	)
 		END as Esferico, --numeric(18,4) --null		
+		False as PrescricaoAlterada, --boolean
 		CAST(NULL as varchar) as Prisma, --varchar(100) --null
 		CAST(NULL as varchar) as Base, --varchar(10) (numeric(18,4)->varchar(10)) --null
 		CAST(NULL as Numeric(18,4)) as DI, --numeric(18,4) --null
@@ -1246,7 +1251,6 @@ insert into DocumentoItem
 		oc."DI L SX"
 );
 
-
 --Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
 insert into DocumentoItem
 (
@@ -1389,7 +1393,6 @@ insert into DocumentoItem
 		oc."Prisma L SX",
 		oc."Base L SX"
 );
-
 
 --Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
 insert into DocumentoItem
@@ -1537,7 +1540,6 @@ insert into DocumentoItem
 		oc."DI M SX"
 );
 
-
 --Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
 insert into DocumentoItem
 (
@@ -1680,7 +1682,6 @@ insert into DocumentoItem
 		oc."Prisma M SX",
 		oc."Base M SX"
 );
-
 
 --Prescrição (PERTO - OLHO DIREITO CARRELLO2)
 insert into DocumentoItem
@@ -1828,7 +1829,6 @@ insert into DocumentoItem
 		oc."DI V SX"
 );
 
-
 --Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
 insert into DocumentoItem
 (
@@ -1901,6 +1901,7 @@ insert into DocumentoItem
 		CAST(NULL as decimal(18,4)) as PercentualIcmsSt, --decimal(18,4), --null
 		CAST(NULL as decimal(18,4)) as ValorIcmsSt, --decimal(18,4), --null
 		CAST(NULL as int) as CodigoDocumentoVenda, --int, --null
+		CAST(NULL as varchar) as CodigoDocumentoItemVenda,
 		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
 		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
 		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
@@ -1937,6 +1938,7 @@ insert into DocumentoItem
 		CAST(NULL as numeric(18,4)) as IndiceRefracao, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Adicao, --numeric(18,4) --null
 		CAST(oc."Sfera V SX" as numeric(18,4)) as Esferico, --numeric(18,4) --null
+		False as PrescricaoAlterada, --boolean
 		CAST(oc."Prisma V SX" as varchar) as Prisma, --varchar(100) --null
 		CAST(oc."Base V SX" as varchar) as Base, --varchar(10) (numeric(18,4)->varchar(10)) --null
 		CAST(NULL as numeric(18,4)) as DI, --numeric(18,4) --null
@@ -1969,7 +1971,6 @@ insert into DocumentoItem
 		oc."Prisma V SX",
 		oc."Base V SX"
 );
-
 
 --produtos (STORICOCARRELLO2)
 insert into DocumentoItem
@@ -2005,6 +2006,7 @@ insert into DocumentoItem
 		CAST(scar2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
 		0.0000 as DescontoTotalRateado, --decimal(18,4), --not null
+		0.0000 as DescontoFaturaRateado, --decimal(18,4), --not null
 		0.0000 as ValorFreteRateado, --decimal(18,4), --not null
 		0.0000 as ValorSeguroRateado, --decimal(18,4), --not null
 		0.0000 as ValorOutrasDespesasRateado, --decimal(18,4), --not null
@@ -2298,7 +2300,6 @@ insert into DocumentoItem
 		(scar2."tipo fornitura" <> 0)
 );
 
-
 --produtos (STORICOCARRELLO2) TIPO FORNITURA = 0
 insert into DocumentoItem
 (
@@ -2333,6 +2334,7 @@ insert into DocumentoItem
 		CAST(scar2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
 		0.0000 as DescontoTotalRateado, --decimal(18,4), --not null
+		0.0000 as DescontoFaturaRateado, --decimal(18,4), --not null
 		0.0000 as ValorFreteRateado, --decimal(18,4), --not null
 		0.0000 as ValorSeguroRateado, --decimal(18,4), --not null
 		0.0000 as ValorOutrasDespesasRateado, --decimal(18,4), --not null
@@ -2624,7 +2626,6 @@ insert into DocumentoItem
 		(scar2."tipo fornitura" = 0)
 		and((scar2."magazzino" = 0) or (scar2."magazzino" = 2))
 );
-
 
 --Devolução (STORICOCARRELLO2)
 insert into DocumentoItem
@@ -3100,7 +3101,6 @@ insert into DocumentoItem
 		oc."DI L SX"
 );
 
-
 --Prescrição (LONGE - OLHO ESQUERDO CARRELLO2)
 insert into DocumentoItem
 (
@@ -3244,7 +3244,6 @@ insert into DocumentoItem
 		oc."Prisma L SX",
 		oc."Base L SX"
 );
-
 
 --Prescrição (MEDIO - OLHO DIREITO CARRELLO2)
 insert into DocumentoItem
@@ -3393,7 +3392,6 @@ insert into DocumentoItem
 		oc."DI M SX"
 );
 
-
 --Prescrição (MÉDIO - OLHO ESQUERDO CARRELLO2)
 insert into DocumentoItem
 (
@@ -3537,7 +3535,6 @@ insert into DocumentoItem
 		oc."Prisma M SX",
 		oc."Base M SX"
 );
-
 
 --Prescrição (PERTO - OLHO DIREITO CARRELLO2)
 insert into DocumentoItem
@@ -3685,7 +3682,6 @@ insert into DocumentoItem
 		oc."DI V DX",
 		oc."DI V SX"
 );
-
 
 --Prescrição (PERTO - OLHO ESQUERDO CARRELLO2)
 insert into DocumentoItem
