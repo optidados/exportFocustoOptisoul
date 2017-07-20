@@ -94,7 +94,7 @@ create table Item
 	UtilizaComposicaoValorReposicao varchar
 );
 
-create index codantigo on item("CodigoAntigo");
+create index CodAntIdx on Item("CodigoAntigo");
 
 insert into Item
 (
