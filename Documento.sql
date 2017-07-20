@@ -10,7 +10,7 @@ create table Documento
 	NotaSerie varchar, --null
 	Revisao	int, --null
 	Tipo varchar(255), --not null
-	Descricao varchar(80), --null
+	Descricao varchar(100), --null
 	CodigoDocumentoOperacao	int, --null
 	Operacao varchar(255), --null
 	Status varchar(255), --null
@@ -388,8 +388,145 @@ insert into Documento
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
 	where
-		(car."tipo fornitura" <> 100) and
-		(car."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
+		(car."tipo fornitura" <> 100)
+		and(car."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
+		and(car."tipo fornitura" <> 0)
+);
+
+
+/*Item venda - CARRELLO2*/
+insert into Documento
+(
+	select
+		'item.car2.' + CAST(car2."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
+		'car2.' + CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
+		CAST(NULL as int) as CodigoNFe, --int --null
+		CAST(NULL as int) as Numero, --int --null
+		CAST(NULL as int) as NotaNumero, --int --null
+		CAST(NULL as varchar) as NotaSerie, --varchar(10) --null
+		CAST(NULL as int) as Revisao, --int --null
+		'Item Venda' as Tipo, --varchar(255) --null
+		car2."descrizione" as Descricao, --varchar(255) --null 
+		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
+		CASE
+			WHEN(car2."magazzino" = 0) THEN('Armação')
+			WHEN(car2."magazzino" = 2) THEN('Lente de Contato Pronta')
+		END as Operacao, --varchar(255) --null
+		'Orçamento' as Status, --varchar(255) --null
+		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
+		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
+		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
+		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
+		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
+		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
+		'cliente.' + car2."codice cliente" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
+		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
+		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
+		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
+		CAST(NULL as varchar) as TelefoneContato, --varchar(30)-> varchar(50) --null
+		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
+		CAST(NULL as int) as CodigoContatoEndereco, --int --null
+		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
+		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
+		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
+		car2."data" as DataHoraEmissao, --datetime (date) --null
+		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
+		CAST(NULL as date) as DataHoraPrevisto, --datetime (date) --null
+		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
+		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
+		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
+		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
+		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
+		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
+		CAST(NULL as int) as CodigoContatoComprador, --int --null
+		CAST(NULL as varchar) as CodigoContatoVendedor, --int --null
+		CAST(NULL as varchar) as CodigoContatoDigitador, --int --null
+		CAST(NULL as int) as CodigoContatoCobranca, --int --null
+		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
+		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
+		CAST(NULL as varchar) as TipoFrete, --varchar(3) --null
+		CAST(NULL as varchar) as TipoTransporte, --varchar(20) --null
+		CAST(NULL as int) as CodigoContatoTransportadora, --int --null
+		0 as NumeroVolumeTransporte, --int --null
+		0.0000 as PesoTotalTransporte, --decimal(18,4) --null
+		CAST(NULL as int) as CodigoMinuta, --int --null
+		CAST(NULL as varchar) as CondicaoPagamento, --varchar(50) --null
+		CAST(NULL as int) as PrazoMedio, --int --null
+		CAST(NULL as varchar) as FormadePagamento, --varchar(100) --null
+		CAST(NULL as int) as CodigoFatura, --int --null
+		CAST(NULL as int) as CodigoFinanceiroPlanoContaFaturamento, --int --null
+		CAST(car2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --null
+		0.0000 as SubTotalProduto, --decimal(18,4) --null
+		0.0000 as ValorDescontoProduto, --decimal(18,4) --null
+		0.0000 as PercentualDescontoProduto, --decimal(18,4) --null
+		0.0000 as TotalProduto, --decimal(18,4) --null
+		0.0000 as SubTotalServico, --decimal(18,4) --null
+		0.0000 as ValorDescontoServico, --decimal(18,4) --null
+		0.0000 as PercentualDescontoServico, --decimal(18,4) --null
+		0.0000 as TotalServico, --decimal(18,4) --null
+		CAST(car2."sconto" as decimal(18,4)) as TotalDesconto, --decimal(18,4) --null
+		CAST(car2."sconto percentuale" as decimal(18,4)) as TotalPercentualDesconto, --decimal(18,4) --null
+		0.0000 as TotalOutroAbatimento, --decimal(18,4) --null
+		0.0000 as TotalPercentualOutroAbatimento, --decimal(18,4) --null
+		0.0000 as ValorFrete, --decimal(18,4) --null
+		1 as FreteSeparado, --int --null
+		0.0000 as ValorSeguro, --decimal(18,4) --null
+		0.0000 as ValorOutrasDespesas, --decimal(18,4) --null
+		0.0000 as ValorIPI, --decimal(18,4) --null
+		CAST(car2."totale" as decimal(18,4)) as TotalDocumento, --decimal(18,4) --null
+		0.0000 as TotalTroco, --decimal(18,4) --null
+		0.0000 as TotalCustoUltimo, --decimal(18,4) --null
+		0.0000 as TotalCustoMedio, --decimal(18,4) --null
+		0.0000 as TotalCustoTerceiro, --decimal(18,4) --null
+		0.0000 as TotalCustoReposicao, --decimal(18,4) --null
+		CAST(NULL as varchar) as NumeroOrdemCompra, --varchar(50) --null
+		CAST(NULL as varchar) as NumeroPedidoVendaFornecedor, --varchar(50) --null
+		CAST(NULL as varchar) as PalavraChave, --varchar(100) --null
+		CAST(NULL as int) as ProvisaoCompra, --int --null
+		'Sim' as CalcularAutomatico, --varchar(3) --null
+		0.0000 as ValorBaseIcms, --decimal(18,4) --null
+		0.0000 as ValorIcms, --decimal(18,4) --null
+		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
+		0.0000 as ValorIcmsSt, --decimal(18,4) --null
+		CAST(NULL as varchar) as DocumentoCodigo, --varchar(100) --null
+		CAST(NULL as varchar) as DocumentoTipo, --varchar(100) --null
+		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
+		CAST(NULL as date) as DataCompra, --date --null
+		CAST(NULL as varchar) as MotivoCancelamento, --varchar(255) --null
+		CAST(NULL as varchar) as ObservacaoCancelamento, --varchar(255) --null
+		CAST(NULL as varchar) as CalculoAcabado, --varchar(8000) --null
+		CAST(NULL as varchar) as CalculoEnvasado, --varchar(8000) --null
+		0 as CodigoItemTabelaPreco, --int --null
+		CAST(NULL as varchar) as CodigoAntigo, --varchar(100) --null
+		CAST(NULL as int) as CodigoDocumentoMobile, --bigint --null
+		CAST(NULL as varchar) as CRMContatoStatus, --varchar(100) --null
+		CAST(NULL as int) as idant, --int --null
+		CAST(NULL as int) as pedidoANT, --int --null
+		CAST(NULL as int) as DuplicataAnt, --int --null
+		CAST(NULL as varchar) as OrdemAnt, --varchar(50) --null
+		CAST(NULL as int) as clienteAnt, --int --null
+		CAST(NULL as date) as emissaoANt, --date --null
+		CAST(NULL as int) as empresaAnt, --int --null
+		CAST(NULL as int) as CodigoContatoResponsavelMinuta, --int --null
+		CAST(NULL as varchar) as DocumentoNotaPaulista, --varchar(50) --null
+		CAST(NULL as varchar) as NomeNotaPaulista, --varchar(255) --null
+		CAST(NULL as int) as CodigoCaixa, --int --null
+		CAST(NULL as decimal(18,4)) as ValorAbertura, --decimal(18,4) --null
+		CAST(NULL as int) as CodigoFinanceiroPlanoContaCaixa, --int --null
+		0 as TransferenciaCaixa --int --null
+
+	from carrello2 as car2
+		left join Contato as matriz
+		on (('sede.' + car2."filiale") = matriz."CodigoAntigo")
+
+		left join Contato as filial
+		on (('puntovendita.' + car2."filiale") = filial."CodigoAntigo")
+
+	where
+		(car2."tipo fornitura" = 0)
+		and((car2."magazzino" = 0) or (car2."magazzino" = 2))
 );
 
 /*Devolução - Item Venda*/
@@ -575,7 +712,7 @@ insert into Documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
-		CAST(oc."note" as varchar(8000)) as Observacao, --varchar(8000) --null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
@@ -629,7 +766,7 @@ insert into Documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		'item.car.' + CAST(car."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		MIN('item.car.' + CAST(car."codice filiale" as varchar(12))) as DocumentoCodigo, --varchar(100) --null
 		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
@@ -677,6 +814,13 @@ insert into Documento
 
 	where
 		(car."tipo fornitura" <> 100)
+
+	group by
+		oc."codice filiale",
+		matriz."CodigoAntigo",
+		filial."CodigoAntigo",
+		car."codice cliente",
+		oc."data"
 );
 
 
@@ -1091,7 +1235,144 @@ insert into documento
 	where
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101) and
-		(scar."tipo fornitura" <> 5) --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
+		(scar."tipo fornitura" <> 5) and --Outro Produto/Serviço não possui registro na Documento com Tipo = Item Venda
+		(scar."tipo fornitura" <> 0)
+);
+
+
+/*Item venda - STORICOCARRELLO2*/
+insert into Documento
+(
+	select
+		'item.scar2.' + CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
+		'scar2.' + CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
+		CAST(NULL as int) as CodigoNFe, --int --null
+		CAST(NULL as int) as Numero, --int --null
+		CAST(NULL as int) as NotaNumero, --int --null
+		CAST(NULL as varchar) as NotaSerie, --varchar(10) --null
+		CAST(NULL as int) as Revisao, --int --null
+		'Item Venda' as Tipo, --varchar(255) --null
+		scar2."descrizione" as Descricao, --varchar(255) --null 
+		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
+		CASE
+			WHEN(scar2."magazzino" = 0) THEN('Armação')
+			WHEN(scar2."magazzino" = 2) THEN('Lente de Contato Pronta')
+		END as Operacao, --varchar(255) --null
+		'Orçamento' as Status, --varchar(255) --null
+		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
+		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
+		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
+		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
+		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
+		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
+		'cliente.' + scar2."codice cliente" as CodigoContato, --varchar(255) (int->varhcar(255)) --not null
+		CAST(NULL as varchar) as DescricaoContato, --varchar(255) --null
+		CAST(NULL as varchar) as NumeroDocumentoContato, --varchar(150) --null
+		CAST(NULL as varchar) as EmailContato, --varchar(100)-> varchar(255) --null
+		CAST(NULL as varchar) as TelefoneContato, --varchar(30)-> varchar(50) --null
+		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
+		CAST(NULL as int) as CodigoContatoEndereco, --int --null
+		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
+		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
+		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
+		scar2."data" as DataHoraEmissao, --datetime (date) --null
+		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
+		CAST(NULL as date) as DataHoraPrevisto, --datetime (date) --null
+		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
+		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
+		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
+		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
+		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
+		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
+		CAST(NULL as int) as CodigoContatoComprador, --int --null
+		CAST(NULL as varchar) as CodigoContatoVendedor, --int --null
+		CAST(NULL as varchar) as CodigoContatoDigitador, --int --null
+		CAST(NULL as int) as CodigoContatoCobranca, --int --null
+		CAST(NULL as int) as CodigoContatoEnderecoEntrega, --int --null
+		CAST(NULL as varchar) as DescricaoContatoEnderecoEntrega, --varchar(8000) --null
+		CAST(NULL as varchar) as TipoFrete, --varchar(3) --null
+		CAST(NULL as varchar) as TipoTransporte, --varchar(20) --null
+		CAST(NULL as int) as CodigoContatoTransportadora, --int --null
+		0 as NumeroVolumeTransporte, --int --null
+		0.0000 as PesoTotalTransporte, --decimal(18,4) --null
+		CAST(NULL as int) as CodigoMinuta, --int --null
+		CAST(NULL as varchar) as CondicaoPagamento, --varchar(50) --null
+		CAST(NULL as int) as PrazoMedio, --int --null
+		CAST(NULL as varchar) as FormadePagamento, --varchar(100) --null
+		CAST(NULL as int) as CodigoFatura, --int --null
+		CAST(NULL as int) as CodigoFinanceiroPlanoContaFaturamento, --int --null
+		CAST(scar2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --null
+		0.0000 as SubTotalProduto, --decimal(18,4) --null
+		0.0000 as ValorDescontoProduto, --decimal(18,4) --null
+		0.0000 as PercentualDescontoProduto, --decimal(18,4) --null
+		0.0000 as TotalProduto, --decimal(18,4) --null
+		0.0000 as SubTotalServico, --decimal(18,4) --null
+		0.0000 as ValorDescontoServico, --decimal(18,4) --null
+		0.0000 as PercentualDescontoServico, --decimal(18,4) --null
+		0.0000 as TotalServico, --decimal(18,4) --null
+		CAST(scar2."sconto" as decimal(18,4)) as TotalDesconto, --decimal(18,4) --null
+		CAST(scar2."sconto percentuale" as decimal(18,4)) as TotalPercentualDesconto, --decimal(18,4) --null
+		0.0000 as TotalOutroAbatimento, --decimal(18,4) --null
+		0.0000 as TotalPercentualOutroAbatimento, --decimal(18,4) --null
+		0.0000 as ValorFrete, --decimal(18,4) --null
+		1 as FreteSeparado, --int --null
+		0.0000 as ValorSeguro, --decimal(18,4) --null
+		0.0000 as ValorOutrasDespesas, --decimal(18,4) --null
+		0.0000 as ValorIPI, --decimal(18,4) --null
+		CAST(scar2."totale" as decimal(18,4)) as TotalDocumento, --decimal(18,4) --null
+		0.0000 as TotalTroco, --decimal(18,4) --null
+		0.0000 as TotalCustoUltimo, --decimal(18,4) --null
+		0.0000 as TotalCustoMedio, --decimal(18,4) --null
+		0.0000 as TotalCustoTerceiro, --decimal(18,4) --null
+		0.0000 as TotalCustoReposicao, --decimal(18,4) --null
+		CAST(NULL as varchar) as NumeroOrdemCompra, --varchar(50) --null
+		CAST(NULL as varchar) as NumeroPedidoVendaFornecedor, --varchar(50) --null
+		CAST(NULL as varchar) as PalavraChave, --varchar(100) --null
+		CAST(NULL as int) as ProvisaoCompra, --int --null
+		'Sim' as CalcularAutomatico, --varchar(3) --null
+		0.0000 as ValorBaseIcms, --decimal(18,4) --null
+		0.0000 as ValorIcms, --decimal(18,4) --null
+		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
+		0.0000 as ValorIcmsSt, --decimal(18,4) --null
+		CAST(NULL as varchar) as DocumentoCodigo, --varchar(100) --null
+		CAST(NULL as varchar) as DocumentoTipo, --varchar(100) --null
+		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
+		CAST(NULL as date) as DataCompra, --date --null
+		CAST(NULL as varchar) as MotivoCancelamento, --varchar(255) --null
+		CAST(NULL as varchar) as ObservacaoCancelamento, --varchar(255) --null
+		CAST(NULL as varchar) as CalculoAcabado, --varchar(8000) --null
+		CAST(NULL as varchar) as CalculoEnvasado, --varchar(8000) --null
+		0 as CodigoItemTabelaPreco, --int --null
+		CAST(NULL as varchar) as CodigoAntigo, --varchar(100) --null
+		CAST(NULL as int) as CodigoDocumentoMobile, --bigint --null
+		CAST(NULL as varchar) as CRMContatoStatus, --varchar(100) --null
+		CAST(NULL as int) as idant, --int --null
+		CAST(NULL as int) as pedidoANT, --int --null
+		CAST(NULL as int) as DuplicataAnt, --int --null
+		CAST(NULL as varchar) as OrdemAnt, --varchar(50) --null
+		CAST(NULL as int) as clienteAnt, --int --null
+		CAST(NULL as date) as emissaoANt, --date --null
+		CAST(NULL as int) as empresaAnt, --int --null
+		CAST(NULL as int) as CodigoContatoResponsavelMinuta, --int --null
+		CAST(NULL as varchar) as DocumentoNotaPaulista, --varchar(50) --null
+		CAST(NULL as varchar) as NomeNotaPaulista, --varchar(255) --null
+		CAST(NULL as int) as CodigoCaixa, --int --null
+		CAST(NULL as decimal(18,4)) as ValorAbertura, --decimal(18,4) --null
+		CAST(NULL as int) as CodigoFinanceiroPlanoContaCaixa, --int --null
+		0 as TransferenciaCaixa --int --null
+
+	from storicocarrello2 as scar2
+		left join Contato as matriz
+		on (('sede.' + scar2."filiale") = matriz."CodigoAntigo")
+
+		left join Contato as filial
+		on (('puntovendita.' + scar2."filiale") = filial."CodigoAntigo")
+
+	where
+		(scar2."tipo fornitura" = 0)
+		and((scar2."magazzino" = 0) or (scar2."magazzino" = 2))
 );
 
 /*Devolução - Item Venda*/
@@ -1278,7 +1559,7 @@ insert into documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
-		CAST(oc."note" as varchar(8000)) as Observacao, --varchar(8000) --null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
 		CAST(NULL as varchar) as ObservacaoFaturamento, --varchar(150) --null
@@ -1332,7 +1613,7 @@ insert into documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		'item.scar.' + CAST(scar."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		MIN('item.scar.' + CAST(scar."codice filiale" as varchar(12))) as DocumentoCodigo, --varchar(100) --null
 		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
@@ -1378,6 +1659,13 @@ insert into documento
 	where
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101)
+
+	group by
+		oc."codice filiale",
+		matriz."CodigoAntigo",
+		filial."CodigoAntigo",
+		scar."codice cliente",
+		oc."data"
 );
 
 
@@ -1521,3 +1809,33 @@ insert into documento
 		(scar."tipo fornitura" <> 100) and
 		(scar."tipo fornitura" <> 101)
 );
+
+
+--UPDATE OBSERVAÇÃO (PRESCRIÇÃO)
+update Documento
+set Documento."Observacao" = 
+(
+	select
+		CAST(oc."note" as varchar(8000))
+	from occhiali as oc
+	where(Documento."CodigoDocumento" = 'occhiali.'+oc."codice filiale")
+);
+
+
+--UPDATE COLUNA OPERAÇÃO = ÓCULOS DE SOL
+update Documento
+set Documento."Operacao" = 'Óculos de Sol'
+where
+	EXISTS
+	(
+		SELECT DocumentoItem."CodigoDocumento", COUNT(*) 
+		FROM DocumentoItem
+		JOIN Item
+		ON (Item."CodigoAntigo" = DocumentoItem."CodigoItem")
+		WHERE
+			Documento."CodigoDocumento" = DocumentoItem."CodigoDocumento"
+			and DocumentoItem."TipoItem" = 'Armação'
+			and Item."Tipo" = 'Óculos Sol'
+		GROUP BY DocumentoItem."CodigoDocumento"
+		HAVING COUNT(*) = 1
+	);
