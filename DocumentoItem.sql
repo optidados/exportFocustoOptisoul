@@ -120,9 +120,9 @@ create table DocumentoItem
 	LenteTipo varchar(100) --null
 );
 
-create index CodDocItIdx on DocumentoItem("CodigoDocumento");
-create index CodDocItAntIdx on DocumentoItem("CodigoAntigo");	
-create index CodDocItItIdx on DocumentoItem("CodigoItem");
+create index CodDocIdx on DocumentoItem("CodigoDocumento");
+create index CodDocAntIdx on DocumentoItem("CodigoAntigo");	
+create index CodItIdx on DocumentoItem("CodigoItem");
 
 --produtos (CARRELLO2)
 insert into DocumentoItem

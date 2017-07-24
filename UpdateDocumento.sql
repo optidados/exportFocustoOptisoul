@@ -116,7 +116,7 @@ WHILE @@FETCH_STATUS = 0 DO
 END WHILE;
 
 CLOSE DevolucaoCursor;
-
+/*
 --UPDATE TOTAIS --da pra otimizar?
 update Documento as doc
 set 
@@ -162,6 +162,7 @@ where
             doc."CodigoDocumento" = doc2."CodigoDocumentoAdicional" and
             doc2."NaturezaOperacao" = 'Devolução'
     );
+*/
 -----------------------------------aqui já é outra coisa---------------------------------------------
 --UPDATE COLUNA OPERAÇÃO = ÓCULOS DE SOL
 update Documento
