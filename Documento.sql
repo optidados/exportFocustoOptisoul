@@ -718,7 +718,13 @@ insert into Documento
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		'Normal' as Operacao, --varchar(255) --null
-		'Aguardando Envio' as Status, --varchar(255) --null
+		CASE b."stato montaggio"
+			WHEN 0 THEN 'Aguardando Envio'
+			WHEN 1 THEN 'Aguardando Retorno'
+			WHEN 2 THEN 'Processando'
+			WHEN 3 THEN 'Pronto para Entrega'
+			WHEN 4 THEN 'Entregue'
+		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
 		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
@@ -834,7 +840,8 @@ insert into Documento
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
 	where
-		(car."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100) /*and
+		(b."stato montaggio" <> 5) --status cancelado*/
 );
 
 /*venda - STORICOCARRELLO*/
@@ -1250,7 +1257,7 @@ insert into Documento
 		and((scar2."magazzino" = 0) or (scar2."magazzino" = 2))
 );
 
-/*venda - STORICOCARRELLO*/
+/*Envelope - STORICOCARRELLO*/
 insert into documento
 (
 	select
@@ -1265,7 +1272,13 @@ insert into documento
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		'Normal' as Operacao, --varchar(255) --null
-		'Aguardando Envio' as Status, --varchar(255) --null
+		CASE b."stato montaggio"
+			WHEN 0 THEN 'Aguardando Envio'
+			WHEN 1 THEN 'Aguardando Retorno'
+			WHEN 2 THEN 'Processando'
+			WHEN 3 THEN 'Pronto para Entrega'
+			WHEN 4 THEN 'Entregue'
+		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
 		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
@@ -1382,7 +1395,8 @@ insert into documento
 
 	where
 		(scar."tipo fornitura" <> 100) and
-		(scar."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 101) /*and
+		(b."stato montaggio" <> 5) --status cancelado*/
 );
 
 
