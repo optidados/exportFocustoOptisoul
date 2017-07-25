@@ -1,7 +1,7 @@
 //NOSQLBDETOFF2 
-drop table if exists documentocontato;
+drop table if exists DocumentoContato;
 
-create table documentocontato
+create table DocumentoContato
 (
 	CodigoContato varchar(30), --(int->varchar(30)) not null
 	Descricao varchar, --not null
@@ -9,9 +9,8 @@ create table documentocontato
 	Percentual decimal(18,4) --null
 );
 
-
 --medico x prescricao
-insert into documentocontato
+insert into DocumentoContato
 (
 	select
 		'oculisti.' + CAST(o."codice filiale" as varchar(12)) as CodigoContato, --int --not null
@@ -20,6 +19,16 @@ insert into documentocontato
 		CAST(NULL as decimal(18,4)) as Percentual --decimal(18,4) --null
 	
 	from oculisti as o
-		join occhiali as oc
-		on(oc."prescrizione" = o."denominazione")
+	join occhiali as oc
+		on (oc."prescrizione" = o."denominazione")
 );
+
+delete from DocumentoContato as docc
+where
+	NOT EXISTS
+	(
+		select *
+		from Documento as doc
+		where 
+			(doc."CodigoDocumento" = docc."CodigoDocumento")
+	);

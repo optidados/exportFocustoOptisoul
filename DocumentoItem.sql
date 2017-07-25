@@ -138,12 +138,17 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
 		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
 		COALESCE(Item."DescricaoComercial", car2."descrizione", '') as DescricaoItem, --varchar(255) --not null
-		CASE 
-			WHEN car2."magazzino" = 0 THEN 'Armação'
-			WHEN ((car2."magazzino" = 1) and (car2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
-			WHEN ((car2."magazzino" = 1) and (car2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
+		CASE
+			WHEN car2."tipo fornitura" = 5 THEN 'Serviço'
+			WHEN (Item."Tipo" = 'Armação' or Item."Tipo" = 'Óculos Sol' or Item."Tipo" = 'Óculos Pronto' or car2."magazzino" = 0) THEN 'Armação'
+			WHEN (((car2."magazzino" = 1) or (car2."magazzino" = 2)) and (car2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
+			WHEN (((car2."magazzino" = 1) or (car2."magazzino" = 2)) and (car2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
 			WHEN car2."tipo fornitura dettaglio" = 5 THEN 'TLOD'
 			WHEN car2."tipo fornitura dettaglio" = 6 THEN 'TLOE'
+			WHEN car2."magazzino" = 3 THEN 'Produto'
+			WHEN car2."magazzino" = 4  THEN 'Serviço'
+			WHEN Item."Tipo" = 'Lente Contato' THEN 'Lente de Contato Pronta'
+			ELSE Item."Tipo"
 		END as TipoItem, --varchar(45) --null
 		CAST(NULL as varchar) as NCM, --varchar(8) --null
 		0 as CodigoDocumentoItemPai, --int --null
@@ -222,13 +227,87 @@ insert into DocumentoItem
 		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		CAST(NULL as varchar) as Diametro, --varhcar(10) (numeric(18,4)->varchar(10)) --null
-		CAST(NULL as numeric(18,4)) as Eixo, --numeric(18,4) --null
+		CASE car2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Asse1 L Dx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Asse1 M Dx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Asse1 V Dx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)		
+			WHEN 3 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Asse1 L Sx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Asse1 M Sx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Asse1 V Sx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)
+		END as Eixo, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as AdicaoInicial, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as AdicaoFinal, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as AlturaMinima, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as EsfericoInicial, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as EsfericoFinal, --numeric(18,4) --null
-		CAST(NULL as numeric(18,4)) as Cilindrico, --numeric(18,4) --null
+		CASE car2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Cilindro L Dx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Cilindro M Dx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Cilindro V Dx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)		
+			WHEN 3 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Cilindro L Sx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Cilindro M Sx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Cilindro V Sx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)
+		END as Cilindrico, --numeric(18,4) --null
 		CAST(NULL as varchar) as AmarcaoCor, --varchar(100) --null
 		CAST(NULL as varchar) as ArmacaoMaterial, --varchar(100) --null
 		CAST(NULL as numeric(18,4)) as Haste, --numeric(18,4) --null
@@ -455,8 +534,11 @@ insert into DocumentoItem
 insert into DocumentoItem
 (
 	select
-		'item.car2.' + CAST(car2."codice filiale" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
-		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
+		CASE 
+			WHEN (car2."magazzino" = 0 or car2."magazzino" = 2 or Item."Tipo" = 'Armação' or Item."Tipo" = 'Óculos Sol' or Item."Tipo" = 'Óculos Pronto' or Item."Tipo" = 'Lente Contato') THEN 'item.car2.' + CAST(car2."codice filiale" as varchar(12))
+			ELSE 'item.car.' + CAST(car2."codice carrello" as varchar(12))
+		END as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		COALESCE(Item."CodigoAntigo", car2."codice a barre", '') as CodigoItem, --int not null
@@ -466,11 +548,12 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
 		COALESCE(Item."DescricaoComercial", car2."descrizione", '') as DescricaoItem, --varchar(255) --not null
 		CASE 
-			WHEN car2."magazzino" = 0 THEN 'Armação'
-			WHEN ((car2."magazzino" = 1) and (car2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
-			WHEN ((car2."magazzino" = 1) and (car2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
-			WHEN car2."tipo fornitura dettaglio" = 5 THEN 'TLOD'
-			WHEN car2."tipo fornitura dettaglio" = 6 THEN 'TLOE'
+			WHEN (Item."Tipo" = 'Armação' or Item."Tipo" = 'Óculos Sol' or Item."Tipo" = 'Óculos Pronto' or car2."magazzino" = 0) THEN 'Armação'
+			WHEN (car2."magazzino" = 1 or Item."Tipo" = 'Lente') THEN 'Produto'
+			WHEN (Item."Tipo" = 'Lente Contato' or car2."magazzino" = 2) THEN 'Lente de Contato Pronta'
+			WHEN car2."magazzino" = 3 THEN 'Produto'
+			WHEN car2."magazzino" = 4 THEN 'Serviço'
+			ELSE Item."Tipo"
 		END as TipoItem, --varchar(45) --null
 		CAST(NULL as varchar) as NCM, --varchar(8) --null
 		0 as CodigoDocumentoItemPai, --int --null
@@ -564,218 +647,32 @@ insert into DocumentoItem
 		CAST(NULL as numeric(18,4)) as RB2, --numeric(18,4) --null
 		CAST(NULL as varchar) as Geometria, --varchar(20) (numeric(18,4)->varchar(20)) --null
 		CAST(NULL as numeric(18,4)) as IndiceRefracao, --numeric(18,4) --null
-	    CASE car2."tipo fornitura dettaglio"
-	    	WHEN 2 THEN 
-	    	(
-	    		CASE WHEN b."occhiale da lontano" IS TRUE 
-	    			THEN 
-	    			(
-	    				CASE WHEN b."occhiale da medio" IS TRUE 
-	    					THEN b."Add M Dx" 
-	    					ELSE 
-    						(
-    							CASE WHEN b."occhiale da vicino" IS TRUE
-    								THEN b."Add V Dx"
-    							END
-    						)
-	    				END
-	    			)
-	    		END
-	    	)
-	    	WHEN 3 THEN
-    		(
-	    		CASE WHEN b."occhiale da lontano" IS TRUE 
-	    			THEN 
-	    			(
-	    				CASE WHEN b."occhiale da medio" IS TRUE 
-	    					THEN b."Add M Sx" 
-	    					ELSE 
-    						(
-    							CASE WHEN b."occhiale da vicino" IS TRUE
-    								THEN b."Add V Sx"
-    							END
-    						)
-	    				END
-	    			)
-	    		END
-	    	)
-		    ELSE CAST(NULL as numeric(18,4))
-		END as Adicao, --numeric(18,4) --null	
-	    CASE car2."tipo fornitura dettaglio"
-	    	WHEN 2 THEN
-	    	(
-				CASE WHEN b."occhiale da lontano" IS TRUE 
-					THEN b."Sfera L Dx" 
-					ELSE 
-					(
-						CASE WHEN b."occhiale da medio" IS TRUE 
-							THEN b."Sfera M Dx"
-							ELSE 
-							(
-								CASE WHEN b."occhiale da vicino" IS TRUE
-									THEN b."Sfera V Dx"
-								END
-							) 
-						END
-					) 
-				END		    		
-	    	)		
-			WHEN 3 THEN
-	    	(
-				CASE WHEN b."occhiale da lontano" IS TRUE 
-					THEN b."Sfera L Sx" 
-					ELSE 
-					(
-						CASE WHEN b."occhiale da medio" IS TRUE 
-							THEN b."Sfera M Sx"
-							ELSE 
-							(
-								CASE WHEN b."occhiale da vicino" IS TRUE
-									THEN b."Sfera V Sx"
-								END
-							) 
-						END
-					) 
-				END		    		
-	    	)
-		END as Esferico, --numeric(18,4) --null		
+	    CAST(NULL as numeric(18,4)) as Adicao, --numeric(18,4) --null	
+	    CAST(NULL as numeric(18,4)) as Esferico, --numeric(18,4) --null		
 		False as PrescricaoAlterada, --boolean
 		CAST(NULL as varchar) as Prisma, --varchar(100) --null
 		CAST(NULL as varchar) as Base, --varchar(10) (numeric(18,4)->varchar(10)) --null
 		CAST(NULL as Numeric(18,4)) as DI, --numeric(18,4) --null
 		CAST(NULL as Numeric(18,4)) as DIOD, --numeric(18,4) --null
 		CAST(NULL as Numeric(18,4)) as DIOE, --numeric(18,4) --null
-		CASE WHEN car2."magazzino" = 0
-			THEN 
-				CASE 
-					WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" >= b."tipo lente sx")) 
-						THEN 
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN 
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" < b."tipo lente sx"))
-		     			THEN 
-		     			(
-							CASE b."tipo lente sx"
-								WHEN 1 THEN
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (b."lente propria sx"))
-		     			THEN
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)     			
-		     		WHEN ((b."lente propria dx") AND (NOT b."lente propria sx")) 
-		     		THEN 
-		     		    (
-							CASE b."tipo lente sx"
-								WHEN 1 THEN
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)                                                              
-		     	END
-		END as Oculos, --varchar(100) --null
+		CAST(NULL as varchar) as Oculos, --varchar(100) --null
 		CASE
-			WHEN ((car2."magazzino" = 0) and (b."occhiale da sole" = False)) THEN 'Vista'
-			WHEN ((car2."magazzino" = 0) and (b."occhiale da sole" = True)) THEN 'Sol'
+			WHEN ((car2."magazzino" = 0) and (Item."Tipo" = 'Armação')) THEN 'Vista'
+			WHEN ((car2."magazzino" = 0) and (Item."Tipo" = 'Óculos Sol')) THEN 'Sol'
 		END as TipoOculos, --varchar(100) --null
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
-		CASE WHEN car2."magazzino" = 1
-			THEN 
-				CASE 
-					WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" >= b."tipo lente sx")) 
-						THEN 
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" < b."tipo lente sx"))
-		     			THEN 
-		     			(
-							CASE b."tipo lente sx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (b."lente propria sx"))
-		     			THEN
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)     			
-		     		WHEN ((b."lente propria dx") AND (NOT b."lente propria sx")) 
-		     		THEN 
-		     		    (
-							CASE b."tipo lente sx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)                                                              
-		     	END
-		END as LenteTipo --varchar(100) --null
+		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
 	from carrello2 as car2
-		left join busta as b
-		on (b."codice filiale" = car2."codice fornitura")
-
-		left join occhiali as oc
-		on (oc."codice cliente" = b."codice cliente")
-
 		left join movimenti as mov
 		on (car2."codice filiale" = mov."codice riga carrello")
 
 		left join Item
 		on (('articoli.' + car2."codice articolo") = Item."CodigoAntigo")
 
-		left join PrescricaoEnvelope as pe
-		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."Dias" = (CAST(b."data" as integer) - CAST(oc."data" as integer))))
-
 	where
 		(car2."tipo fornitura" = 0)
-		and((car2."magazzino" = 0) or (car2."magazzino" = 2))
+		--and (car2."magazzino" <> 1)
 );
 
 --Prescrição (LONGE - OLHO DIREITO CARRELLO2)
@@ -1659,12 +1556,17 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
 		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
 		COALESCE(Item."DescricaoComercial", scar2."descrizione", '') as DescricaoItem, --varchar(255) --not null
-		CASE 
-			WHEN scar2."magazzino" = 0 THEN 'Armação'
-			WHEN ((scar2."magazzino" = 1) and (scar2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
-			WHEN ((scar2."magazzino" = 1) and (scar2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
+		CASE
+			WHEN scar2."tipo fornitura" = 5 THEN 'Serviço'
+			WHEN (Item."Tipo" = 'Armação' or Item."Tipo" = 'Óculos Sol' or Item."Tipo" = 'Óculos Pronto' or scar2."magazzino" = 0) THEN 'Armação'
+			WHEN (((scar2."magazzino" = 1) or (scar2."magazzino" = 2)) and (scar2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
+			WHEN (((scar2."magazzino" = 1) or (scar2."magazzino" = 2)) and (scar2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
 			WHEN scar2."tipo fornitura dettaglio" = 5 THEN 'TLOD'
 			WHEN scar2."tipo fornitura dettaglio" = 6 THEN 'TLOE'
+			WHEN scar2."magazzino" = 3 THEN 'Produto'
+			WHEN scar2."magazzino" = 4  THEN 'Serviço'
+			WHEN Item."Tipo" = 'Lente Contato' THEN 'Lente de Contato Pronta'
+			ELSE Item."Tipo"
 		END as TipoItem, --varchar(45) --null
 		CAST(NULL as varchar) as NCM, --varchar(8) --null
 		0 as CodigoDocumentoItemPai, --int --null
@@ -1743,13 +1645,87 @@ insert into DocumentoItem
 		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
 		CAST(NULL as varchar) as Diametro, --varhcar(10) (numeric(18,4)->varchar(10)) --null
-		CAST(NULL as numeric(18,4)) as Eixo, --numeric(18,4) --null
+		CASE scar2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Asse1 L Dx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Asse1 M Dx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Asse1 V Dx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)		
+			WHEN 3 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Asse1 L Sx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Asse1 M Sx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Asse1 V Sx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)
+		END as Eixo, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as AdicaoInicial, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as AdicaoFinal, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as AlturaMinima, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as EsfericoInicial, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as EsfericoFinal, --numeric(18,4) --null
-		CAST(NULL as numeric(18,4)) as Cilindrico, --numeric(18,4) --null
+		CASE scar2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Cilindro L Dx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Cilindro M Dx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Cilindro V Dx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)		
+			WHEN 3 THEN
+	    	(
+				CASE WHEN b."occhiale da lontano" IS TRUE 
+					THEN b."Cilindro L Sx" 
+					ELSE 
+					(
+						CASE WHEN b."occhiale da medio" IS TRUE 
+							THEN b."Cilindro M Sx"
+							ELSE 
+							(
+								CASE WHEN b."occhiale da vicino" IS TRUE
+									THEN b."Cilindro V Sx"
+								END
+							) 
+						END
+					) 
+				END		    		
+	    	)
+		END as Cilindrico, --numeric(18,4) --null
 		CAST(NULL as varchar) as AmarcaoCor, --varchar(100) --null
 		CAST(NULL as varchar) as ArmacaoMaterial, --varchar(100) --null
 		CAST(NULL as numeric(18,4)) as Haste, --numeric(18,4) --null
@@ -1977,8 +1953,11 @@ insert into DocumentoItem
 insert into DocumentoItem
 (
 	select
-		'item.scar.' + CAST(scar2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
-		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
+		CASE 
+			WHEN (scar2."magazzino" = 0 or scar2."magazzino" = 2 or Item."Tipo" = 'Armação' or Item."Tipo" = 'Óculos Sol' or Item."Tipo" = 'Óculos Pronto' or Item."Tipo" = 'Lente Contato') THEN 'item.scar2.' + CAST(scar2."codice filiale" as varchar(12))
+			ELSE 'item.scar.' + CAST(scar2."codice carrello" as varchar(12))
+		END as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
+		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
 		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
 		COALESCE(Item."CodigoAntigo", scar2."codice a barre", '') as CodigoItem, --int not null
@@ -1988,11 +1967,12 @@ insert into DocumentoItem
 		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
 		COALESCE(Item."DescricaoComercial", scar2."descrizione", '') as DescricaoItem, --varchar(255) --not null
 		CASE 
-			WHEN scar2."magazzino" = 0 THEN 'Armação'
-			WHEN ((scar2."magazzino" = 1) and (scar2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
-			WHEN ((scar2."magazzino" = 1) and (scar2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
-			WHEN scar2."tipo fornitura dettaglio" = 5 THEN 'TLOD'
-			WHEN scar2."tipo fornitura dettaglio" = 6 THEN 'TLOE'
+			WHEN (Item."Tipo" = 'Armação' or Item."Tipo" = 'Óculos Sol' or Item."Tipo" = 'Óculos Pronto' or scar2."magazzino" = 0) THEN 'Armação'
+			WHEN (scar2."magazzino" = 1 or Item."Tipo" = 'Lente') THEN 'Produto'
+			WHEN (Item."Tipo" = 'Lente Contato' or scar2."magazzino" = 2) THEN 'Lente de Contato Pronta'
+			WHEN scar2."magazzino" = 3 THEN 'Produto'
+			WHEN scar2."magazzino" = 4 THEN 'Serviço'
+			ELSE Item."Tipo"
 		END as TipoItem, --varchar(45) --null
 		CAST(NULL as varchar) as NCM, --varchar(8) --null
 		0 as CodigoDocumentoItemPai, --int --null
@@ -2086,218 +2066,32 @@ insert into DocumentoItem
 		CAST(NULL as numeric(18,4)) as RB2, --numeric(18,4) --null
 		CAST(NULL as varchar) as Geometria, --varchar(20) (numeric(18,4)->varchar(20)) --null
 		CAST(NULL as numeric(18,4)) as IndiceRefracao, --numeric(18,4) --null
-	    CASE scar2."tipo fornitura dettaglio"
-	    	WHEN 2 THEN 
-	    	(
-	    		CASE WHEN b."occhiale da lontano" IS TRUE 
-	    			THEN 
-	    			(
-	    				CASE WHEN b."occhiale da medio" IS TRUE 
-	    					THEN b."Add M Dx" 
-	    					ELSE 
-    						(
-    							CASE WHEN b."occhiale da vicino" IS TRUE
-    								THEN b."Add V Dx"
-    							END
-    						)
-	    				END
-	    			)
-	    		END
-	    	)
-	    	WHEN 3 THEN
-    		(
-	    		CASE WHEN b."occhiale da lontano" IS TRUE 
-	    			THEN 
-	    			(
-	    				CASE WHEN b."occhiale da medio" IS TRUE 
-	    					THEN b."Add M Sx" 
-	    					ELSE 
-    						(
-    							CASE WHEN b."occhiale da vicino" IS TRUE
-    								THEN b."Add V Sx"
-    							END
-    						)
-	    				END
-	    			)
-	    		END
-	    	)
-		    ELSE CAST(NULL as numeric(18,4))
-		END as Adicao, --numeric(18,4) --null	
-	    CASE scar2."tipo fornitura dettaglio"
-	    	WHEN 2 THEN
-	    	(
-				CASE WHEN b."occhiale da lontano" IS TRUE 
-					THEN b."Sfera L Dx" 
-					ELSE 
-					(
-						CASE WHEN b."occhiale da medio" IS TRUE 
-							THEN b."Sfera M Dx"
-							ELSE 
-							(
-								CASE WHEN b."occhiale da vicino" IS TRUE
-									THEN b."Sfera V Dx"
-								END
-							) 
-						END
-					) 
-				END		    		
-	    	)		
-			WHEN 3 THEN
-	    	(
-				CASE WHEN b."occhiale da lontano" IS TRUE 
-					THEN b."Sfera L Sx" 
-					ELSE 
-					(
-						CASE WHEN b."occhiale da medio" IS TRUE 
-							THEN b."Sfera M Sx"
-							ELSE 
-							(
-								CASE WHEN b."occhiale da vicino" IS TRUE
-									THEN b."Sfera V Sx"
-								END
-							) 
-						END
-					) 
-				END		    		
-	    	)
-		END as Esferico, --numeric(18,4) --null		
+	    CAST(NULL as numeric(18,4)) as Adicao, --numeric(18,4) --null	
+	    CAST(NULL as numeric(18,4)) as Esferico, --numeric(18,4) --null		
 		False as PrescricaoAlterada, --boolean
 		CAST(NULL as varchar) as Prisma, --varchar(100) --null
 		CAST(NULL as varchar) as Base, --varchar(10) (numeric(18,4)->varchar(10)) --null
 		CAST(NULL as Numeric(18,4)) as DI, --numeric(18,4) --null
 		CAST(NULL as Numeric(18,4)) as DIOD, --numeric(18,4) --null
 		CAST(NULL as Numeric(18,4)) as DIOE, --numeric(18,4) --null
-		CASE WHEN scar2."magazzino" = 0
-			THEN 
-				CASE 
-					WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" >= b."tipo lente sx")) 
-						THEN 
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN 
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" < b."tipo lente sx"))
-		     			THEN 
-		     			(
-							CASE b."tipo lente sx"
-								WHEN 1 THEN
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (b."lente propria sx"))
-		     			THEN
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)     			
-		     		WHEN ((b."lente propria dx") AND (NOT b."lente propria sx")) 
-		     		THEN 
-		     		    (
-							CASE b."tipo lente sx"
-								WHEN 1 THEN
-									CASE 
-										WHEN (b."occhiale da lontano") THEN 'MonofocalLonge'
-										WHEN (b."occhiale da vicino") THEN 'MonofocalPerto'
-									END
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Intermediario'
-							END
-						)                                                              
-		     	END
-		END as Oculos, --varchar(100) --null
+		CAST(NULL as varchar) as Oculos, --varchar(100) --null
 		CASE
-			WHEN ((scar2."magazzino" = 0) and (b."occhiale da sole" = False)) THEN 'Vista'
-			WHEN ((scar2."magazzino" = 0) and (b."occhiale da sole" = True)) THEN 'Sol'
+			WHEN ((scar2."magazzino" = 0) and (Item."Tipo" = 'Armação')) THEN 'Vista'
+			WHEN ((scar2."magazzino" = 0) and (Item."Tipo" = 'Óculos Sol')) THEN 'Sol'
 		END as TipoOculos, --varchar(100) --null
 		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
-		CASE WHEN scar2."magazzino" = 1
-			THEN 
-				CASE 
-					WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" >= b."tipo lente sx")) 
-						THEN 
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (NOT b."lente propria sx") AND (b."tipo lente dx" < b."tipo lente sx"))
-		     			THEN 
-		     			(
-							CASE b."tipo lente sx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)
-		     		WHEN ((NOT b."lente propria dx") AND (b."lente propria sx"))
-		     			THEN
-						(
-							CASE b."tipo lente dx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)     			
-		     		WHEN ((b."lente propria dx") AND (NOT b."lente propria sx")) 
-		     		THEN 
-		     		    (
-							CASE b."tipo lente sx"
-								WHEN 1 THEN 'Monofocal'
-								WHEN 2 THEN 'Bifocal'
-								WHEN 3 THEN 'Multifocal'
-								WHEN 4 THEN 'Monofocal'
-							END
-						)                                                              
-		     	END
-		END as LenteTipo --varchar(100) --null
+		CAST(NULL as varchar) as LenteTipo --varchar(100) --null
 
 	from storicocarrello2 as scar2
-		left join busta as b
-		on (b."codice filiale" = scar2."codice fornitura")
-
-		left join occhiali as oc
-		on (oc."codice cliente" = b."codice cliente")
-
 		left join movimenti as mov
 		on (scar2."codice filiale" = mov."codice riga carrello")
 
 		left join Item
 		on (('articoli.' + scar2."codice articolo") = Item."CodigoAntigo")
 
-		left join PrescricaoEnvelope as pe
-		on ((b."codice filiale" = pe."CodigoEnvelope") and (pe."Dias" = (CAST(b."data" as integer) - CAST(oc."data" as integer))))
-
 	where
 		(scar2."tipo fornitura" = 0)
-		and((scar2."magazzino" = 0) or (scar2."magazzino" = 2))
+		--and (scar2."magazzino" <> 1)
 );
 
 --Prescrição (LONGE - OLHO DIREITO CARRELLO2)
