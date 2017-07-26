@@ -124,7 +124,7 @@ create index CodDocIdx on DocumentoItem("CodigoDocumento");
 create index CodDocAntIdx on DocumentoItem("CodigoAntigo");	
 create index CodItIdx on DocumentoItem("CodigoItem");
 
---produtos de venda e devolução (CARRELLO2)
+--Produtos (carrello2, busta) e Devolução com tipo fornitura <> 0
 insert into DocumentoItem
 (
 	select
@@ -528,9 +528,188 @@ insert into DocumentoItem
 	where
 		((car2."tipo fornitura" <> 100) or (car2."tipo fornitura" = 100 and car2."quantita" < 0))
 		and (car2."tipo fornitura" <> 0)
+  	and(car2."tipo fornitura" <> 10)
 );
 
---produtos (CARRELLO2)
+--PRODUTOS (CARRELLO2, LENTIBUSTA) tipo fornitura = 10 LENTE DE CONTATO SURFAÇADA
+insert into DocumentoItem
+(
+	select
+		'item.car.' + CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
+		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
+		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
+		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		COALESCE(Item."CodigoAntigo", car2."codice a barre", '') as CodigoItem, --int not null
+		CAST(NULL as int) as CodigoItemDNA, --int --null
+		CAST(NULL as varchar) as Lote, --varchar(50) --null
+		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
+		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
+		COALESCE(Item."DescricaoComercial", car2."descrizione", '') as DescricaoItem, --varchar(255) --not null
+		CASE
+			WHEN ((car2."magazzino" = 2) and (car2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
+			WHEN ((car2."magazzino" = 2) and (car2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
+		END as TipoItem, --varchar(45) --null
+		CAST(NULL as varchar) as NCM, --varchar(8) --null
+		0 as CodigoDocumentoItemPai, --int --null
+		'Venda de Mercadoria' as Operacao, --varchar(255) --not null
+		-1 as OperacaoFator, --int --null
+		CASE WHEN car2."pagato" THEN 'Faturado' ELSE 'Aguardando Faturamento' END as Status, --varchar(255), --null
+		261 as CodigoCFOP, --int --null
+		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
+		CAST(car2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
+		0.0000 as ValorItemUltimo, --decimal(18,4), --not null
+		CAST(car2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
+		CAST(car2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
+		0.0000 as DescontoTotalRateado, --decimal(18,4), --not null
+		0.0000 as DescontoFaturaRateado, --decimal(18,4), --not null
+		0.0000 as ValorFreteRateado, --decimal(18,4), --not null
+		0.0000 as ValorSeguroRateado, --decimal(18,4), --not null
+		0.0000 as ValorOutrasDespesasRateado, --decimal(18,4), --not null
+		CAST(car2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
+		CAST(car2."quantita" as decimal(18,6)) as QuantidadeRealizado, --decimal(18,6) --not null
+		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
+		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		CAST(car2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
+		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
+		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
+		CAST(car2."totale" as decimal(18,4)) as Total, --decimal(18,4) --not null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
+		CAST(car2."totale" as decimal(18,4)) as ValorReal, --decimal(18,4) --not null
+		CAST(car2."totale" as decimal(18,4)) as ValorRealTotal, --decimal(18,4) --not null
+		0.0000 as ValorRealTotalImpostos, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
+		COALESCE(CAST(mov."costo medio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
+		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
+		car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+		car2."data" as DataHoraFinalizado, --datetime (datetime->date) --null
+		CAST(NULL as int) as CodigoCST, --int --null
+		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
+		0.0000 as ValorBaseICMS, --decimal(18,4) --null
+		CAST(NULL as int) as CodigoCSTIPI, --int --null
+		CAST(NULL as decimal(18,4)) as ValorBaseIPI, --decimal(18,4) --null
+		0.0000 as PercentualICMS, --decimal(18,4) --not null
+		0.0000 as ValorICMS, --decimal(18,4) --not null
+		0.0000 as PercentualIPI, --decimal(18,4) --not null
+		0.0000 as ValorIPI, --decimal(18,4) --not null
+		CAST(NULL as varchar(100)) as UnidadeTributada, --varchar(100) --null
+		0.0000 as QuantidadeTributada, --decimal(18,4) --not null
+		0.0000 as ValorItemTributado, --decimal(18,4) --not null
+		CAST(NULL as date) as DataValidadeLote, --date --null
+		CAST(NULL as decimal(18,4)) as QuantidadeUltimo, --decimal(18,4) --null
+		CAST(NULL as date) as DataUltimaVenda, --datetime, --null
+		CAST(NULL as int) as ModalidadeBaseCalculoST, --int, --null
+		CAST(NULL as decimal(18,4)) as PercentualIVA, --decimal(18,4), --null
+		CAST(NULL as decimal(18,4)) as ValorBaseIcmsSt, --decimal(18,4), --null
+		CAST(NULL as decimal(18,4)) as PercentualIcmsSt, --decimal(18,4), --null
+		CAST(NULL as decimal(18,4)) as ValorIcmsSt, --decimal(18,4), --null
+		CAST(NULL as varchar) as CodigoDocumentoVenda, --int, --null
+		CAST(NULL as varchar) as CodigoDocumentoItemVenda,
+		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
+		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
+		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
+		'car2.' + CAST(car2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
+		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
+		CAST(NULL as int) as CRMItemNovo, --int --null
+		CAST(NULL as int) as CodigoContatoFornecedor, --int --null
+		CAST(NULL as varchar) as Marca, --varchar(100) --null
+		CAST(NULL as varchar) as Modelo, --varchar(100) --null
+		CAST(NULL as varchar) as Genero, --varchar(100) --null
+		CAST(NULL as varchar) as Cor, --varchar(100) --null
+		CAST(NULL as varchar) as Material, --varchar(100) --null
+		CAST(NULL as varchar) as Tamanho, --varchar(100) --null
+		CAST(NULL as numeric(18,4)) as Altura, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Largura, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
+		CAST(NULL as varchar) as Diametro, --varhcar(10) (numeric(18,4)->varchar(10)) --null
+		CASE car2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Asse Dx" as numeric(18,4)) )
+			WHEN 3 THEN( CAST(lb."Asse Sx" as numeric(18,4)) )
+		END as Eixo, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as AdicaoInicial, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as AdicaoFinal, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as AlturaMinima, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as EsfericoInicial, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as EsfericoFinal, --numeric(18,4) --null
+		CASE car2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Cilindro Dx" as numeric(18,4)) )
+			WHEN 3 THEN( CAST(lb."Cilindro Sx" as numeric(18,4)) )
+		END as Cilindrico, --numeric(18,4) --null
+		CAST(NULL as varchar) as AmarcaoCor, --varchar(100) --null
+		CAST(NULL as varchar) as ArmacaoMaterial, --varchar(100) --null
+		CAST(NULL as numeric(18,4)) as Haste, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Ponte, --numeric(18,4) --null
+		CAST(NULL as varchar) as RB1, --varchar(5) (numeric(18,4)->varchar(5)) --null
+		CAST(NULL as numeric(18,4)) as RB2, --numeric(18,4) --null
+		CAST(NULL as varchar) as Geometria, --varchar(20) (numeric(18,4)->varchar(20)) --null
+		CAST(NULL as numeric(18,4)) as IndiceRefracao, --numeric(18,4) --null
+	    CASE car2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Add Dx" as numeric(18,4)) )
+	    	WHEN 3 THEN( CAST(lb."Add Sx" as numeric(18,4)) )
+		END as Adicao, --numeric(18,4) --null	
+	    CASE car2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Sfera Dx" as numeric(18,4)) )		
+			WHEN 3 THEN( CAST(lb."Sfera Sx" as numeric(18,4)) )
+		END as Esferico, --numeric(18,4) --null		
+		False as PrescricaoAlterada, --boolean
+		CAST(NULL as varchar) as Prisma, --varchar(100) --null
+		CAST(NULL as varchar) as Base, --varchar(10) (numeric(18,4)->varchar(10)) --null
+		CAST(NULL as Numeric(18,4)) as DI, --numeric(18,4) --null
+		CAST(NULL as Numeric(18,4)) as DIOD, --numeric(18,4) --null
+		CAST(NULL as Numeric(18,4)) as DIOE, --numeric(18,4) --null
+		CAST(NULL as varchar) as Oculos, --varchar(100) --null
+		CAST(NULL as varchar) as TipoOculos, --varchar(100) --null
+		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
+		CASE
+			WHEN car2."magazzino" = 2
+			THEN
+			(	
+				CASE lb."Famiglia Dx"
+					WHEN 'monofocal' THEN 'Monofocal'
+					WHEN 'bifocal' THEN 'Bifocal'
+					WHEN 'trifocal' THEN 'Multifocal'
+					WHEN 'multifocal' THEN 'Multifocal'
+					WHEN 'cosmética' THEN 'Cosmética'
+				END
+	 		)
+			WHEN car2."magazzino" = 2
+			THEN
+			(
+				CASE lb."Famiglia Sx"
+					WHEN 'monofocal' THEN 'Monofocal'
+					WHEN 'bifocal' THEN 'Bifocal'
+					WHEN 'trifocal' THEN 'Multifocal'
+					WHEN 'multifocal' THEN 'Multifocal'
+					WHEN 'cosmética' THEN 'Cosmética'
+				END
+			)
+		END as LenteTipo --varchar(100) --null
+
+	from carrello2 as car2
+		left join lentibusta as lb
+		on (lb."codice filiale" = car2."codice fornitura")
+
+		left join occhiali as oc
+		on (oc."codice cliente" = lb."codice cliente")
+
+		left join movimenti as mov
+		on (car2."codice filiale" = mov."codice riga carrello")
+
+		left join Item
+		on (('articoli.' + car2."codice articolo") = Item."CodigoAntigo")
+
+		left join PrescricaoEnvelope as pe
+		on ((lb."codice filiale" = pe."CodigoEnvelope") and (pe."Dias" = (CAST(lb."data" as integer) - CAST(oc."data" as integer))))
+
+	where
+		(car2."tipo fornitura" = 10)
+);
+
+--Produtos (CARRELLO2) tipo fornitura = 0 VENDA DIRETA PELO CARRINHO
 insert into DocumentoItem
 (
 	select
@@ -1542,7 +1721,7 @@ insert into DocumentoItem
 		oc."Base V SX"
 );
 
---produtos e devolução (STORICOCARRELLO2)
+--Produtos (STORICOCARRELLO2, BUSTA) e Devolução com tipo fornitura <> 10
 insert into DocumentoItem
 (
 	select
@@ -1947,6 +2126,184 @@ insert into DocumentoItem
 		((scar2."tipo fornitura" <> 100) or (scar2."tipo fornitura" = 100 and scar2."quantita" < 0)) and
 		(scar2."tipo fornitura" <> 101) and
 		(scar2."tipo fornitura" <> 0)
+);
+
+--Produtos (STORICOCARRELLO2, LENTIBUSTA) = TF10 LENTE DE CONTATO SURFAÇADA
+insert into DocumentoItem
+(
+	select
+		'item.scar.' + CAST(scar2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
+		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
+		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
+		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		COALESCE(Item."CodigoAntigo", scar2."codice a barre", '') as CodigoItem, --int not null
+		CAST(NULL as int) as CodigoItemDNA, --int --null
+		CAST(NULL as varchar) as Lote, --varchar(50) --null
+		CAST(NULL as varchar) as LoteEmpresa, --varchar(50) --null
+		CAST(NULL as varchar) as ReferenciaFornecedor, --varchar(30) --null
+		COALESCE(Item."DescricaoComercial", scar2."descrizione", '') as DescricaoItem, --varchar(255) --not null
+		CASE
+			WHEN ((scar2."magazzino" = 2) and (scar2."tipo fornitura dettaglio" = 2)) THEN 'LOD'
+			WHEN ((scar2."magazzino" = 2) and (scar2."tipo fornitura dettaglio" = 3)) THEN 'LOE'
+		END as TipoItem, --varchar(45) --null
+		CAST(NULL as varchar) as NCM, --varchar(8) --null
+		0 as CodigoDocumentoItemPai, --int --null
+		'Venda de Mercadoria' as Operacao, --varchar(255) --not null
+		-1 as OperacaoFator, --int --null
+		CASE WHEN scar2."pagato" THEN 'Faturado' ELSE 'Aguardando Faturamento' END as Status, --varchar(255), --null
+		261 as CodigoCFOP, --int --null
+		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
+		CAST(scar2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
+		0.0000 as ValorItemUltimo, --decimal(18,4), --not null
+		CAST(scar2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
+		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
+		0.0000 as DescontoTotalRateado, --decimal(18,4), --not null
+		0.0000 as DescontoFaturaRateado, --decimal(18,4), --not null
+		0.0000 as ValorFreteRateado, --decimal(18,4), --not null
+		0.0000 as ValorSeguroRateado, --decimal(18,4), --not null
+		0.0000 as ValorOutrasDespesasRateado, --decimal(18,4), --not null
+		CAST(scar2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
+		CAST(scar2."quantita" as decimal(18,6)) as QuantidadeRealizado, --decimal(18,6) --not null
+		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
+		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		CAST(scar2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
+		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
+		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
+		CAST(scar2."totale" as decimal(18,4)) as Total, --decimal(18,4) --not null
+		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
+		CAST(scar2."totale" as decimal(18,4)) as ValorReal, --decimal(18,4) --not null
+		CAST(scar2."totale" as decimal(18,4)) as ValorRealTotal, --decimal(18,4) --not null
+		0.0000 as ValorRealTotalImpostos, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
+		COALESCE(CAST(mov."costo medio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
+		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
+		scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
+		scar2."data" as DataHoraFinalizado, --datetime (datetime->date) --null
+		CAST(NULL as int) as CodigoCST, --int --null
+		CAST(NULL as int) as ModalidadeBaseCalculo, --int --null
+		0.0000 as ValorBaseICMS, --decimal(18,4) --null
+		CAST(NULL as int) as CodigoCSTIPI, --int --null
+		CAST(NULL as decimal(18,4)) as ValorBaseIPI, --decimal(18,4) --null
+		0.0000 as PercentualICMS, --decimal(18,4) --not null
+		0.0000 as ValorICMS, --decimal(18,4) --not null
+		0.0000 as PercentualIPI, --decimal(18,4) --not null
+		0.0000 as ValorIPI, --decimal(18,4) --not null
+		CAST(NULL as varchar(100)) as UnidadeTributada, --varchar(100) --null
+		0.0000 as QuantidadeTributada, --decimal(18,4) --not null
+		0.0000 as ValorItemTributado, --decimal(18,4) --not null
+		CAST(NULL as date) as DataValidadeLote, --date --null
+		CAST(NULL as decimal(18,4)) as QuantidadeUltimo, --decimal(18,4) --null
+		CAST(NULL as date) as DataUltimaVenda, --datetime, --null
+		CAST(NULL as int) as ModalidadeBaseCalculoST, --int, --null
+		CAST(NULL as decimal(18,4)) as PercentualIVA, --decimal(18,4), --null
+		CAST(NULL as decimal(18,4)) as ValorBaseIcmsSt, --decimal(18,4), --null
+		CAST(NULL as decimal(18,4)) as PercentualIcmsSt, --decimal(18,4), --null
+		CAST(NULL as decimal(18,4)) as ValorIcmsSt, --decimal(18,4), --null
+		CAST(NULL as varchar) as CodigoDocumentoVenda, --int, --null
+		CAST(NULL as varchar) as CodigoDocumentoItemVenda,
+		CAST(NULL as int) as CodigoDocumentoRemessa, --int, --null
+		CAST(NULL as int) as CodigoDocumentoCompra, --int --null
+		CAST(NULL as int) as CodigoDocumentoTriagem, --int --null
+		'scar2.' + CAST(scar2."codice filiale" as varchar(12)) as CodigoAntigo, --varchar(150) --null
+		CAST(NULL as varchar) as CRMGrupoMetaVendedor, --varchar(100) --null
+		CAST(NULL as varchar) as CRMGrupoMetaAssistent, --varchar(100) --null
+		CAST(NULL as int) as CRMItemNovo, --int --null
+		CAST(NULL as int) as CodigoContatoFornecedor, --int --null
+		CAST(NULL as varchar) as Marca, --varchar(100) --null
+		CAST(NULL as varchar) as Modelo, --varchar(100) --null
+		CAST(NULL as varchar) as Genero, --varchar(100) --null
+		CAST(NULL as varchar) as Cor, --varchar(100) --null
+		CAST(NULL as varchar) as Material, --varchar(100) --null
+		CAST(NULL as varchar) as Tamanho, --varchar(100) --null
+		CAST(NULL as numeric(18,4)) as Altura, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Largura, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Diagonal, --numeric(18,4) --null
+		CAST(NULL as varchar) as Diametro, --varhcar(10) (numeric(18,4)->varchar(10)) --null
+		CASE scar2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Asse Dx" as numeric(18,4)) )
+			WHEN 3 THEN( CAST(lb."Asse Sx" as numeric(18,4)) )
+		END as Eixo, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as AdicaoInicial, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as AdicaoFinal, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as AlturaMinima, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as EsfericoInicial, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as EsfericoFinal, --numeric(18,4) --null
+		CASE scar2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Cilindro Dx" as numeric(18,4)) )
+			WHEN 3 THEN( CAST(lb."Cilindro Sx" as numeric(18,4)) )
+		END as Cilindrico, --numeric(18,4) --null
+		CAST(NULL as varchar) as AmarcaoCor, --varchar(100) --null
+		CAST(NULL as varchar) as ArmacaoMaterial, --varchar(100) --null
+		CAST(NULL as numeric(18,4)) as Haste, --numeric(18,4) --null
+		CAST(NULL as numeric(18,4)) as Ponte, --numeric(18,4) --null
+		CAST(NULL as varchar) as RB1, --varchar(5) (numeric(18,4)->varchar(5)) --null
+		CAST(NULL as numeric(18,4)) as RB2, --numeric(18,4) --null
+		CAST(NULL as varchar) as Geometria, --varchar(20) (numeric(18,4)->varchar(20)) --null
+		CAST(NULL as numeric(18,4)) as IndiceRefracao, --numeric(18,4) --null
+	    CASE scar2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Add Dx" as numeric(18,4)) )
+	    	WHEN 3 THEN( CAST(lb."Add Sx" as numeric(18,4)) )
+		END as Adicao, --numeric(18,4) --null	
+	    CASE scar2."tipo fornitura dettaglio"
+	    	WHEN 2 THEN( CAST(lb."Sfera Dx" as numeric(18,4)) )		
+			WHEN 3 THEN( CAST(lb."Sfera Sx" as numeric(18,4)) )
+		END as Esferico, --numeric(18,4) --null		
+		False as PrescricaoAlterada, --boolean
+		CAST(NULL as varchar) as Prisma, --varchar(100) --null
+		CAST(NULL as varchar) as Base, --varchar(10) (numeric(18,4)->varchar(10)) --null
+		CAST(NULL as Numeric(18,4)) as DI, --numeric(18,4) --null
+		CAST(NULL as Numeric(18,4)) as DIOD, --numeric(18,4) --null
+		CAST(NULL as Numeric(18,4)) as DIOE, --numeric(18,4) --null
+		CAST(NULL as varchar) as Oculos, --varchar(100) --null
+		CAST(NULL as varchar) as TipoOculos, --varchar(100) --null
+		CAST(NULL as varchar) as TipoMontagem, --varchar(100) --null
+		CASE
+			WHEN scar2."magazzino" = 2
+			THEN
+			(
+				CASE lb."Famiglia Dx"
+					WHEN 'monofocal' THEN 'Monofocal'
+					WHEN 'bifocal' THEN 'Bifocal'
+					WHEN 'trifocal' THEN 'Multifocal'
+					WHEN 'multifocal' THEN 'Multifocal'
+					WHEN 'cosmética' THEN 'Cosmética'
+				END
+			)
+			WHEN scar2."magazzino" = 2
+			THEN
+ 			(
+				CASE lb."Famiglia Sx"
+					WHEN 'monofocal' THEN 'Monofocal'
+					WHEN 'bifocal' THEN 'Bifocal'
+					WHEN 'trifocal' THEN 'Multifocal'
+					WHEN 'multifocal' THEN 'Multifocal'
+					WHEN 'cosmética' THEN 'Cosmética'
+				END
+			)
+		END as LenteTipo --varchar(100) --null
+
+	from storicocarrello2 as scar2
+		left join lentibusta as lb
+		on (lb."codice filiale" = scar2."codice fornitura")
+
+		left join occhiali as oc
+		on (oc."codice cliente" = lb."codice cliente")
+
+		left join movimenti as mov
+		on (scar2."codice filiale" = mov."codice riga carrello")
+
+		left join Item
+		on (('articoli.' + scar2."codice articolo") = Item."CodigoAntigo")
+
+		left join PrescricaoEnvelope as pe
+		on ((lb."codice filiale" = pe."CodigoEnvelope") and (pe."Dias" = (CAST(lb."data" as integer) - CAST(oc."data" as integer))))
+
+	where
+		(scar2."tipo fornitura" = 10)
 );
 
 --produtos (STORICOCARRELLO2) TIPO FORNITURA = 0
