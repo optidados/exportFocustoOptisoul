@@ -1,5 +1,5 @@
 //NOSQLBDETOFF2
-/*Precisa ser rodado para encontrar a venda original que gerou a devolução além de atualizar os totais do registro Venda da Documento*/
+/*Precisa ser rodado para encontrar a venda original que gerou a devolução*/
 --TEMP DEVOLUÇÃO
 create table #temp_devolvido //NOMODIFICA
     (

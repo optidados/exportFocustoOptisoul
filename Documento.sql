@@ -272,14 +272,11 @@ insert into Documento
 		car."descrizione" as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		CASE car."tipo fornitura"
-			WHEN 0 THEN 'Outro Produto/Serviço'
 			WHEN 1 THEN 'Óculos de Grau'
 			WHEN 2 THEN 'Óculos de Sol'
 			WHEN 3 THEN 'Óculos de Grau'
 			WHEN 4 THEN 'Armação'
-			WHEN 5 THEN 'Outro Produto/Serviço'
 			WHEN 100 THEN 'Item de Devolução'
-			ELSE 'Outro Produto/Serviço'
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
@@ -413,9 +410,12 @@ insert into Documento
 		'Item Venda' as Tipo, --varchar(255) --null
 		car2."descrizione" as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
-		CASE
-			WHEN(car2."magazzino" = 0) THEN('Armação')
-			WHEN(car2."magazzino" = 2) THEN('Lente de Contato Pronta')
+		CASE 
+			WHEN Item."Tipo" = 'Armação' THEN 'Armação'
+			WHEN Item."Tipo" = 'Óculos Sol' THEN 'Óculos de Sol'
+			WHEN Item."Tipo" = 'Óculos Pronto' THEN 'Óculos Pronto'
+			WHEN car2."magazzino" = 2 THEN 'Lente de Contato Pronta'
+			WHEN car2."magazzino" = 0 THEN 'Armação'
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
@@ -528,6 +528,9 @@ insert into Documento
 
 		left join Contato as filial
 		on (('puntovendita.' + car2."filiale") = filial."CodigoAntigo")
+
+		left join Item
+		on (('articoli.' + car2."codice articolo") = Item."CodigoAntigo")
 
 	where
 		(car2."tipo fornitura" = 0)
@@ -718,7 +721,13 @@ insert into Documento
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		'Normal' as Operacao, --varchar(255) --null
-		'Aguardando Envio' as Status, --varchar(255) --null
+		CASE b."stato montaggio"
+			WHEN 0 THEN 'Aguardando Envio'
+			WHEN 1 THEN 'Aguardando Retorno'
+			WHEN 2 THEN 'Processando'
+			WHEN 3 THEN 'Pronto para Entrega'
+			WHEN 4 THEN 'Entregue'
+		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
 		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
@@ -834,7 +843,8 @@ insert into Documento
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
 	where
-		(car."tipo fornitura" <> 100)
+		(car."tipo fornitura" <> 100) /*and
+		(b."stato montaggio" <> 5) --status cancelado*/
 );
 
 /*venda - STORICOCARRELLO*/
@@ -987,14 +997,11 @@ insert into documento
 		scar."descrizione" as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		CASE scar."tipo fornitura"
-			WHEN 0 THEN 'Outro Produto/Serviço'
 			WHEN 1 THEN 'Óculos de Grau'
 			WHEN 2 THEN 'Óculos de Sol'
 			WHEN 3 THEN 'Óculos de Grau'
 			WHEN 4 THEN 'Armação'
-			WHEN 5 THEN 'Outro Produto/Serviço'
 			WHEN 100 THEN 'Item de Devolução'
-			ELSE 'Outro Produto/Serviço'
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
@@ -1129,9 +1136,12 @@ insert into Documento
 		'Item Venda' as Tipo, --varchar(255) --null
 		scar2."descrizione" as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
-		CASE
-			WHEN(scar2."magazzino" = 0) THEN('Armação')
-			WHEN(scar2."magazzino" = 2) THEN('Lente de Contato Pronta')
+		CASE 
+			WHEN Item."Tipo" = 'Armação' THEN 'Armação'
+			WHEN Item."Tipo" = 'Óculos Sol' THEN 'Óculos de Sol'
+			WHEN Item."Tipo" = 'Óculos Pronto' THEN 'Óculos Pronto'
+			WHEN scar2."magazzino" = 2 THEN 'Lente de Contato Pronta'
+			WHEN scar2."magazzino" = 0 THEN 'Armação'
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
@@ -1245,12 +1255,15 @@ insert into Documento
 		left join Contato as filial
 		on (('puntovendita.' + scar2."filiale") = filial."CodigoAntigo")
 
+		left join Item
+		on (('articoli.' + scar2."codice articolo") = Item."CodigoAntigo")
+
 	where
 		(scar2."tipo fornitura" = 0)
 		and((scar2."magazzino" = 0) or (scar2."magazzino" = 2))
 );
 
-/*venda - STORICOCARRELLO*/
+/*Envelope - STORICOCARRELLO*/
 insert into documento
 (
 	select
@@ -1265,7 +1278,13 @@ insert into documento
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		'Normal' as Operacao, --varchar(255) --null
-		'Aguardando Envio' as Status, --varchar(255) --null
+		CASE b."stato montaggio"
+			WHEN 0 THEN 'Aguardando Envio'
+			WHEN 1 THEN 'Aguardando Retorno'
+			WHEN 2 THEN 'Processando'
+			WHEN 3 THEN 'Pronto para Entrega'
+			WHEN 4 THEN 'Entregue'
+		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
 		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
 		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
@@ -1382,7 +1401,8 @@ insert into documento
 
 	where
 		(scar."tipo fornitura" <> 100) and
-		(scar."tipo fornitura" <> 101)
+		(scar."tipo fornitura" <> 101) /*and
+		(b."stato montaggio" <> 5) --status cancelado*/
 );
 
 

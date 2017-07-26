@@ -35,7 +35,6 @@ insert into DocumentoStatus
 	from carrello as car
 );
 
-
 --insert carrello (Aguardando Faturamento)
 insert into DocumentoStatus
 (
@@ -98,7 +97,6 @@ insert into DocumentoStatus
 	from storicocarrello as scar
 );
 
-
 --insert storicocarrello (Aguardando Faturamento)
 insert into DocumentoStatus
 (
@@ -141,6 +139,45 @@ insert into DocumentoStatus
 		trans."operatore"
 );
 
+insert into DocumentoStatus
+(
+	select
+		CAST(NULL as int) as CodigoDocumentoStatus, --int not null
+		doc."CodigoDocumento", --varchar(30) not null
+		CAST(NULL as int) as CodigoDocumentoItem, --int null
+		CAST(NULL as int) as CodigoContatoResponsavel, --int null
+		'Mudança status envelope' as Operacao, -- varchar(20) null
+		'Orçamento' as StatusOriginal, --varchar(10) null
+		'Aguardando Envio' as StatusFinalizado, --varchar(255) null
+		doc."DataHoraEmissao", --datetime not null
+		doc."CodigoContatoDigitador", --varchar(10) (int->varchar(10)) null
+		CAST(NULL as int) as CodigoDocumentoCaixa --int null
+	
+	from Documento as doc
+	where
+		(doc."Tipo" = 'Envelope')
+);
+
+insert into DocumentoStatus
+(
+	select
+		CAST(NULL as int) as CodigoDocumentoStatus, --int not null
+		doc."CodigoDocumento", --varchar(30) not null
+		CAST(NULL as int) as CodigoDocumentoItem, --int null
+		CAST(NULL as int) as CodigoContatoResponsavel, --int null
+		'Mudança status envelope' as Operacao, -- varchar(20) null
+		'Aguardando Envio' as StatusOriginal, --varchar(10) null
+		doc."Status" as StatusFinalizado, --varchar(255) null
+		doc."DataHoraEmissao", --datetime not null
+		doc."CodigoContatoDigitador", --varchar(10) (int->varchar(10)) null
+		CAST(NULL as int) as CodigoDocumentoCaixa --int null
+	
+	from Documento as doc
+	where
+		(doc."Tipo" = 'Envelope') and
+		(doc."Status" <> 'Aguardando Envio')
+);
+
 delete from DocumentoStatus as docs
 where
 	NOT EXISTS
@@ -149,7 +186,7 @@ where
 		from Documento as doc
 		where 
 			doc."CodigoDocumento" = docs."CodigoDocumento" and
-			doc."Tipo" = 'Venda'
+			(doc."Tipo" = 'Venda' or doc."Tipo" = 'Envelope')
 	);
 
 update Documento as doc
