@@ -1,7 +1,7 @@
 //NOSQLBDETOFF2 
-drop table if exists documentoendereco;
+drop table if exists DocumentoEndereco;
 
-create table documentoendereco
+create table DocumentoEndereco
 (
 	Descricao varchar, --null
 	CodigoDocumento	varchar(30), --not null
@@ -23,9 +23,8 @@ create table documentoendereco
 	Observacao varchar --null
 );
 
-
 --Cliente Endereço (carrello)
-insert into documentoendereco
+insert into DocumentoEndereco
 (
 	select
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null
@@ -48,13 +47,12 @@ insert into documentoendereco
 		CAST(NULL as varchar) as Observacao --varchar(255) --null
 
 	from carrello as car
-		join clienti as c
-		on(c."codice personale" = car."codice cliente")
+	join clienti as c
+		on (c."codice personale" = car."codice cliente")
 );
 
-
 --Cliente Endereço (storicocarrello)
-insert into documentoendereco
+insert into DocumentoEndereco
 (
 	select
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null
@@ -77,14 +75,12 @@ insert into documentoendereco
 		CAST(NULL as varchar) as Observacao --varchar(255) --null
 
 	from storicocarrello as scar
-		join clienti as c
-		on(c."codice personale" = scar."codice cliente")
+	join clienti as c
+		on (c."codice personale" = scar."codice cliente")
 );
 
-
-
 --Matriz Endereço (carrello)
-insert into documentoendereco
+insert into DocumentoEndereco
 (
 	select
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null
@@ -107,13 +103,12 @@ insert into documentoendereco
 		CAST(NULL as varchar) as Observacao --varchar(255) --null
 
 	from carrello as car
-		join sede as s
+	join sede as s
 		on (s."codice filiale" = car."filiale")
 );
 
-
 --Matriz Endereço (storicocarrello)
-insert into documentoendereco
+insert into DocumentoEndereco
 (
 	select
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null
@@ -136,13 +131,12 @@ insert into documentoendereco
 		CAST(NULL as varchar) as Observacao --varchar(255) --null
 
 	from storicocarrello as scar
-		join sede as s
+	join sede as s
 		on (s."codice filiale" = scar."filiale")
 );
 
-
 --Filial Endereço (carrello)
-insert into documentoendereco
+insert into DocumentoEndereco
 (
 	select
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null
@@ -165,13 +159,12 @@ insert into documentoendereco
 		CAST(NULL as varchar) as Observacao --varchar(255) --null
 
 	from carrello as car
-		join puntovendita as pv
+	join puntovendita as pv
 		on (pv."codice filiale" = car."filiale")
 );
 
-
 --Filial Endereço (storicocarrello)
-insert into documentoendereco
+insert into DocumentoEndereco
 (
 	select
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null
@@ -194,6 +187,16 @@ insert into documentoendereco
 		CAST(NULL as varchar) as Observacao --varchar(255) --null
 
 	from storicocarrello as scar
-		join puntovendita as pv
+	join puntovendita as pv
 		on (pv."codice filiale" = scar."filiale")
 );
+
+delete from DocumentoEndereco as doce
+where
+	NOT EXISTS
+	(
+		select *
+		from Documento as doc
+		where 
+			(doc."CodigoDocumento" = doce."CodigoDocumento")
+	);

@@ -20,8 +20,17 @@ insert into PrescricaoEnvelope
 			CAST(b."data" as int) - CAST(oc."data" as int) as conta,
 			b."codice filiale"
 		from busta b
-			left join occhiali oc
+		left join occhiali oc
 			on ((b."codice cliente" = oc."codice cliente") and ((CAST(b."data" as int) - CAST(oc."data" as int) >= 0)))
+
+		UNION
+
+		select 
+			CAST(lb."data" as int) - CAST(oc."data" as int) as conta,
+			lb."codice filiale"
+		from lentibusta lb
+		left join occhiali oc
+			on ((lb."codice cliente" = oc."codice cliente") and ((CAST(lb."data" as int) - CAST(oc."data" as int) >= 0)))		
 	) as t2
 	group by t2."codice filiale"
 );
