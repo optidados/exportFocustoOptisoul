@@ -4,8 +4,10 @@ create table Item
 (
 	Referencia varchar(25), --[varchar](20) NULL,
 	CodigoBarras varchar(50), --[varchar](50) NULL,
+	CodigoBarrasAntigo varchar, --[varchar](50) NULL,
 	CodigoNCM varchar(12), --[int] NULL,
 	NCM varchar(8), --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+	CEST varchar, --varchar NULL,
 	Descricao varchar(500), --[varchar](500) NOT NULL,
 	DescricaoComercial varchar(500), --[varchar](500) NOT NULL,
 	Tipo varchar(50), --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
@@ -33,6 +35,7 @@ create table Item
 	Observacao varchar(255), --[varchar](255) NULL,
 	ObservacaoCompra varchar(255), --[varchar](255) NULL,
 	ObservacaoVenda varchar(255), --[varchar](255) NULL,
+	UtilizaComposicaoValorReposicao varchar, --varchar NULL,
 	UtilizaComposicaoPedido int, --[bit] NULL CONSTRAINT [DF_Item_UtilizaComposicaoPedido]  DEFAULT ((0)),
 	GarantiaDias int, --[int] NULL,
 	GarantiaDescricao varchar(255), --[varchar](255) NULL,
@@ -66,6 +69,7 @@ create table Item
 	Modelo varchar(100), --[varchar](100) NULL,
 	Genero varchar(100), --[varchar](100) NULL,
 	Cor varchar(100), --COR DAS LENTES [varchar](100) NULL,
+	TipoMontagem varchar, --varchar NULL
 	Material varchar(100), --MATERIAL DAS LENTES [varchar](100) NULL,
 	Tamanho numeric(18, 4), --[numeric](18, 4) NULL,
 	Altura numeric(18, 4), --[numeric](18, 4) NULL,
@@ -77,6 +81,7 @@ create table Item
 	AdicaoInicial numeric(18, 4), --[numeric](18, 4) NULL,
 	AdicaoFinal numeric(18, 4), --NULO OU O MESMO QUE AdicaoInicial? [numeric](18, 4) NULL,
 	AlturaMinima numeric(18, 4), --[numeric](18, 4) NULL,
+	AlturaMontagem numeric(18,4), --numeric(18,4) NULL,
 	EsfericoInicial numeric(18, 4), --[numeric](18, 4) NULL,
 	EsfericoFinal numeric(18, 4), --NULO OU O MESMO QUE EsfericoInicial? [numeric](18, 4) NULL,
 	Cilindrico numeric(18, 4), --[numeric](18, 4) NULL,
@@ -91,7 +96,7 @@ create table Item
 	PAF_SituacaoTributaria varchar(30), --[varchar](30) NULL,
 	PAF_IAT varchar(1), --[varchar](1) NULL,
 	PAF_IPPT varchar(1), --[varchar](1) NULL,
-	UtilizaComposicaoValorReposicao varchar
+	LenteTipo varchar --varchar NULL
 );
 
 create index CodAntIdx on Item("CodigoAntigo");
@@ -101,8 +106,10 @@ insert into Item
 	select 
 		COALESCE(a."SKU", t."SKU") as Referencia, --[varchar](20) NULL,
 		COALESCE(a."codice a barre", t."codice a barre") as CodigoBarras, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CodigoBarrasAntigo, --[varchar] NULL,
 		COALESCE(a."codice doganale", t."codice doganale") as CodigoNCM, --[int] NULL,
 		CAST(NULL as varchar(8)) as NCM, --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+		CAST(NULL as varchar) as CEST, --varchar NULL
 		CASE COALESCE(a."magazzino", t."magazzino")
 			WHEN 0 THEN TRIM(GetLinea(COALESCE(a."codice linea", t."codice linea", '')) + ' ' + COALESCE(a."modello", t."modello", '') + ' ' + COALESCE(a."colore", t."colore", '') + ' ' + CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
 			ELSE TRIM(COALESCE(a."modello", t."modello", '') + ' ' + GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' + COALESCE(a."descrizione", t."descrizione", ''))
@@ -156,6 +163,7 @@ insert into Item
 		CAST(COALESCE(a."Note", t."Note") as varchar(255)) as Observacao, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoCompra, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoVenda, --[varchar](255) NULL,
+		CAST(NULL as varchar) as UtilizaComposicaoValorReposicao, --varchar NULL
 		0 as UtilizaComposicaoPedido, --[bit] NULL CONSTRAINT [DF_Item_UtilizaComposicaoPedido]  DEFAULT ((0)),
 		CAST(NULL as int) as GarantiaDias, --[int] NULL,
 		CAST(NULL as varchar(255)) as GarantiaDescricao, --[varchar](255) NULL,
@@ -227,6 +235,7 @@ insert into Item
 			WHEN 0 THEN COALESCE(t."colore 2", a."colore 2")
 			ELSE COALESCE(a."colore", t."colore")
 		END as Cor, --COR DAS LENTES [varchar](100) NULL,
+		CAST(NULL as varchar) as TipoMontagem, --varchar NULL,
 		CASE COALESCE(a."magazzino", t."magazzino")
 			WHEN 0 THEN CAST(NULL as varchar(25)) --PODEMOS TRATAR POLARIZADO, FOTOSENSÍVEL, ETC. POR AQUI?
 			ELSE GetMateriale(COALESCE(a."codice materiale", t."codice materiale"))
@@ -240,7 +249,8 @@ insert into Item
 		CAST(COALESCE(a."asse", t."asse") as numeric(18,4)) as Eixo, --[numeric](18, 4) NULL,
 		CAST(COALESCE(a."addizione", t."addizione", 0.75) as numeric(18,4)) as AdicaoInicial, --[numeric](18, 4) NULL,
 		CAST(COALESCE(a."addizione", t."addizione", 3.75) as numeric(18,4)) as AdicaoFinal, --NULO OU O MESMO QUE AdicaoInicial? [numeric](18, 4) NULL,
-		CAST(NULL as numeric(18, 4)) as AlturaMinima, --[numeric](18, 4) NULL,
+		CAST(NULL as numeric(18,4)) as AlturaMinima, --[numeric](18, 4) NULL,
+		CAST(NULL as numeric(18,4)) as AlturaMontagem, --numeric(18,4) NULL,
 		CAST(COALESCE(a."sfera", t."sfera", -25.00) as numeric(18,4)) as EsfericoInicial, --[numeric](18, 4) NULL,
 		CAST(COALESCE(a."sfera", t."sfera", 25.00) as numeric(18,4)) as EsfericoFinal, --NULO OU O MESMO QUE EsfericoInicial? [numeric](18, 4) NULL,
 		CAST(COALESCE(a."cilindro", t."cilindro", -8.00) as numeric(18,4)) as Cilindrico, --[numeric](18, 4) NULL,
@@ -266,7 +276,7 @@ insert into Item
 		END as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		COALESCE(a."IAT", t."IAT") as PAF_IAT, --[varchar](1) NULL,
 		COALESCE(a."IPPT", t."IPPT") as PAF_IPPT, --[varchar](1) NULL,
-		CAST(NULL as varchar)
+		CAST(NULL as varchar) as LenteTipo --varchar NULL
 	from articoli_fornitore as t
 		full outer join articoli as a
 			on (a."codice a barre" = t."codice a barre")
@@ -284,8 +294,10 @@ insert into Item
 	select 
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		c."codice a barre" as CodigoBarras, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CodigoBarrasAntigo, --[varchar] NULL,
 		c."codice doganale" as CodigoNCM, --[int] NULL,
 		CAST(NULL as varchar(8)) as NCM, --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+		CAST(NULL as varchar) as CEST, --varchar NULL
 		TRIM(COALESCE(c."modello", '') + ' ' + COALESCE(c."trattamento", '') + ' ' + COALESCE(c."descrizione", '')) as Descricao, --[varchar](500) NOT NULL,
 		TRIM(COALESCE(c."modello", '') + ' ' + COALESCE(c."trattamento", '') + ' ' + COALESCE(c."descrizione", '')) as DescricaoComercial, --[varchar](500) NOT NULL,
 		'Lente' as Tipo, --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
@@ -313,6 +325,7 @@ insert into Item
 		CAST(c."note" as varchar(255)) as Observacao, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoCompra, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoVenda, --[varchar](255) NULL,
+		CAST(NULL as varchar) as UtilizaComposicaoValorReposicao, --varchar NULL
 		0 as UtilizaComposicaoPedido, --[bit] NULL CONSTRAINT [DF_Item_UtilizaComposicaoPedido]  DEFAULT ((0)),
 		CAST(NULL as int) as GarantiaDias, --[int] NULL,
 		CAST(NULL as varchar(255)) as GarantiaDescricao, --[varchar](255) NULL,
@@ -349,6 +362,7 @@ insert into Item
 		CAST(NULL as varchar(100)) as Modelo, --[varchar](100) NULL,
 		CAST(NULL as varchar(100)) as Genero, --[varchar](100) NULL,
 		c."colore" as Cor, --COR DAS LENTES [varchar](100) NULL,
+		CAST(NULL as varchar) as TipoMontagem, --varchar NULL,
 		c."materiale" as Material, --MATERIAL DAS LENTES [varchar](100) NULL,
 		CAST(NULL as numeric(18, 4)) as Tamanho, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as Altura, --[numeric](18, 4) NULL,
@@ -360,6 +374,7 @@ insert into Item
 		dx."da addizione" as AdicaoInicial, --[numeric](18, 4) NULL,
 		dx."a addizione" as AdicaoFinal, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as AlturaMinima, --[numeric](18, 4) NULL,
+		CAST(NULL as numeric(18,4)) as AlturaMontagem, --numeric(18,4) NULL,
 		dx."da sfero" as EsfericoInicial, --[numeric](18, 4) NULL,
 		dx."a sfero" as EsfericoFinal, --[numeric](18, 4) NULL,
 		dx."cilindro massimo" as Cilindrico, --[numeric](18, 4) NULL,
@@ -396,7 +411,7 @@ insert into Item
 		CAST(NULL as varchar(30)) as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		CAST(NULL as varchar(1)) as PAF_IAT, --[varchar](1) NULL,
 		CAST(NULL as varchar(1)) as PAF_IPPT, --[varchar](1) NULL,
-		CAST(NULL as varchar)
+		CAST(NULL as varchar) as LenteTipo --varchar NULL
 	from catalogo as c
 		left join diametrirx as dx 
 			on (diametrirx."codice articolo" = c."codice filiale")
@@ -416,8 +431,10 @@ insert into Item
 	select distinct 
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		CAST(NULL as varchar(50)) as CodigoBarras, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CodigoBarrasAntigo, --[varchar] NULL,
 		CAST(NULL as varchar) as CodigoNCM, --[int] NULL,
 		CAST(NULL as varchar(8)) as NCM, --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+		CAST(NULL as varchar) as CEST, --varchar NULL
 		TRIM(t."descrizione") as Descricao, --[varchar](500) NOT NULL,
 		TRIM(t."descrizione") as DescricaoComercial, --[varchar](500) NOT NULL,
 		'Tratamento' as Tipo, --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
@@ -445,6 +462,7 @@ insert into Item
 		CAST(NULL as varchar(255)) as Observacao, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoCompra, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoVenda, --[varchar](255) NULL,
+		CAST(NULL as varchar) as UtilizaComposicaoValorReposicao, --varchar NULL
 		0 as UtilizaComposicaoPedido, --[bit] NULL CONSTRAINT [DF_Item_UtilizaComposicaoPedido]  DEFAULT ((0)),
 		CAST(NULL as int) as GarantiaDias, --[int] NULL,
 		CAST(NULL as varchar(255)) as GarantiaDescricao, --[varchar](255) NULL,
@@ -478,6 +496,7 @@ insert into Item
 		CAST(NULL as varchar(100)) as Modelo, --[varchar](100) NULL,
 		CAST(NULL as varchar(100)) as Genero, --[varchar](100) NULL,
 		CAST(NULL as varchar(100)) as Cor, --COR DAS LENTES [varchar](100) NULL,
+		CAST(NULL as varchar) as TipoMontagem, --varchar NULL,
 		CAST(NULL as varchar(100)) as Material, --MATERIAL DAS LENTES [varchar](100) NULL,
 		CAST(NULL as numeric(18, 4)) as Tamanho, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as Altura, --[numeric](18, 4) NULL,
@@ -489,6 +508,7 @@ insert into Item
 		CAST(NULL as numeric(18, 4)) as AdicaoInicial, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as AdicaoFinal, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as AlturaMinima, --[numeric](18, 4) NULL,
+		CAST(NULL as numeric(18,4)) as AlturaMontagem, --numeric(18,4) NULL,
 		CAST(NULL as numeric(18, 4)) as EsfericoInicial, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as EsfericoFinal, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as Cilindrico, --[numeric](18, 4) NULL,
@@ -503,7 +523,7 @@ insert into Item
 		CAST(NULL as varchar(30)) as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		CAST(NULL as varchar(1)) as PAF_IAT, --[varchar](1) NULL,
 		CAST(NULL as varchar(1)) as PAF_IPPT, --[varchar](1) NULL,
-		CAST(NULL as varchar)
+		CAST(NULL as varchar) as LenteTipo --varchar NULL
 	from trattamenti as t
 		join catalogo as c
 			on (t."codice articolo" = c."codice filiale")
@@ -519,8 +539,10 @@ insert into Item
 	select distinct 
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		CAST(NULL as varchar(50)) as CodigoBarras, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CodigoBarrasAntigo, --[varchar] NULL,
 		CAST(NULL as varchar) as CodigoNCM, --[int] NULL,
 		CAST(NULL as varchar(8)) as NCM, --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+		CAST(NULL as varchar) as CEST, --varchar NULL
 		TRIM(s."descrizione") as Descricao, --[varchar](500) NOT NULL,
 		TRIM(s."descrizione") as DescricaoComercial, --[varchar](500) NOT NULL,
 		'Tratamento' as Tipo, --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
@@ -548,6 +570,7 @@ insert into Item
 		CAST(NULL as varchar(255)) as Observacao, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoCompra, --[varchar](255) NULL,
 		CAST(NULL as varchar(255)) as ObservacaoVenda, --[varchar](255) NULL,
+		CAST(NULL as varchar) as UtilizaComposicaoValorReposicao, --varchar NULL
 		0 as UtilizaComposicaoPedido, --[bit] NULL CONSTRAINT [DF_Item_UtilizaComposicaoPedido]  DEFAULT ((0)),
 		CAST(NULL as int) as GarantiaDias, --[int] NULL,
 		CAST(NULL as varchar(255)) as GarantiaDescricao, --[varchar](255) NULL,
@@ -581,6 +604,7 @@ insert into Item
 		CAST(NULL as varchar(100)) as Modelo, --[varchar](100) NULL,
 		CAST(NULL as varchar(100)) as Genero, --[varchar](100) NULL,
 		CAST(NULL as varchar(100)) as Cor, --COR DAS LENTES [varchar](100) NULL,
+		CAST(NULL as varchar) as TipoMontagem, --varchar NULL,
 		CAST(NULL as varchar(100)) as Material, --MATERIAL DAS LENTES [varchar](100) NULL,
 		CAST(NULL as numeric(18, 4)) as Tamanho, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as Altura, --[numeric](18, 4) NULL,
@@ -592,6 +616,7 @@ insert into Item
 		CAST(NULL as numeric(18, 4)) as AdicaoInicial, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as AdicaoFinal, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as AlturaMinima, --[numeric](18, 4) NULL,
+		CAST(NULL as numeric(18,4)) as AlturaMontagem, --numeric(18,4) NULL,
 		CAST(NULL as numeric(18, 4)) as EsfericoInicial, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as EsfericoFinal, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as Cilindrico, --[numeric](18, 4) NULL,
@@ -606,7 +631,7 @@ insert into Item
 		CAST(NULL as varchar(30)) as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		CAST(NULL as varchar(1)) as PAF_IAT, --[varchar](1) NULL,
 		CAST(NULL as varchar(1)) as PAF_IPPT, --[varchar](1) NULL,
-		CAST(NULL as varchar)
+		CAST(NULL as varchar) as LenteTipo --varchar NULL
 	from supplementi as s
 		join catalogo as c
 			on (s."codice articolo" = c."codice filiale")
