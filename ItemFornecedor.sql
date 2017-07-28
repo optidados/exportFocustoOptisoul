@@ -4,8 +4,8 @@ create table ItemFornecedor
 (
 	CodigoItem varchar(200), --[bigint] NOT NULL,
 	CodigoContato varchar(255), --[int] NOT NULL,
-	Descricao varchar(50), --[varchar](50) NULL,
-	Referencia varchar(30) --[varchar](30) NULL
+	Descricao varchar, --[varchar](50) NULL,
+	Referencia varchar --[varchar](30) NULL
 );
 
 
@@ -14,8 +14,8 @@ insert into ItemFornecedor
 	select
 		COALESCE('articoli.' + a."codice filiale", 'articoli_fornitore.' + t."codice a barre") as CodigoItem, --[bigint] NOT NULL,
 		'fornitor.' + COALESCE(a."codice fornitore", t."codice fornitore") as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
-		CAST(NULL as varchar(50)) as Descricao, --[varchar](50) NULL,
-		COALESCE(a."sku", t."sku") as Referencia --[varchar](30) NULL
+		CAST(NULL as varchar) as Descricao, --[varchar](50) NULL,
+		CAST(NULL as varchar) as Referencia --[varchar](30) NULL
 	from articoli_fornitore as t
 		full outer join articoli as a
 			on (a."codice a barre" = t."codice a barre")
@@ -32,8 +32,8 @@ insert into ItemFornecedor
 			COALESCE('.dx.' + dx."codice filiale", '') +
 			COALESCE('.p.' + p."codice filiale", '') as CodigoItem, --[bigint] NOT NULL,
 		'fornitor.' + f."codice filiale" as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
-		CAST(NULL as varchar(50)) as Descricao, --[varchar](50) NULL,
-		CAST(NULL as varchar(30)) as Referencia --[varchar](30) NULL
+		CAST(NULL as varchar) as Descricao, --[varchar](50) NULL,
+		CAST(NULL as varchar) as Referencia --[varchar](30) NULL
 	from catalogo as c
 		join fornitor as f
 			on (f."ragione sociale" = c."fornitore")
@@ -56,8 +56,8 @@ insert into ItemFornecedor
 	select distinct
 		't.' + SUBSTRING(t."descrizione" from 0 for 33) + '.f.' + f."codice filiale" as CodigoItem, --[bigint] NOT NULL,
 		'fornitor.' + COALESCE(f."codice filiale", '') as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
-		CAST(NULL as varchar(50)) as Descricao, --[varchar](50) NULL,
-		CAST(NULL as varchar(30)) as Referencia --[varchar](30) NULL
+		CAST(NULL as varchar) as Descricao, --[varchar](50) NULL,
+		CAST(NULL as varchar) as Referencia --[varchar](30) NULL
 	from trattamenti as t
 		join catalogo as c
 			on (t."codice articolo" = c."codice filiale")
@@ -73,8 +73,8 @@ insert into ItemFornecedor
 	select distinct
 		's.' + SUBSTRING(s."descrizione" from 0 for 33) + '.f.' + f."codice filiale" as CodigoItem, --[bigint] NOT NULL,
 		'fornitor.' + COALESCE(f."codice filiale", '') as CodigoContato, --[int] (int->varchar(255)) NOT NULL,
-		CAST(NULL as varchar(50)) as Descricao, --[varchar](50) NULL,
-		CAST(NULL as varchar(30)) as Referencia --[varchar](30) NULL
+		CAST(NULL as varchar) as Descricao, --[varchar](50) NULL,
+		CAST(NULL as varchar) as Referencia --[varchar](30) NULL
 	from supplementi as s
 		join catalogo as c
 			on (s."codice articolo" = c."codice filiale")

@@ -14,7 +14,7 @@ insert into ContatoGrupo
 	select
 		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoContato, --[int] (int->varchar(30)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		'Clientes' as Descricao --[varchar](255) NOT NULL,
+		'Cliente' as Descricao --[varchar](255) NOT NULL,
 	from clienti as c
 );
 
@@ -36,7 +36,7 @@ insert into ContatoGrupo
 	select
 		'clienti ingrosso.' + CAST(ci."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(30)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		'Clientes' as Descricao --[varchar](255) NOT NULL,
+		'Cliente' as Descricao --[varchar](255) NOT NULL,
 	from "clienti ingrosso" as ci
 );
 
@@ -47,10 +47,20 @@ insert into ContatoGrupo
 	select
 		'fornitor.' + CAST(f."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(30)) NOT NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		'Fornecedores' as Descricao --[varchar](255) NOT NULL,
+		'Fornecedor' as Descricao --[varchar](255) NOT NULL,
 	from fornitor as f
 );
 
+--CONVÊNIO
+insert into ContatoGrupo
+(
+	select
+		'fornitor.' + CAST(f."codice filiale" as varchar(12)) as CodigoContato, --[int] (int->varchar(30)) NOT NULL,
+		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
+		'Convênio' as Descricao --[varchar](255) NOT NULL,
+	from fornitor as f
+	where f."campo3_f" is not null
+);
 
 --MÉDICO
 insert into ContatoGrupo
@@ -61,7 +71,6 @@ insert into ContatoGrupo
 		'Médico' as Descricao --[varchar](255) NOT NULL,
 	from oculisti as o
 );
-
 
 --PROBLEMA VISUAL
 insert into ContatoGrupo
