@@ -181,3 +181,102 @@ where
         GROUP BY DocumentoItem."CodigoDocumento"
         HAVING COUNT(*) = 1
     );
+
+-----------------------------------------------------------------------------------------------------
+--UPDATE DO TITULAR
+create table #temp_fatturac //NOMODIFICA
+(
+    "codice fornitore" varchar(30),
+    "codice transdet" varchar(12),
+    "codice azienda" varchar(30)
+);
+
+create index codforidx on #temp_fatturac("codice fornitore"); //NOMODIFICA
+create index codtdidx on #temp_fatturac("codice transdet"); //NOMODIFICA    
+
+insert into #temp_fatturac //NOMODIFICA
+(
+    select
+        'clienti.' + fc."codice fornitore",
+        fc."codice transdet",
+        'fornitor.' + fc."codice azienda"
+    from fatturaclienti as fc
+    where fc."codice transdet" <> ''
+);
+
+create table #temp_v //NOMODIFICA
+(
+    "codice carrello" varchar(20),
+    "codice cliente" varchar(25),
+    "codice transazione" varchar(12)
+);
+
+create index codcaridx on #temp_v("codice carrello"); //NOMODIFICA
+create index codcliidx on #temp_v("codice cliente"); //NOMODIFICA
+create index codtidx on #temp_v("codice transazione"); //NOMODIFICA    
+
+insert into #temp_v //NOMODIFICA
+(
+    select distinct
+        'car.' + car2."codice carrello" as "codice carrello",
+        'clienti.' + car2."codice cliente",
+        car2."codice transazione"
+    from carrello2 as car2    
+);
+
+insert into #temp_v //NOMODIFICA
+(
+    select distinct
+        'scar.' + scar2."codice carrello" as "codice carrello",
+        'clienti.' + scar2."codice cliente",
+        scar2."codice transazione"
+    from storicocarrello2 as scar2    
+);
+
+update Documento
+set Documento."CodigoContato" = 
+(
+    select
+        fc."codice fornitore"
+    from #temp_v as v //NOMODIFICA
+    join transdet as td
+        on (td."codice transazione" = v."codice transazione")
+    join #temp_fatturac as fc //NOMODIFICA
+        on (fc."codice transdet" = td."codice filiale")
+    
+    where
+        (v."codice cliente" <> fc."codice fornitore") and
+        (v."codice carrello" = Documento."CodigoDocumento")
+)
+where
+    Documento."Tipo" = 'Venda';
+
+--CONVÊNIO
+update Documento
+set Documento."CodigoContatoResponsavel" = 
+(
+    select
+        fc."codice azienda"
+    from #temp_v as v //NOMODIFICA
+    join transdet as td
+        on (td."codice transazione" = v."codice transazione")
+    join #temp_fatturac as fc //NOMODIFICA
+        on (fc."codice transdet" = td."codice filiale")
+    where
+        (fc."codice azienda" <> '') and
+        (v."codice carrello" = Documento."CodigoDocumento")
+)
+where
+    Documento."Tipo" = 'Venda';
+
+update Documento
+set Documento."ContatoResponsavelEmail" = 
+(
+    select
+        c."EmailNFe"
+    from Contato as c
+    where
+        (c."CodigoAntigo" = Documento."CodigoContatoResponsavel")
+)
+where
+    Documento."CodigoContatoResponsavel" is not null;

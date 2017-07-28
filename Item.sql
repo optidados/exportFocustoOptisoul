@@ -5,8 +5,8 @@ create table Item
 	Referencia varchar(25), --[varchar](20) NULL,
 	CodigoBarras varchar(50), --[varchar](50) NULL,
 	CodigoBarrasAntigo varchar, --[varchar](50) NULL,
-	CodigoNCM varchar(12), --[int] NULL,
-	NCM varchar(8), --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+	CodigoNCM int, --[int] NULL,
+	NCM varchar(8), --[varchar](8) NULL,
 	CEST varchar, --varchar NULL,
 	Descricao varchar(500), --[varchar](500) NOT NULL,
 	DescricaoComercial varchar(500), --[varchar](500) NOT NULL,
@@ -69,7 +69,7 @@ create table Item
 	Modelo varchar(100), --[varchar](100) NULL,
 	Genero varchar(100), --[varchar](100) NULL,
 	Cor varchar(100), --COR DAS LENTES [varchar](100) NULL,
-	TipoMontagem varchar, --varchar NULL
+	TipoMontagem varchar(25), --varchar NULL
 	Material varchar(100), --MATERIAL DAS LENTES [varchar](100) NULL,
 	Tamanho numeric(18, 4), --[numeric](18, 4) NULL,
 	Altura numeric(18, 4), --[numeric](18, 4) NULL,
@@ -96,7 +96,7 @@ create table Item
 	PAF_SituacaoTributaria varchar(30), --[varchar](30) NULL,
 	PAF_IAT varchar(1), --[varchar](1) NULL,
 	PAF_IPPT varchar(1), --[varchar](1) NULL,
-	LenteTipo varchar --varchar NULL
+	LenteTipo varchar(20) --varchar NULL
 );
 
 create index CodAntIdx on Item("CodigoAntigo");
@@ -107,8 +107,8 @@ insert into Item
 		COALESCE(a."SKU", t."SKU") as Referencia, --[varchar](20) NULL,
 		COALESCE(a."codice a barre", t."codice a barre") as CodigoBarras, --[varchar](50) NULL,
 		CAST(NULL as varchar) as CodigoBarrasAntigo, --[varchar] NULL,
-		COALESCE(a."codice doganale", t."codice doganale") as CodigoNCM, --[int] NULL,
-		CAST(NULL as varchar(8)) as NCM, --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+		CAST(NULL as int) as CodigoNCM, --[int] NULL,
+		CAST(COALESCE(a."codice doganale", t."codice doganale") as varchar(8)) as NCM, --[varchar](8) NULL,
 		CAST(NULL as varchar) as CEST, --varchar NULL
 		CASE COALESCE(a."magazzino", t."magazzino")
 			WHEN 0 THEN TRIM(GetLinea(COALESCE(a."codice linea", t."codice linea", '')) + ' ' + COALESCE(a."modello", t."modello", '') + ' ' + COALESCE(a."colore", t."colore", '') + ' ' + CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
@@ -130,17 +130,11 @@ insert into Item
 			--E O TRATAMENTO? DIFÍCIL SEPARAR
 		END as Tipo, --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
 		CASE COALESCE(a."magazzino", t."magazzino")
-			WHEN 0 THEN GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti"))
-			WHEN 1 THEN GetFamiglia(COALESCE(a."codice famiglia", t."codice famiglia"))
-			WHEN 2 THEN GetFamigliaLac(COALESCE(a."codice famiglia", t."codice famiglia"))
-			ELSE GetTipoProdotto(COALESCE(a."codice tipo prodotto", t."codice tipo prodotto"))
+			WHEN 2 THEN GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti"))
+			WHEN 3 THEN GetTipoProdotto(COALESCE(a."codice tipo prodotto", t."codice tipo prodotto"))
 			--E O TRATAMENTO?
 		END as Grupo, --[varchar](50) NULL,
-		CASE COALESCE(a."magazzino", t."magazzino")
-			WHEN 0 THEN GetMontaggio(COALESCE(a."codice montaggio", t."codice montaggio"))
-			--WHEN 1 THEN GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti")) --EH A MESMA COISA QUE FAMILIA
-			WHEN 2 THEN GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti"))
-		END as SubGrupo, --[varchar](50) NULL,
+		CAST(NULL as varchar) as SubGrupo, --[varchar](50) NULL,
 		GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) as Marca, --[varchar](50) NULL,
 		'Linha' as Status, --[varchar](20) NULL CONSTRAINT [DF_Item_Status]  DEFAULT ('Linha'),
 		CAST(NULL as varchar(20)) as "Local", --[varchar](20) NULL,
@@ -235,7 +229,7 @@ insert into Item
 			WHEN 0 THEN COALESCE(t."colore 2", a."colore 2")
 			ELSE COALESCE(a."colore", t."colore")
 		END as Cor, --COR DAS LENTES [varchar](100) NULL,
-		CAST(NULL as varchar) as TipoMontagem, --varchar NULL,
+		GetMontaggio(COALESCE(a."codice montaggio", t."codice montaggio")) as TipoMontagem, --varchar NULL,
 		CASE COALESCE(a."magazzino", t."magazzino")
 			WHEN 0 THEN CAST(NULL as varchar(25)) --PODEMOS TRATAR POLARIZADO, FOTOSENSÍVEL, ETC. POR AQUI?
 			ELSE GetMateriale(COALESCE(a."codice materiale", t."codice materiale"))
@@ -247,13 +241,23 @@ insert into Item
 		CAST(NULL as numeric(18, 4)) as Diagonal, --[numeric](18, 4) NULL,
 		COALESCE(a."diametro", t."diametro") as Diametro, --[numeric](18, 4) NULL,
 		CAST(COALESCE(a."asse", t."asse") as numeric(18,4)) as Eixo, --[numeric](18, 4) NULL,
-		CAST(COALESCE(a."addizione", t."addizione", 0.75) as numeric(18,4)) as AdicaoInicial, --[numeric](18, 4) NULL,
-		CAST(COALESCE(a."addizione", t."addizione", 3.75) as numeric(18,4)) as AdicaoFinal, --NULO OU O MESMO QUE AdicaoInicial? [numeric](18, 4) NULL,
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+			THEN CAST(COALESCE(a."addizione", t."addizione", 0.75) as numeric(18,4))
+		END as AdicaoInicial, --[numeric](18, 4) NULL,
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+			THEN CAST(COALESCE(a."addizione", t."addizione", 4) as numeric(18,4))
+		END as AdicaoFinal, --NULO OU O MESMO QUE AdicaoInicial? [numeric](18, 4) NULL,
 		CAST(NULL as numeric(18,4)) as AlturaMinima, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18,4)) as AlturaMontagem, --numeric(18,4) NULL,
-		CAST(COALESCE(a."sfera", t."sfera", -25.00) as numeric(18,4)) as EsfericoInicial, --[numeric](18, 4) NULL,
-		CAST(COALESCE(a."sfera", t."sfera", 25.00) as numeric(18,4)) as EsfericoFinal, --NULO OU O MESMO QUE EsfericoInicial? [numeric](18, 4) NULL,
-		CAST(COALESCE(a."cilindro", t."cilindro", -8.00) as numeric(18,4)) as Cilindrico, --[numeric](18, 4) NULL,
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+			THEN CAST(COALESCE(a."sfera", t."sfera", -25.00) as numeric(18,4))
+		END as EsfericoInicial, --[numeric](18, 4) NULL,
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+			THEN CAST(COALESCE(a."sfera", t."sfera", 25.00) as numeric(18,4))
+		END as EsfericoFinal, --NULO OU O MESMO QUE EsfericoInicial? [numeric](18, 4) NULL,
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+			THEN CAST(COALESCE(a."cilindro", t."cilindro", -8.00) as numeric(18,4))
+		END as Cilindrico, --[numeric](18, 4) NULL,
 		CASE COALESCE(a."magazzino", t."magazzino")
 			WHEN 0 THEN COALESCE(a."colore", t."colore")
 		END as AmarcaoCor, --[varchar](100) NULL,
@@ -264,7 +268,11 @@ insert into Item
 		CAST(COALESCE(a."ponte", t."ponte") as numeric(18,4)) as Ponte, --[numeric](18, 4) NULL,
 		COALESCE(a."rb", t."rb") as RB1, --varchar(5) (numeric(18,4)->varchar(5)) NULL,
 		CAST(COALESCE(a."rb2", t."rb2") as numeric(18,4)) as RB2, --[numeric](18, 4) NULL,
-		GetGeometriaLac(COALESCE(a."codice geometria", t."codice geometria")) as Geometria, --varchar(20) (numeric(18,4)->varchar(20)) NULL,
+		CASE COALESCE(a."codice geometria", t."codice geometria")
+			WHEN 'S' THEN 'Esférica'
+			WHEN 'A' THEN 'Asférica'
+			WHEN 'T' THEN 'Tórica'
+		END as Geometria, --varchar(20) (numeric(18,4)->varchar(20)) NULL,
 		CAST(COALESCE(a."indice rifrazione", t."indice rifrazione") as numeric(18,4)) as IndiceRefracao, --[numeric](18, 4) NULL,
 		CASE COALESCE(a."situazione tributaria", t."situazione tributaria")
 			WHEN 'T' THEN 'TributaçãoICMS'
@@ -276,7 +284,16 @@ insert into Item
 		END as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		COALESCE(a."IAT", t."IAT") as PAF_IAT, --[varchar](1) NULL,
 		COALESCE(a."IPPT", t."IPPT") as PAF_IPPT, --[varchar](1) NULL,
-		CAST(NULL as varchar) as LenteTipo --varchar NULL
+		CASE COALESCE(a."codice famiglia", t."codice famiglia")
+			WHEN 'M' THEN 'Monofocal'
+			WHEN 'B' THEN 'Bifocal'
+			WHEN 'P' THEN 'Multifocal'
+			WHEN 'I' THEN 'Monofocal'
+			WHEN 'T' THEN 'Multifocal'
+			WHEN 'C' THEN 'Cosmética'
+			WHEN 'F' THEN 'Multifocal'
+			--E O TRATAMENTO?
+		END as LenteTipo --varchar NULL
 	from articoli_fornitore as t
 		full outer join articoli as a
 			on (a."codice a barre" = t."codice a barre")
@@ -295,14 +312,14 @@ insert into Item
 		CAST(NULL as varchar(25)) as Referencia, --[varchar](20) NULL,
 		c."codice a barre" as CodigoBarras, --[varchar](50) NULL,
 		CAST(NULL as varchar) as CodigoBarrasAntigo, --[varchar] NULL,
-		c."codice doganale" as CodigoNCM, --[int] NULL,
-		CAST(NULL as varchar(8)) as NCM, --O FOCUS POSSUI A DESCRIÇÃO EM OUTRA TABELA, MAS ACREDITO QUE A DA GEEKS SEJA MELHOR [varchar](8) NULL,
+		CAST(NULL as int) as CodigoNCM, --[int] NULL,
+		CAST(c."codice doganale" as varchar(8)) as NCM, --[varchar](8) NULL,
 		CAST(NULL as varchar) as CEST, --varchar NULL
 		TRIM(COALESCE(c."modello", '') + ' ' + COALESCE(c."trattamento", '') + ' ' + COALESCE(c."descrizione", '')) as Descricao, --[varchar](500) NOT NULL,
 		TRIM(COALESCE(c."modello", '') + ' ' + COALESCE(c."trattamento", '') + ' ' + COALESCE(c."descrizione", '')) as DescricaoComercial, --[varchar](500) NOT NULL,
 		'Lente' as Tipo, --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
-		c."linea" as Grupo, --[varchar](50) NULL,
-		CAST(NULL as varchar(50)) as SubGrupo, --[varchar](50) NULL,
+		CAST(NULL as varchar) as Grupo, --[varchar](50) NULL,
+		CAST(NULL as varchar) as SubGrupo, --[varchar](50) NULL,
 		c."marca" as Marca, --[varchar](50) NULL,
 		'Linha' as Status, --[varchar](20) NULL CONSTRAINT [DF_Item_Status]  DEFAULT ('Linha'),
 		CAST(NULL as varchar(20)), --[varchar](20) NULL,
@@ -411,7 +428,11 @@ insert into Item
 		CAST(NULL as varchar(30)) as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		CAST(NULL as varchar(1)) as PAF_IAT, --[varchar](1) NULL,
 		CAST(NULL as varchar(1)) as PAF_IPPT, --[varchar](1) NULL,
-		CAST(NULL as varchar) as LenteTipo --varchar NULL
+		CASE c."linea"
+			WHEN 'Monofoc.' THEN 'Monofocal'
+			WHEN 'Intermed.' THEN 'Monofocal'
+			ELSE c."linea"
+		END as LenteTipo --varchar NULL
 	from catalogo as c
 		left join diametrirx as dx 
 			on (diametrirx."codice articolo" = c."codice filiale")
