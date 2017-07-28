@@ -29,15 +29,15 @@ create table Documento
 	RegimeContato varchar, --null
 	CodigoContatoEndereco int, --null
 	DescricaoContatoEndereco varchar(8000), --null [varchar(max)]--> varchar(8000)
-	CodigoContatoResponsavel int, --null
-	ContatoResponsavelEmail varchar, --null
+	CodigoContatoResponsavel varchar(13), --null
+	ContatoResponsavelEmail varchar(50), --null
 	DataHoraEmissao	date, --datetime->date --null
 	DataHoraFinalizado date, --datetime->date --null
 	DataHoraPrevisto date, --datetime->date --null
 	DataHoraRealizado date, --datetime->date --null
 	DataHoraAvisado	date, --datetime->date --null
 	DataHoraRetorno	date, --datetime->date --null
-	CodigoContatoFinalizado	int, --null
+	CodigoContatoFinalizado	varchar(13), --null
 	Observacao varchar(8000), --null [varchar(max)]--> varchar(8000)
 	ObservacaoInterna varchar, --null [varchar(max)]--> varchar(8000)
 	ObservacaoEntrega varchar, --null
@@ -146,9 +146,9 @@ insert into Documento
 		'Venda de Mercadoria' as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -168,7 +168,7 @@ insert into Documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRetorno, --datetime (date) --null
-		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
+		'utente.' + car."operatore" as CodigoContatoFinalizado, --int --null
 		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
@@ -295,9 +295,9 @@ insert into Documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -312,7 +312,7 @@ insert into Documento
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		car."data" as DataHoraEmissao, --datetime (date) --null
-		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
+		car."data" as DataHoraFinalizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraPrevisto, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
@@ -441,9 +441,9 @@ insert into Documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -458,7 +458,7 @@ insert into Documento
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		car2."data" as DataHoraEmissao, --datetime (date) --null
-		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
+		car2."data" as DataHoraFinalizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraPrevisto, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
@@ -583,9 +583,9 @@ insert into Documento
 		'Prescrição' as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -729,7 +729,7 @@ insert into Documento
 		on (('puntovendita.' + oc."filiale") = filial."CodigoAntigo")
 
 		left join Contato as cliente
-		on (('clienti.' + t."codice cliente") = cliente."CodigoAntigo")
+		on (('clienti.' + oc."codice cliente") = cliente."CodigoAntigo")
 
 		join PrescricaoEnvelope as pe
 		on ((COALESCE(b."codice filiale", lb."codice filiale") = pe."CodigoEnvelope") and (pe."Dias" = (CAST(COALESCE(b."data", lb."data") as integer) - CAST(oc."data" as integer))))
@@ -738,6 +738,12 @@ insert into Documento
 		oc."codice filiale",
 		matriz."CodigoAntigo",
 		filial."CodigoAntigo",
+		matriz."Nome",
+		filial."Nome",
+		matriz."NumeroDocumentoNacional", 
+		filial."NumeroDocumentoNacional",
+		matriz."NumeroDocumentoMunicipal",
+		filial."NumeroDocumentoMunicipal",
 		oc."codice cliente",
 		oc."data"
 );
@@ -747,7 +753,7 @@ insert into Documento
 (
 	select
 		'busta.' + CAST(b."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(20)
-		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(12)
+		'item.car.' + CAST(car."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(12)
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -765,9 +771,9 @@ insert into Documento
 			WHEN 4 THEN 'Entregue'
 		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -779,12 +785,12 @@ insert into Documento
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
 		CAST(NULL as int) as CodigoContatoEndereco, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
-		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
+		'utente.' + b."operatore" as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		b."data" as DataHoraEmissao, --datetime (date) --null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
 		b."data prevista consegna" as DataHoraPrevisto, --datetime (date) --null
-		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
+		b."data consegna" as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRetorno, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
@@ -842,8 +848,8 @@ insert into Documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		CAST(NULL as varchar) as DocumentoCodigo, --varchar(100) --null
-		CAST(NULL as varchar) as DocumentoTipo, --varchar(100) --null
+		'car.' + CAST(car."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
 		CAST(NULL as varchar) as MotivoCancelamento, --varchar(255) --null
@@ -905,26 +911,26 @@ insert into Documento
 		CAST(NULL as varchar) as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		'Normal' as Operacao, --varchar(255) --null
-    CASE 
-      WHEN lb."stato lente dx" >= lb."stato lente sx" THEN
-        CASE lb."stato lente dx"
-          WHEN 1 THEN 'Aguardando Envio'
-          WHEN 2 THEN 'Aguardando Retorno'
-          WHEN 3 THEN 'Pronto para Entrega'
-          WHEN 4 THEN 'Entregue'
-        END
-      WHEN lb."stato lente dx" < lb."stato lente sx" THEN
-        CASE lb."stato lente sx"
-          WHEN 1 THEN 'Aguardando Envio'
-          WHEN 2 THEN 'Aguardando Retorno'
-          WHEN 3 THEN 'Pronto para Entrega'
-          WHEN 4 THEN 'Entregue'
-        END
-    END as Status, --varchar(255) --null
+	    CASE 
+	      WHEN lb."stato lente dx" >= lb."stato lente sx" THEN
+	        CASE lb."stato lente dx"
+	          WHEN 1 THEN 'Aguardando Envio'
+	          WHEN 2 THEN 'Aguardando Retorno'
+	          WHEN 3 THEN 'Pronto para Entrega'
+	          WHEN 4 THEN 'Entregue'
+	        END
+	      WHEN lb."stato lente dx" < lb."stato lente sx" THEN
+	        CASE lb."stato lente sx"
+	          WHEN 1 THEN 'Aguardando Envio'
+	          WHEN 2 THEN 'Aguardando Retorno'
+	          WHEN 3 THEN 'Pronto para Entrega'
+	          WHEN 4 THEN 'Entregue'
+	        END
+	    END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -936,12 +942,12 @@ insert into Documento
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
 		CAST(NULL as int) as CodigoContatoEndereco, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
-		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
+		'utente.' + lb."operatore" as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		lb."data" as DataHoraEmissao, --datetime (date) --null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
 		lb."data prevista consegna" as DataHoraPrevisto, --datetime (date) --null
-		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
+		lb."data consegna" as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRetorno, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
@@ -999,8 +1005,8 @@ insert into Documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		CAST(NULL as varchar) as DocumentoCodigo, --varchar(100) --null
-		CAST(NULL as varchar) as DocumentoTipo, --varchar(100) --null
+		'car.' + CAST(car."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
 		CAST(NULL as varchar) as MotivoCancelamento, --varchar(255) --null
@@ -1063,9 +1069,9 @@ insert into Documento
 		'Venda de Mercadoria' as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -1085,7 +1091,7 @@ insert into Documento
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRetorno, --datetime (date) --null
-		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
+		'utente.' + scar."operatore" as CodigoContatoFinalizado, --int --null
 		CAST(NULL as varchar) as Observacao, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoInterna, --varchar(8000) --null
 		CAST(NULL as varchar) as ObservacaoEntrega, --varchar(150) --null
@@ -1212,9 +1218,9 @@ insert into documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -1229,7 +1235,7 @@ insert into documento
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		scar."data" as DataHoraEmissao, --datetime (date) --null
-		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
+		scar."data" as DataHoraFinalizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraPrevisto, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
@@ -1359,9 +1365,9 @@ insert into Documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -1376,7 +1382,7 @@ insert into Documento
 		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		scar2."data" as DataHoraEmissao, --datetime (date) --null
-		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
+		scar2."data" as DataHoraFinalizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraPrevisto, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
@@ -1507,9 +1513,9 @@ insert into documento
 			WHEN 4 THEN 'Entregue'
 		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -1521,12 +1527,12 @@ insert into documento
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
 		CAST(NULL as int) as CodigoContatoEndereco, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
-		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
+		'utente.' + b."operatore" as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		b."data" as DataHoraEmissao, --datetime (date) --null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
 		b."data prevista consegna" as DataHoraPrevisto, --datetime (date) --null
-		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
+		b."data consegna" as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRetorno, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
@@ -1584,8 +1590,8 @@ insert into documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		CAST(NULL as varchar) as DocumentoCodigo, --varchar(100) --null
-		CAST(NULL as varchar) as DocumentoTipo, --varchar(100) --null
+		'scar.' + CAST(scar."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
 		CAST(NULL as varchar) as MotivoCancelamento, --varchar(255) --null
@@ -1649,25 +1655,25 @@ insert into documento
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
 		'Normal' as Operacao, --varchar(255) --null
 		CASE 
-      WHEN lb."stato lente dx" >= lb."stato lente sx" THEN
-        CASE lb."stato lente dx"
-          WHEN 1 THEN 'Aguardando Envio'
-          WHEN 2 THEN 'Aguardando Retorno'
-          WHEN 3 THEN 'Pronto para Entrega'
-          WHEN 4 THEN 'Entregue'
-        END
-      WHEN lb."stato lente dx" < lb."stato lente sx" THEN
-        CASE lb."stato lente sx"
-          WHEN 1 THEN 'Aguardando Envio'
-          WHEN 2 THEN 'Aguardando Retorno'
-          WHEN 3 THEN 'Pronto para Entrega'
-          WHEN 4 THEN 'Entregue'
-        END
-    END as Status, --varchar(255) --null
+	      WHEN lb."stato lente dx" >= lb."stato lente sx" THEN
+	        CASE lb."stato lente dx"
+	          WHEN 1 THEN 'Aguardando Envio'
+	          WHEN 2 THEN 'Aguardando Retorno'
+	          WHEN 3 THEN 'Pronto para Entrega'
+	          WHEN 4 THEN 'Entregue'
+        	END
+	      WHEN lb."stato lente dx" < lb."stato lente sx" THEN
+	        CASE lb."stato lente sx"
+	          WHEN 1 THEN 'Aguardando Envio'
+	          WHEN 2 THEN 'Aguardando Retorno'
+	          WHEN 3 THEN 'Pronto para Entrega'
+	          WHEN 4 THEN 'Entregue'
+	        END
+	    END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		CAST(NULL as varchar) as DescricaoEmpresa, --varchar(255) --null
-		CAST(NULL as varchar) as NumeroDocumentoEmpresa, --varchar(150) --null
-		CAST(NULL as varchar) as InscricaoMunicipalEmpresa, --varchar(150) --null
+		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
+		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
 		CAST(NULL as int) as OptanteSimplesNacional, --int --not null
 		CAST(NULL as int) as CodigoEmpresaEndereco, --int --null
@@ -1679,12 +1685,12 @@ insert into documento
 		CAST(NULL as varchar) as RegimeContato, --varchar(100) --null
 		CAST(NULL as int) as CodigoContatoEndereco, --int --null
 		CAST(NULL as varchar) as DescricaoContatoEndereco, --varchar(170) --null
-		CAST(NULL as int) as CodigoContatoResponsavel, --int --null
+		'utente.' + lb."operatore" as CodigoContatoResponsavel, --int --null
 		CAST(NULL as varchar) as ContatoResponsavelEmail, --varchar(255) --null
 		lb."data" as DataHoraEmissao, --datetime (date) --null
 		CAST(NULL as date) as DataHoraFinalizado, --datetime (date) --null
 		lb."data prevista consegna" as DataHoraPrevisto, --datetime (date) --null
-		CAST(NULL as date) as DataHoraRealizado, --datetime (date) --null
+		lb."data consegna" as DataHoraRealizado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraAvisado, --datetime (date) --null
 		CAST(NULL as date) as DataHoraRetorno, --datetime (date) --null
 		CAST(NULL as int) as CodigoContatoFinalizado, --int --null
@@ -1742,8 +1748,8 @@ insert into documento
 		0.0000 as ValorIcms, --decimal(18,4) --null
 		0.0000 as ValorBaseIcmsSt, --decimal(18,4) --null
 		0.0000 as ValorIcmsSt, --decimal(18,4) --null
-		CAST(NULL as varchar) as DocumentoCodigo, --varchar(100) --null
-		CAST(NULL as varchar) as DocumentoTipo, --varchar(100) --null
+		'scar.' + CAST(scar."codice filiale" as varchar(12)) as DocumentoCodigo, --varchar(100) --null
+		'Venda' as DocumentoTipo, --varchar(100) --null
 		CAST(NULL as varchar) as NaturezaOperacao, --varchar(255) --null
 		CAST(NULL as date) as DataCompra, --date --null
 		CAST(NULL as varchar) as MotivoCancelamento, --varchar(255) --null
