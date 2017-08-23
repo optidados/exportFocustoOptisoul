@@ -61,39 +61,32 @@ create table Contato
 create index CodAntigoIdx
 	on Contato ("CodigoAntigo");
 
---CLIENTI
+
+--SEDE
 insert into Contato
 (
-	select
-		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
-		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
-		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Apelido, --[varchar](255) NULL,
-		c."codfiva" as NumeroDocumentoNacional, --[varchar](150) NULL,
-		CASE
-			WHEN c."codfiva" IS NOT NULL and c."codfiva" <> ''
-			THEN 'CPF'
+	select	
+		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
+		s."ragione sociale" as Nome, --[varchar](255) NOT NULL,
+		s."sede" as Apelido, --[varchar](255) NULL,
+		s."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
+		CASE 
+			WHEN s."codice fiscale" IS NOT NULL and s."codice fiscale" <> ''
+			THEN 'CNPJ'
 		END as TipoDocumentoNacional, --[varchar](4) NULL,
-		c."partita iva" as NumeroDocumentoEstadual, --[varchar](150) NULL,
-		CAST(NULL as varchar) as NumeroDocumentoMunicipal,--[varchar](150) NULL,
+		s."partita iva" as NumeroDocumentoEstadual, --[varchar](150) NULL,
+		CAST(NULL as varchar) as NumeroDocumentoMunicipal, --[varchar](150) NULL,
 		CAST(NULL as varchar) as Site, --[varchar](255) NULL,
-		c."e mail" as Email, --[varchar](255) NULL,
-		c."e mail" as EmailNFe, --[varchar](255) NULL,
-		CASE c."sesso"
-			WHEN 'M' THEN 'Masculino'
-			WHEN 'F' THEN 'Feminino'
-		END as Sexo, --[varchar](100) NULL,
-		c."professione" as Segmento, --SEGMENTO DE CLIENTE? [varchar](100) NULL, 
-		CASE c."campo4_c"
-			WHEN 0 THEN 'Não Consultado'
-			WHEN 3 THEN 'Com Pendência'
-		END as CondutaObservacao, --ALERTAS NA HORA DO PEDIDO -- JOGAR O COM PENDENCIA, NÃO CONSULTADO [varchar](255) NULL,
-		CASE c."campo4_c"
-			WHEN 2 THEN 'Bloqueado'
-		END as CondutaRestricao, --RESTRINGE O PEDIDO -- JOGAR O BLOQUEADO SPC AQUI [varchar](255) NULL,
-		CAST(c."note" as varchar(8000)) as Observacao, --[varchar](max) NULL,
-		CAST(c."note riservate" as varchar(8000)) as ObservacaoConsulta, --[varchar](max) NULL,
-		CAST(c."data nascita" as datetime) as DataAbertura, --[datetime] NULL,
-		CAST(c."data inserimento" as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
+		s."e-mail" as Email, --[varchar](255) NULL,
+		s."e-mail" as EmailNFe, --[varchar](255) NULL,
+		CAST(NULL as varchar) as Sexo, --[varchar](100) NULL,
+		'Matriz' as Segmento, --[varchar](100) NULL, 
+		CAST(NULL as varchar) as CondutaObservacao, --[varchar](255) NULL,
+		CAST(NULL as varchar) CondutaRestricao, --[varchar](255) NULL,
+		CAST(NULL as varchar(8000)) as Observacao, --[varchar](max) NULL,
+		CAST(NULL as varchar) as ObservacaoConsulta, --[varchar](max) NULL,
+		CAST(NULL as datetime) as DataAbertura, --[datetime] NULL,
+		CAST(NULL as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
 		CAST(NULL as datetime) as DataAlteracao, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
 		CAST(NULL as datetime) as DataConsulta, --[datetime] NULL,
 		CAST(NULL as int) as CodigoContatoVendedor, --[int] NULL,
@@ -103,15 +96,15 @@ insert into Contato
 		CAST(NULL as int) as CodigoItemTabelaPreco, --[int] NULL,
 		CAST(NULL as int) as CodigoFormaPagamento, --[int] NULL,
 		CAST(NULL as varchar) as CondicaoPagamento, --[varchar](50) NULL,
-		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
+		'sede.' + CAST(s."codice filiale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Imagem, --[varchar](max) NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		1 as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
+		CASE WHEN NOT(s."attivo") THEN 0 ELSE 1 END as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
 		0 as Excluido, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
 		CAST(NULL as int) as CodigoContatoPlataforma, --[int] NULL,
 		CAST(NULL as varchar) as Regime, --[varchar](100) NULL,
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
-		c."credito" as LimiteCredito, --[numeric](18, 2) NULL,
+		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
 		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
@@ -130,9 +123,72 @@ insert into Contato
 		CAST(NULL as varchar) as CRMAcao, --[varchar](50) NULL,
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
-	from clienti as c
-		left join anag_ext5 as an
-		on (an."codice cliente" = c."codice personale")
+	from sede as s
+);
+
+
+--PUNTOVENDITA
+insert into Contato
+(
+	select	
+		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
+		pv."ragione sociale" as Nome, --[varchar](255) NOT NULL,
+		pv."punto vendita" as Apelido, --[varchar](255) NULL,
+		pv."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
+		CASE 
+			WHEN pv."codice fiscale" IS NOT NULL and pv."codice fiscale" <> ''
+			THEN 'CNPJ'
+		END as TipoDocumentoNacional, --[varchar](4) NULL,
+		pv."partita iva" as NumeroDocumentoEstadual, --[varchar](150) NULL,
+		CAST(NULL as varchar) as NumeroDocumentoMunicipal, --[varchar](150) NULL,
+		CAST(NULL as varchar) as Site, --[varchar](255) NULL,
+		pv."e-mail" as Email, --[varchar](255) NULL,
+		pv."e-mail" as EmailNFe, --[varchar](255) NULL,
+		CAST(NULL as varchar) as Sexo, --[varchar](100) NULL,
+		'Filial' as Segmento, --[varchar](100) NULL, 
+		CAST(NULL as varchar) as CondutaObservacao, --[varchar](255) NULL,
+		CAST(NULL as varchar) CondutaRestricao, --[varchar](255) NULL,
+		CAST(NULL as varchar(8000)) as Observacao, --[varchar](max) NULL,
+		CAST(NULL as varchar) as ObservacaoConsulta, --[varchar](max) NULL,
+		CAST(NULL as datetime) as DataAbertura, --[datetime] NULL,
+		CAST(NULL as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
+		CAST(NULL as datetime) as DataAlteracao, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
+		CAST(NULL as datetime) as DataConsulta, --[datetime] NULL,
+		CAST(NULL as int) as CodigoContatoVendedor, --[int] NULL,
+		CAST(NULL as int) as CodigoContatoAssistente, --[int] NULL,
+		CAST(NULL as int) as CodigoContatoIndicacao, --[int] NULL,
+		CAST(NULL as int) as CodigoContatoTransportadora, --[int] NULL,
+		CAST(NULL as int) as CodigoItemTabelaPreco, --[int] NULL,
+		CAST(NULL as int) as CodigoFormaPagamento, --[int] NULL,
+		CAST(NULL as varchar) as CondicaoPagamento, --[varchar](50) NULL,
+		'puntovendita.' + CAST(pv."codice filiale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
+		CAST(NULL as varchar) as Imagem, --[varchar](max) NULL,
+		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
+		CASE WHEN NOT(pv."attivo") THEN 0 ELSE 1 END as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
+		0 as Excluido, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
+		CAST(NULL as int) as CodigoContatoPlataforma, --[int] NULL,
+		CAST(NULL as varchar) as Regime, --[varchar](100) NULL,
+		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
+		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
+		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
+		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
+		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as CRMValorTotalOrcamentos, --[numeric](18, 2) NULL,
+		CAST(NULL as date) as CRMDataUltimoOrcamento, --[datetime] NULL,
+		CAST(NULL as varchar) as CRMValorTotalVendasMesAtual, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as CRMMetaProximaVenda, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as CRMMargem, --[numeric](18, 2) NULL,
+		CAST(NULL as date) as CRMDataPrimeraVenda, --[datetime] NULL,
+		CAST(NULL as int) as CRMDiasUltimaVenda, --[int] NULL,
+		CAST(NULL as varchar) as CRMFrequenciaVenda, --[varchar](10) NULL,
+		CAST(NULL as varchar) as CRMFrequenciaStatus, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CRMStatusFinanceiro, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CRMAcao, --[varchar](50) NULL,
+		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
+		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
+	from puntovendita as pv
 );
 
 
@@ -268,6 +324,81 @@ insert into Contato
 	from fornitor as f
 		left join tipopagamento as tp
 		on (tp."codice filiale" = f."codice pagamento")
+);
+
+
+--CLIENTI
+insert into Contato
+(
+	select
+		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
+		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
+		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Apelido, --[varchar](255) NULL,
+		c."codfiva" as NumeroDocumentoNacional, --[varchar](150) NULL,
+		CASE
+			WHEN c."codfiva" IS NOT NULL and c."codfiva" <> ''
+			THEN 'CPF'
+		END as TipoDocumentoNacional, --[varchar](4) NULL,
+		c."partita iva" as NumeroDocumentoEstadual, --[varchar](150) NULL,
+		CAST(NULL as varchar) as NumeroDocumentoMunicipal,--[varchar](150) NULL,
+		CAST(NULL as varchar) as Site, --[varchar](255) NULL,
+		c."e mail" as Email, --[varchar](255) NULL,
+		c."e mail" as EmailNFe, --[varchar](255) NULL,
+		CASE c."sesso"
+			WHEN 'M' THEN 'Masculino'
+			WHEN 'F' THEN 'Feminino'
+		END as Sexo, --[varchar](100) NULL,
+		c."professione" as Segmento, --SEGMENTO DE CLIENTE? [varchar](100) NULL, 
+		CASE c."campo4_c"
+			WHEN 0 THEN 'Não Consultado'
+			WHEN 3 THEN 'Com Pendência'
+		END as CondutaObservacao, --ALERTAS NA HORA DO PEDIDO -- JOGAR O COM PENDENCIA, NÃO CONSULTADO [varchar](255) NULL,
+		CASE c."campo4_c"
+			WHEN 2 THEN 'Bloqueado'
+		END as CondutaRestricao, --RESTRINGE O PEDIDO -- JOGAR O BLOQUEADO SPC AQUI [varchar](255) NULL,
+		CAST(c."note" as varchar(8000)) as Observacao, --[varchar](max) NULL,
+		CAST(c."note riservate" as varchar(8000)) as ObservacaoConsulta, --[varchar](max) NULL,
+		CAST(c."data nascita" as datetime) as DataAbertura, --[datetime] NULL,
+		CAST(c."data inserimento" as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
+		CAST(NULL as datetime) as DataAlteracao, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
+		CAST(NULL as datetime) as DataConsulta, --[datetime] NULL,
+		CAST(NULL as int) as CodigoContatoVendedor, --[int] NULL,
+		CAST(NULL as int) as CodigoContatoAssistente, --[int] NULL,
+		CAST(NULL as int) as CodigoContatoIndicacao, --[int] NULL,
+		CAST(NULL as int) as CodigoContatoTransportadora, --[int] NULL,
+		CAST(NULL as int) as CodigoItemTabelaPreco, --[int] NULL,
+		CAST(NULL as int) as CodigoFormaPagamento, --[int] NULL,
+		CAST(NULL as varchar) as CondicaoPagamento, --[varchar](50) NULL,
+		'clienti.' + CAST(c."codice personale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
+		CAST(NULL as varchar) as Imagem, --[varchar](max) NULL,
+		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
+		1 as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
+		0 as Excluido, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
+		CAST(NULL as int) as CodigoContatoPlataforma, --[int] NULL,
+		CAST(NULL as varchar) as Regime, --[varchar](100) NULL,
+		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
+		c."credito" as LimiteCredito, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
+		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
+		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
+		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as CRMValorTotalOrcamentos, --[numeric](18, 2) NULL,
+		CAST(NULL as date) as CRMDataUltimoOrcamento, --[datetime] NULL,
+		CAST(NULL as varchar) as CRMValorTotalVendasMesAtual, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as CRMMetaProximaVenda, --[numeric](18, 2) NULL,
+		CAST(NULL as varchar) as CRMMargem, --[numeric](18, 2) NULL,
+		CAST(NULL as date) as CRMDataPrimeraVenda, --[datetime] NULL,
+		CAST(NULL as int) as CRMDiasUltimaVenda, --[int] NULL,
+		CAST(NULL as varchar) as CRMFrequenciaVenda, --[varchar](10) NULL,
+		CAST(NULL as varchar) as CRMFrequenciaStatus, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CRMStatusFinanceiro, --[varchar](50) NULL,
+		CAST(NULL as varchar) as CRMAcao, --[varchar](50) NULL,
+		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
+		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
+	from clienti as c
+		left join anag_ext5 as an
+		on (an."codice cliente" = c."codice personale")
 );
 
 
@@ -529,136 +660,6 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from rubrica as r
-);
-
-
---SEDE
-insert into Contato
-(
-	select	
-		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
-		s."ragione sociale" as Nome, --[varchar](255) NOT NULL,
-		s."sede" as Apelido, --[varchar](255) NULL,
-		s."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
-		CASE 
-			WHEN s."codice fiscale" IS NOT NULL and s."codice fiscale" <> ''
-			THEN 'CNPJ'
-		END as TipoDocumentoNacional, --[varchar](4) NULL,
-		s."partita iva" as NumeroDocumentoEstadual, --[varchar](150) NULL,
-		CAST(NULL as varchar) as NumeroDocumentoMunicipal, --[varchar](150) NULL,
-		CAST(NULL as varchar) as Site, --[varchar](255) NULL,
-		s."e-mail" as Email, --[varchar](255) NULL,
-		s."e-mail" as EmailNFe, --[varchar](255) NULL,
-		CAST(NULL as varchar) as Sexo, --[varchar](100) NULL,
-		'Matriz' as Segmento, --[varchar](100) NULL, 
-		CAST(NULL as varchar) as CondutaObservacao, --[varchar](255) NULL,
-		CAST(NULL as varchar) CondutaRestricao, --[varchar](255) NULL,
-		CAST(NULL as varchar(8000)) as Observacao, --[varchar](max) NULL,
-		CAST(NULL as varchar) as ObservacaoConsulta, --[varchar](max) NULL,
-		CAST(NULL as datetime) as DataAbertura, --[datetime] NULL,
-		CAST(NULL as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
-		CAST(NULL as datetime) as DataAlteracao, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
-		CAST(NULL as datetime) as DataConsulta, --[datetime] NULL,
-		CAST(NULL as int) as CodigoContatoVendedor, --[int] NULL,
-		CAST(NULL as int) as CodigoContatoAssistente, --[int] NULL,
-		CAST(NULL as int) as CodigoContatoIndicacao, --[int] NULL,
-		CAST(NULL as int) as CodigoContatoTransportadora, --[int] NULL,
-		CAST(NULL as int) as CodigoItemTabelaPreco, --[int] NULL,
-		CAST(NULL as int) as CodigoFormaPagamento, --[int] NULL,
-		CAST(NULL as varchar) as CondicaoPagamento, --[varchar](50) NULL,
-		'sede.' + CAST(s."codice filiale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
-		CAST(NULL as varchar) as Imagem, --[varchar](max) NULL,
-		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		CASE WHEN NOT(s."attivo") THEN 0 ELSE 1 END as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
-		0 as Excluido, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
-		CAST(NULL as int) as CodigoContatoPlataforma, --[int] NULL,
-		CAST(NULL as varchar) as Regime, --[varchar](100) NULL,
-		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
-		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
-		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
-		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
-		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as CRMValorTotalOrcamentos, --[numeric](18, 2) NULL,
-		CAST(NULL as date) as CRMDataUltimoOrcamento, --[datetime] NULL,
-		CAST(NULL as varchar) as CRMValorTotalVendasMesAtual, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as CRMMetaProximaVenda, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as CRMMargem, --[numeric](18, 2) NULL,
-		CAST(NULL as date) as CRMDataPrimeraVenda, --[datetime] NULL,
-		CAST(NULL as int) as CRMDiasUltimaVenda, --[int] NULL,
-		CAST(NULL as varchar) as CRMFrequenciaVenda, --[varchar](10) NULL,
-		CAST(NULL as varchar) as CRMFrequenciaStatus, --[varchar](50) NULL,
-		CAST(NULL as varchar) as CRMStatusFinanceiro, --[varchar](50) NULL,
-		CAST(NULL as varchar) as CRMAcao, --[varchar](50) NULL,
-		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
-		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
-	from sede as s
-);
-
-
---PUNTOVENDITA
-insert into Contato
-(
-	select	
-		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
-		pv."ragione sociale" as Nome, --[varchar](255) NOT NULL,
-		pv."punto vendita" as Apelido, --[varchar](255) NULL,
-		pv."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
-		CASE 
-			WHEN pv."codice fiscale" IS NOT NULL and pv."codice fiscale" <> ''
-			THEN 'CNPJ'
-		END as TipoDocumentoNacional, --[varchar](4) NULL,
-		pv."partita iva" as NumeroDocumentoEstadual, --[varchar](150) NULL,
-		CAST(NULL as varchar) as NumeroDocumentoMunicipal, --[varchar](150) NULL,
-		CAST(NULL as varchar) as Site, --[varchar](255) NULL,
-		pv."e-mail" as Email, --[varchar](255) NULL,
-		pv."e-mail" as EmailNFe, --[varchar](255) NULL,
-		CAST(NULL as varchar) as Sexo, --[varchar](100) NULL,
-		'Filial' as Segmento, --[varchar](100) NULL, 
-		CAST(NULL as varchar) as CondutaObservacao, --[varchar](255) NULL,
-		CAST(NULL as varchar) CondutaRestricao, --[varchar](255) NULL,
-		CAST(NULL as varchar(8000)) as Observacao, --[varchar](max) NULL,
-		CAST(NULL as varchar) as ObservacaoConsulta, --[varchar](max) NULL,
-		CAST(NULL as datetime) as DataAbertura, --[datetime] NULL,
-		CAST(NULL as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
-		CAST(NULL as datetime) as DataAlteracao, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
-		CAST(NULL as datetime) as DataConsulta, --[datetime] NULL,
-		CAST(NULL as int) as CodigoContatoVendedor, --[int] NULL,
-		CAST(NULL as int) as CodigoContatoAssistente, --[int] NULL,
-		CAST(NULL as int) as CodigoContatoIndicacao, --[int] NULL,
-		CAST(NULL as int) as CodigoContatoTransportadora, --[int] NULL,
-		CAST(NULL as int) as CodigoItemTabelaPreco, --[int] NULL,
-		CAST(NULL as int) as CodigoFormaPagamento, --[int] NULL,
-		CAST(NULL as varchar) as CondicaoPagamento, --[varchar](50) NULL,
-		'puntovendita.' + CAST(pv."codice filiale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
-		CAST(NULL as varchar) as Imagem, --[varchar](max) NULL,
-		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		CASE WHEN NOT(pv."attivo") THEN 0 ELSE 1 END as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
-		0 as Excluido, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
-		CAST(NULL as int) as CodigoContatoPlataforma, --[int] NULL,
-		CAST(NULL as varchar) as Regime, --[varchar](100) NULL,
-		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
-		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
-		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
-		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
-		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as CRMValorTotalOrcamentos, --[numeric](18, 2) NULL,
-		CAST(NULL as date) as CRMDataUltimoOrcamento, --[datetime] NULL,
-		CAST(NULL as varchar) as CRMValorTotalVendasMesAtual, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as CRMMetaProximaVenda, --[numeric](18, 2) NULL,
-		CAST(NULL as varchar) as CRMMargem, --[numeric](18, 2) NULL,
-		CAST(NULL as date) as CRMDataPrimeraVenda, --[datetime] NULL,
-		CAST(NULL as int) as CRMDiasUltimaVenda, --[int] NULL,
-		CAST(NULL as varchar) as CRMFrequenciaVenda, --[varchar](10) NULL,
-		CAST(NULL as varchar) as CRMFrequenciaStatus, --[varchar](50) NULL,
-		CAST(NULL as varchar) as CRMStatusFinanceiro, --[varchar](50) NULL,
-		CAST(NULL as varchar) as CRMAcao, --[varchar](50) NULL,
-		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
-		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
-	from puntovendita as pv
 );
 
 
