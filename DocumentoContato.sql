@@ -21,6 +21,7 @@ insert into DocumentoContato
 	from oculisti as o
 	join occhiali as oc
 		on (oc."prescrizione" = o."denominazione")
+	where oc."prescrizione" <> ''
 );
 
 delete from DocumentoContato as docc

@@ -21,7 +21,7 @@ create table Documento
 	CodigoMunicipioEmpresa varchar(40), --null
 	OptanteSimplesNacional int, --not null [bit] --> int
 	CodigoEmpresaEndereco int, --null
-	CodigoContato varchar(255), --not null
+	CodigoContato varchar(30), --not null
 	DescricaoContato varchar(255), --null
 	NumeroDocumentoContato varchar(150), --null
 	EmailContato varchar(255), --varchar(100)-> varchar(255) --null
@@ -29,7 +29,7 @@ create table Documento
 	RegimeContato varchar, --null
 	CodigoContatoEndereco int, --null
 	DescricaoContatoEndereco varchar(8000), --null [varchar(max)]--> varchar(8000)
-	CodigoContatoResponsavel varchar(13), --null
+	CodigoContatoResponsavel varchar(30), --null
 	ContatoResponsavelEmail varchar(50), --null
 	DataHoraEmissao	date, --datetime->date --null
 	DataHoraFinalizado date, --datetime->date --null
@@ -37,14 +37,14 @@ create table Documento
 	DataHoraRealizado date, --datetime->date --null
 	DataHoraAvisado	date, --datetime->date --null
 	DataHoraRetorno	date, --datetime->date --null
-	CodigoContatoFinalizado	varchar(13), --null
+	CodigoContatoFinalizado	varchar(30), --null
 	Observacao varchar(8000), --null [varchar(max)]--> varchar(8000)
 	ObservacaoInterna varchar, --null [varchar(max)]--> varchar(8000)
 	ObservacaoEntrega varchar, --null
 	ObservacaoFaturamento varchar, --null
 	CodigoContatoComprador int, --null
-	CodigoContatoVendedor varchar(13), --null
-	CodigoContatoDigitador varchar(13), --null
+	CodigoContatoVendedor varchar(30), --null
+	CodigoContatoDigitador varchar(30), --null
 	CodigoContatoCobranca int, --null
 	CodigoContatoEnderecoEntrega int, --null
 	DescricaoContatoEnderecoEntrega	varchar, --null [varchar(max)]--> varchar(8000)
