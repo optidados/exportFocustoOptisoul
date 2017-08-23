@@ -130,8 +130,8 @@ insert into DocumentoItem
 	select
 		'item.car.' + CAST(car2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		COALESCE(Item."CodigoAntigo", car2."codice a barre", '') as CodigoItem, --int not null
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -170,7 +170,7 @@ insert into DocumentoItem
 		CAST(car2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
 		CAST(car2."quantita" as decimal(18,6)) as QuantidadeRealizado, --decimal(18,6) --not null
 		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		CAST(car2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -221,7 +221,7 @@ insert into DocumentoItem
 		Item."Genero" as Genero, --varchar(100) --null
 		Item."Cor" as Cor, --varchar(100) --null
 		Item."Material" as Material, --varchar(100) --null
-		Item."Tamanho" as Tamanho, --varchar(100) --null
+		CAST(Item."Tamanho" as varchar(100)) as Tamanho, --varchar(100) --null
 		Item."Altura" as Altura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Largura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
@@ -547,8 +547,8 @@ insert into DocumentoItem
 			ELSE 'item.car.' + CAST(car2."codice carrello" as varchar(12))
 		END as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		COALESCE(Item."CodigoAntigo", car2."codice a barre", '') as CodigoItem, --int not null
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -583,7 +583,7 @@ insert into DocumentoItem
 		CAST(car2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
 		CAST(car2."quantita" as decimal(18,6)) as QuantidadeRealizado, --decimal(18,6) --not null
 		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		CAST(car2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -634,7 +634,7 @@ insert into DocumentoItem
 		Item."Genero" as Genero, --varchar(100) --null
 		Item."Cor" as Cor, --varchar(100) --null
 		Item."Material" as Material, --varchar(100) --null
-		Item."Tamanho" as Tamanho, --varchar(100) --null
+		CAST(Item."Tamanho" as varchar(100)) as Tamanho, --varchar(100) --null
 		Item."Altura" as Altura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Largura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
@@ -689,8 +689,8 @@ insert into DocumentoItem
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		'0' as CodigoItem, --int not null
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -718,7 +718,7 @@ insert into DocumentoItem
 		0.000000 as Quantidade, --decimal(18,6) --not null
 		0.000000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.000000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		0.0000 as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -814,8 +814,8 @@ insert into DocumentoItem
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		'0' as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -843,7 +843,7 @@ insert into DocumentoItem
 		0.000000 as Quantidade, --decimal(18,6) --not null
 		0.000000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.000000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		0.0000 as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -939,8 +939,8 @@ insert into DocumentoItem
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(20))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		'0'as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -968,7 +968,7 @@ insert into DocumentoItem
 		0.000000 as Quantidade, --decimal(18,6) --not null
 		0.000000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.000000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		0.0000 as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -1064,8 +1064,8 @@ insert into DocumentoItem
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --int (int->varchar(30))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		'0' as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -1093,7 +1093,7 @@ insert into DocumentoItem
 		0.000000 as Quantidade, --decimal(18,6) --not null
 		0.000000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.000000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		0.0000 as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -1189,8 +1189,8 @@ insert into DocumentoItem
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		'0' as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -1218,7 +1218,7 @@ insert into DocumentoItem
 		0.000000 as Quantidade, --decimal(18,6) --not null
 		0.000000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.000000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		0.0000 as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -1314,8 +1314,8 @@ insert into DocumentoItem
 	select
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30) (int->varchar(30))--null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar (int->varchar(30)) --null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		'0' as CodigoItem, --car2."codice a barre" ou car2."codice articolo" as CodigoItem --int not null "QUAL DEVEMOS UTILIZAR?"
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -1343,7 +1343,7 @@ insert into DocumentoItem
 		0.000000 as Quantidade, --decimal(18,6) --not null
 		0.000000 as QuantidadeRealizado, --decimal(18,6) --not null
 		0.000000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		0.0000 as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -1439,8 +1439,8 @@ insert into DocumentoItem
 	select
 		'item.scar.' + CAST(scar2."codice carrello" as varchar(12)) as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
 		'occhiali.' + CAST(oc."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		COALESCE(Item."CodigoAntigo", scar2."codice a barre", '') as CodigoItem, --int not null
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -1479,7 +1479,7 @@ insert into DocumentoItem
 		CAST(scar2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
 		CAST(scar2."quantita" as decimal(18,6)) as QuantidadeRealizado, --decimal(18,6) --not null
 		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		CAST(scar2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -1530,7 +1530,7 @@ insert into DocumentoItem
 		Item."Genero" as Genero, --varchar(100) --null
 		Item."Cor" as Cor, --varchar(100) --null
 		Item."Material" as Material, --varchar(100) --null
-		Item."Tamanho" as Tamanho, --varchar(100) --null
+		CAST(Item."Tamanho" as varchar(100)) as Tamanho, --varchar(100) --null
 		Item."Altura" as Altura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Largura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
@@ -1856,8 +1856,8 @@ insert into DocumentoItem
 			ELSE 'item.scar.' + CAST(scar2."codice carrello" as varchar(12))
 		END as CodigoDocumento, --varhcar(30) (int->varchar(20)) --not null
 		CAST(NULL as varchar) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(20))--null
-		CAST(NULL as int) as CodigoPlanoContaEstoque, --int --null
-		CAST(NULL as int) as CodigoPlanoContaDestino, --int --null
+		146 as CodigoPlanoContaEstoque, --int --null
+		139 as CodigoPlanoContaDestino, --int --null
 		COALESCE(Item."CodigoAntigo", scar2."codice a barre", '') as CodigoItem, --int not null
 		CAST(NULL as int) as CodigoItemDNA, --int --null
 		CAST(NULL as varchar) as Lote, --varchar(50) --null
@@ -1892,7 +1892,7 @@ insert into DocumentoItem
 		CAST(scar2."quantita" as decimal(18,6)) as Quantidade, --decimal(18,6) --not null
 		CAST(scar2."quantita" as decimal(18,6)) as QuantidadeRealizado, --decimal(18,6) --not null
 		0.0000 as QuantidadeConferido, --decimal(18,6) --not null
-		CAST(NULL as varchar) as Unidade, --varchar(10) --null
+		'UN' as Unidade, --varchar(10) --null
 		CAST(scar2."prezzo" as decimal(18,4)) as SubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoSubTotal, --decimal(18,4) --not null
 		0.0000 as DescontoPercentualSubTotal, --decimal(18,4) --not null
@@ -1943,7 +1943,7 @@ insert into DocumentoItem
 		Item."Genero" as Genero, --varchar(100) --null
 		Item."Cor" as Cor, --varchar(100) --null
 		Item."Material" as Material, --varchar(100) --null
-		Item."Tamanho" as Tamanho, --varchar(100) --null
+		CAST(Item."Tamanho" as varchar(100)) as Tamanho, --varchar(100) --null
 		Item."Altura" as Altura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Largura, --numeric(18,4) --null
 		CAST(NULL as numeric(18,4)) as Comprimento, --numeric(18,4) --null
