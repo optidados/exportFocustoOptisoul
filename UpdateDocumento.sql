@@ -247,6 +247,8 @@ set Documento."CodigoContato" =
     where
         (v."codice cliente" <> fc."codice fornitore") and
         (v."codice carrello" = Documento."CodigoDocumento")
+
+    group by fc."codice fornitore"
 )
 where
     Documento."Tipo" = 'Venda';
