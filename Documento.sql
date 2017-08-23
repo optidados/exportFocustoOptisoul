@@ -146,7 +146,7 @@ insert into Documento
 		'Venda de Mercadoria' as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -295,7 +295,7 @@ insert into Documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -441,7 +441,7 @@ insert into Documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -583,7 +583,7 @@ insert into Documento
 		'Prescrição' as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -738,8 +738,8 @@ insert into Documento
 		oc."codice filiale",
 		matriz."CodigoAntigo",
 		filial."CodigoAntigo",
-		matriz."Nome",
-		filial."Nome",
+		matriz."Apelido",
+		filial."Apelido",
 		matriz."NumeroDocumentoNacional", 
 		filial."NumeroDocumentoNacional",
 		matriz."NumeroDocumentoMunicipal",
@@ -771,7 +771,7 @@ insert into Documento
 			WHEN 4 THEN 'Entregue'
 		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -892,7 +892,7 @@ insert into Documento
 		on (('puntovendita.' + car."filiale") = filial."CodigoAntigo")
 
 	where
-		(car."tipo fornitura" <> 100) /*and
+		(car."tipo fornitura" NOT IN (2, 5, 6, 100)) /*and
 		(b."stato montaggio" <> 5) --status cancelado*/
 );
 
@@ -928,7 +928,7 @@ insert into Documento
 	        END
 	    END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -1069,7 +1069,7 @@ insert into Documento
 		'Venda de Mercadoria' as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -1218,7 +1218,7 @@ insert into documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -1365,7 +1365,7 @@ insert into Documento
 		END as Operacao, --varchar(255) --null
 		CAST(NULL as varchar) as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -1513,7 +1513,7 @@ insert into documento
 			WHEN 4 THEN 'Entregue'
 		END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
@@ -1634,8 +1634,7 @@ insert into documento
 		on (('puntovendita.' + scar."filiale") = filial."CodigoAntigo")
 
 	where
-		(scar."tipo fornitura" <> 100) and
-		(scar."tipo fornitura" <> 101) /*and
+		(scar."tipo fornitura" NOT IN (2, 5, 6, 100, 101)) /*and
 		(b."stato montaggio" <> 5) --status cancelado*/
 );
 
@@ -1671,7 +1670,7 @@ insert into documento
 	        END
 	    END as Status, --varchar(255) --null
 		COALESCE(matriz."CodigoAntigo", filial."CodigoAntigo") as CodigoEmpresa, --varchar(255) (int -> varchar(255)) --not null
-		COALESCE(matriz."Nome", filial."Nome") as DescricaoEmpresa, --varchar(255) --null
+		COALESCE(matriz."Apelido", filial."Apelido") as DescricaoEmpresa, --varchar(255) --null
 		COALESCE(matriz."NumeroDocumentoNacional", filial."NumeroDocumentoNacional") as NumeroDocumentoEmpresa, --varchar(150) --null
 		COALESCE(matriz."NumeroDocumentoMunicipal", filial."NumeroDocumentoMunicipal") as InscricaoMunicipalEmpresa, --varchar(150) --null
 		CAST(NULL as varchar) as CodigoMunicipioEmpresa, --int->varchar(40) --null
