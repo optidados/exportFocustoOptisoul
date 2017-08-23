@@ -241,10 +241,10 @@ insert into Item
 		CAST(NULL as numeric(18, 4)) as Diagonal, --[numeric](18, 4) NULL,
 		COALESCE(a."diametro", t."diametro") as Diametro, --[numeric](18, 4) NULL,
 		CAST(COALESCE(a."asse", t."asse") as numeric(18,4)) as Eixo, --[numeric](18, 4) NULL,
-		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2) and (COALESCE(a."codice famiglia", t."codice famiglia") <> 'M')
 			THEN CAST(COALESCE(a."addizione", t."addizione", 0.75) as numeric(18,4))
 		END as AdicaoInicial, --[numeric](18, 4) NULL,
-		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2)
+		CASE WHEN (COALESCE(a."magazzino", t."magazzino") = 1 or COALESCE(a."magazzino", t."magazzino") = 2) and (COALESCE(a."codice famiglia", t."codice famiglia") <> 'M')
 			THEN CAST(COALESCE(a."addizione", t."addizione", 4) as numeric(18,4))
 		END as AdicaoFinal, --NULO OU O MESMO QUE AdicaoInicial? [numeric](18, 4) NULL,
 		CAST(NULL as numeric(18,4)) as AlturaMinima, --[numeric](18, 4) NULL,
@@ -288,7 +288,7 @@ insert into Item
 			WHEN 'M' THEN 'Monofocal'
 			WHEN 'B' THEN 'Bifocal'
 			WHEN 'P' THEN 'Multifocal'
-			WHEN 'I' THEN 'Monofocal'
+			WHEN 'I' THEN 'Intermediária'
 			WHEN 'T' THEN 'Multifocal'
 			WHEN 'C' THEN 'Cosmética'
 			WHEN 'F' THEN 'Multifocal'
@@ -430,7 +430,7 @@ insert into Item
 		CAST(NULL as varchar(1)) as PAF_IPPT, --[varchar](1) NULL,
 		CASE c."linea"
 			WHEN 'Monofoc.' THEN 'Monofocal'
-			WHEN 'Intermed.' THEN 'Monofocal'
+			WHEN 'Intermed.' THEN 'Intermediária'
 			ELSE c."linea"
 		END as LenteTipo --varchar NULL
 	from catalogo as c
