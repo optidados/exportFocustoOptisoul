@@ -195,7 +195,7 @@ insert into Item
 		CAST(NULL as decimal(18, 4)) as Capacidade, --[decimal](18, 4) NULL,
 		CAST(NULL as varchar(20)) as CapacidadeUnidade, --[varchar](20) NULL,
 		CAST(NULL as numeric(18, 4)) as Densidade, --[numeric](18, 4) NULL,
-		CAST(NULL as varchar(8000)) as Procedimento, --[varchar](max) NULL,
+		CAST(NULL as varchar) as Procedimento, --[varchar](max) NULL,
 		COALESCE(a."campo_1", t."campo_1") as AliquotaIPI, --[numeric](18, 4) NULL,
 		CAST(NULL as varchar(50)) as NumeroPop, --[varchar](50) NULL,
 		CAST(NULL as numeric(18, 4)) as Peso, --[numeric](18, 4) NULL,
@@ -315,19 +315,19 @@ insert into Item
 		CAST(NULL as int) as CodigoNCM, --[int] NULL,
 		CAST(c."codice doganale" as varchar(8)) as NCM, --[varchar](8) NULL,
 		CAST(NULL as varchar) as CEST, --varchar NULL
-		TRIM(COALESCE(c."modello", '') + ' ' + COALESCE(c."trattamento", '') + ' ' + COALESCE(c."descrizione", '')) as Descricao, --[varchar](500) NOT NULL,
-		TRIM(COALESCE(c."modello", '') + ' ' + COALESCE(c."trattamento", '') + ' ' + COALESCE(c."descrizione", '')) as DescricaoComercial, --[varchar](500) NOT NULL,
+		COALESCE(c."modello", '') + COALESCE(' ' + c."trattamento", '') + COALESCE(' ' + c."descrizione", '') + COALESCE(' ' + p2."descrizione", '') as Descricao, --[varchar](500) NOT NULL,
+		COALESCE(c."modello", '') + COALESCE(' ' + c."trattamento", '') + COALESCE(' ' + c."descrizione", '') + COALESCE(' ' + p2."descrizione", '') as DescricaoComercial, --[varchar](500) NOT NULL,
 		'Lente' as Tipo, --[varchar](50) NOT NULL CONSTRAINT [DF_Item_Tipo]  DEFAULT ('Produto'),
 		CAST(NULL as varchar) as Grupo, --[varchar](50) NULL,
 		CAST(NULL as varchar) as SubGrupo, --[varchar](50) NULL,
 		c."marca" as Marca, --[varchar](50) NULL,
 		'Linha' as Status, --[varchar](20) NULL CONSTRAINT [DF_Item_Status]  DEFAULT ('Linha'),
 		CAST(NULL as varchar(20)), --[varchar](20) NULL,
-		COALESCE(p."prezzo acquisto", c."prezzo acquisto", 0.00) as ValorCusto, --[decimal](18, 2) NULL,
+		COALESCE(p2."prezzo acquisto", c."prezzo acquisto", 0.00) as ValorCusto, --[decimal](18, 2) NULL,
 		CAST(NULL as decimal(18, 2)) as ValorCustoUltimo, --[decimal](18, 2) NULL,
 		CAST(NULL as decimal(18, 2)) as ValorCustoMedio, --[decimal](18, 2) NULL,
-		COALESCE(p."prezzo acquisto", c."prezzo acquisto", 0.00) as ValorCustoReposicao, --[decimal](18, 2) NULL,
-		COALESCE(p."prezzo di vendita", c."prezzo di vendita", 0.00) as ValorVenda, --[decimal](18, 2) NULL,
+		COALESCE(p2."prezzo acquisto", c."prezzo acquisto", 0.00) as ValorCustoReposicao, --[decimal](18, 2) NULL,
+		COALESCE(p2."prezzo di vendita", c."prezzo di vendita", 0.00) as ValorVenda, --[decimal](18, 2) NULL,
 		CAST(NULL as decimal(18, 4)) as PercentualMarkup, --[decimal](18, 4) NULL,
 		CAST(NULL as decimal(18, 4)) as PercentualMarkupReal, --[decimal](18, 4) NULL,
 		CAST(NULL as varchar(10)) as Unidade, --[varchar](10) NULL,
@@ -373,7 +373,7 @@ insert into Item
 		'c.' + c."codice filiale" + 
 			COALESCE('.d.' + d."codice filiale", '') +
 			COALESCE('.dx.' + dx."codice filiale", '') +
-			COALESCE('.p.' + p."codice filiale", '') as CodigoAntigo, --[varchar](255) NULL,
+			COALESCE('.p.' + p2."codice filiale", '') as CodigoAntigo, --[varchar](255) NULL,
 		CAST(NULL as datetime) as DataPrimeiraVenda, --[datetime] NULL,
 		CAST(NULL as varchar(255)) as Embalagem, --[varchar](255) NULL,
 		CAST(NULL as varchar(100)) as Modelo, --[varchar](100) NULL,
@@ -443,8 +443,8 @@ insert into Item
 		left join diametri2 as d
 			on (d."codice articolo" = c."codice filiale")
 
-		left join prezzilenti as p
-			on (p."codice articolo" = c."codice filiale")
+		left join prezzilenti2 as p2
+			on (p2."codice articolo" = c."codice filiale")		
 
 	where (c."magazzino" = 1)
 );
@@ -506,7 +506,7 @@ insert into Item
 		CAST(NULL as decimal(18, 4)) as Capacidade, --[decimal](18, 4) NULL,
 		CAST(NULL as varchar(20)) as CapacidadeUnidade, --[varchar](20) NULL,
 		CAST(NULL as numeric(18, 4)) as Densidade, --[numeric](18, 4) NULL,
-		CAST(NULL as varchar(8192)) as Procedimento, --[varchar](max) NULL,
+		CAST(NULL as varchar) as Procedimento, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 4)) as AliquotaIPI, --[numeric](18, 4) NULL,
 		CAST(NULL as varchar(50)) as NumeroPop, --[varchar](50) NULL,
 		CAST(NULL as numeric(18, 4)) as Peso, --[numeric](18, 4) NULL,
@@ -614,7 +614,7 @@ insert into Item
 		CAST(NULL as decimal(18, 4)) as Capacidade, --[decimal](18, 4) NULL,
 		CAST(NULL as varchar(20)) as CapacidadeUnidade, --[varchar](20) NULL,
 		CAST(NULL as numeric(18, 4)) as Densidade, --[numeric](18, 4) NULL,
-		CAST(NULL as varchar(8192)) as Procedimento, --[varchar](max) NULL,
+		CAST(NULL as varchar) as Procedimento, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 4)) as AliquotaIPI, --[numeric](18, 4) NULL,
 		CAST(NULL as varchar(50)) as NumeroPop, --[varchar](50) NULL,
 		CAST(NULL as numeric(18, 4)) as Peso, --[numeric](18, 4) NULL,
