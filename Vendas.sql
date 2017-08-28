@@ -1,4 +1,29 @@
 //NOSQLBDETOFF2
+/*Apaga a tabela vendas se ela já existir e cria novamente*/
+DROP TABLE IF EXISTS Vendas;
+create table Vendas
+(
+    "operador" varchar(6),
+    "data pagamento" date,
+    "nome" varchar(51),
+    "codigo barras" varchar(14),
+    "SKU e Cod Catalogo" varchar(30),
+    "Fornecedor" varchar(70),
+    "Estoque" varchar(30),
+    "Tipos" varchar(40),
+    "Familia" varchar(40),
+    "Marca" varchar(40),
+    "Linha" varchar(60),
+    "TipoProduto" varchar(40),
+    "Modelo" varchar(80),
+    "Descricao" varchar(100),
+    "Cor" varchar(40),
+    "Tamanho" float,
+    "tipo_pag" varchar(30),
+    "filiale" varchar(2),
+    "valor_trans" numeric(18, 2)
+);
+
 --DROP DA TEMPORARIA DE SESSAO
     DROP TABLE IF EXISTS ##car; //NOMODIFICA
 
