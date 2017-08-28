@@ -55,7 +55,7 @@ create table Item
 	Capacidade decimal(18, 4), --[decimal](18, 4) NULL,
 	CapacidadeUnidade varchar(20), --[varchar](20) NULL,
 	Densidade numeric(18, 4), --[numeric](18, 4) NULL,
-	Procedimento varchar(8000), --[varchar](max) NULL,
+	Procedimento varchar, --[varchar](max) NULL,
 	AliquotaIPI numeric(18, 4), --[numeric](18, 4) NULL,
 	NumeroPop varchar(50), --[varchar](50) NULL,
 	Peso numeric(18, 4), --[numeric](18, 4) NULL,
@@ -362,7 +362,7 @@ insert into Item
 		CAST(NULL as decimal(18, 4)) as Capacidade, --[decimal](18, 4) NULL,
 		CAST(NULL as varchar(20)) as CapacidadeUnidade, --[varchar](20) NULL,
 		CAST(NULL as numeric(18, 4)) as Densidade, --[numeric](18, 4) NULL,
-		CAST(COALESCE(d."dati", '') as varchar(8000)) as Procedimento, --[varchar](max) NULL,
+		CAST(NULL as varchar) as Procedimento, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 4)) as AliquotaIPI, --[numeric](18, 4) NULL,
 		CAST(NULL as varchar(50)) as NumeroPop, --[varchar](50) NULL,
 		CAST(NULL as numeric(18, 4)) as Peso, --[numeric](18, 4) NULL,
@@ -392,9 +392,9 @@ insert into Item
 		dx."a addizione" as AdicaoFinal, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18, 4)) as AlturaMinima, --[numeric](18, 4) NULL,
 		CAST(NULL as numeric(18,4)) as AlturaMontagem, --numeric(18,4) NULL,
-		dx."da sfero" as EsfericoInicial, --[numeric](18, 4) NULL,
-		dx."a sfero" as EsfericoFinal, --[numeric](18, 4) NULL,
-		dx."cilindro massimo" as Cilindrico, --[numeric](18, 4) NULL,
+		COALESCE(dx."da sfero", d."esf_de") as EsfericoInicial, --[numeric](18, 4) NULL,
+		COALESCE(dx."a sfero", d."esf_ate") as EsfericoFinal, --[numeric](18, 4) NULL,
+		COALESCE(dx."cilindro massimo", d."cilindrico") as Cilindrico, --[numeric](18, 4) NULL,
 		CAST(NULL as varchar(100)) as AmarcaoCor, --[varchar](100) NULL,
 		CAST(NULL as varchar(100)) as ArmacaoMaterial, --[varchar](100) NULL,
 		CAST(NULL as numeric(18, 4)) as Haste, --[numeric](18, 4) NULL,
@@ -440,7 +440,7 @@ insert into Item
 		left join diametrirx as dx 
 			on (diametrirx."codice articolo" = c."codice filiale")
 
-		left join diametri as d
+		left join diametri2 as d
 			on (d."codice articolo" = c."codice filiale")
 
 		left join prezzilenti as p
