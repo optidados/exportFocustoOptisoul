@@ -1,3 +1,5 @@
+//NOSQLBDETOFF2
+/*EXECUTAR 1 ESSES BLOCOS*/
 delete from carrello as c
 where
 	(c."codice fornitura" <> '') and
@@ -105,12 +107,15 @@ select * from storicocarrello2 as sc2
 where sc2."codice a barre" = '';
 */
 ---------------------------------------------
+
 --Verificar "codice filiale" duplicados--
+/*EXECUTAR 2 ESSE BLOCO*/
 select c."codice filiale"
 from carrello as c
 group by c."codice filiale"
 having COUNT(c."codice filiale") > 1;
 
+/*EXECUTAR 3 ESSE BLOCO*/
 select sc."codice filiale"
 from storicocarrello as sc
 group by sc."codice filiale"

@@ -405,23 +405,26 @@ insert into Item
 		CAST
 		(
 			(
-				CASE WHEN ((c."tipo lenti" = '') or (POSITION('.' in c."tipo lenti") <> 0))
-					THEN c."tipo lenti"
-					ELSE 
-						SUBSTRING
-						(
-							c."tipo lenti" from 0 for 
+				CASE 
+					WHEN (POSITION('.' in c."tipo lenti") <> 0)
+						THEN c."tipo lenti"
+					WHEN (c."tipo lenti" = '')
+						THEN CAST(NULL as varchar)
+						ELSE 
+							SUBSTRING
 							(
-								CASE WHEN POSITION(',' in c."tipo lenti") = 0 THEN CHAR_LENGTH(c."tipo lenti") ELSE POSITION(',' in c."tipo lenti")-1 END
-							)
-						) +
-						'.' + 
-						(
-							CASE WHEN POSITION(',' in c."tipo lenti") = 0 
-								THEN '0' 
-								ELSE SUBSTRING(c."tipo lenti" from POSITION(',' in c."tipo lenti")+1 for CHAR_LENGTH(c."tipo lenti") - POSITION(',' in c."tipo lenti")) 
-							END
-						) 
+								c."tipo lenti" from 0 for 
+								(
+									CASE WHEN POSITION(',' in c."tipo lenti") = 0 THEN CHAR_LENGTH(c."tipo lenti") ELSE POSITION(',' in c."tipo lenti")-1 END
+								)
+							) +
+							'.' + 
+							(
+								CASE WHEN POSITION(',' in c."tipo lenti") = 0 
+									THEN '0' 
+									ELSE SUBSTRING(c."tipo lenti" from POSITION(',' in c."tipo lenti")+1 for CHAR_LENGTH(c."tipo lenti") - POSITION(',' in c."tipo lenti")) 
+								END
+							) 
 				END
 			) as numeric(18, 4)
 		) as IndiceRefracao, --[numeric](18, 4) NULL,
