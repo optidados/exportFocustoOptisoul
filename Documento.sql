@@ -423,7 +423,7 @@ insert into Documento
 (
 	select
 		'item.car2.' + CAST(car2."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
-		'car.' + CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
+		'car2.' + CAST(car2."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -1347,7 +1347,7 @@ insert into Documento
 (
 	select
 		'item.scar2.' + CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumento, --varchar(30)
-		'scar.' + CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
+		'scar2.' + CAST(scar2."codice filiale" as varchar(12)) as CodigoDocumentoAdicional, --varchar(30) (int->varchar(30))
 		CAST(NULL as int) as CodigoNFe, --int --null
 		CAST(NULL as int) as Numero, --int --null
 		CAST(NULL as int) as NotaNumero, --int --null
@@ -1356,7 +1356,7 @@ insert into Documento
 		'Item Venda' as Tipo, --varchar(255) --null
 		scar2."descrizione" as Descricao, --varchar(255) --null 
 		CAST(NULL as int) as CodigoDocumentoOperacao, --int --null
-		CASE
+		CASE 
 			WHEN Item."Tipo" = 'Armação' THEN 'Armação'
 			WHEN Item."Tipo" = 'Óculos Sol' THEN 'Óculos de Sol'
 			WHEN Item."Tipo" = 'Óculos Pronto' THEN 'Óculos Pronto'

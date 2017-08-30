@@ -1,4 +1,3 @@
-//NOSQLBDETOFF2
 drop table if exists ContatoGrupo;
 
 create table ContatoGrupo

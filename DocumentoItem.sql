@@ -158,7 +158,7 @@ insert into DocumentoItem
 		261 as CodigoCFOP, --int --null
 		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
 		CAST(car2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), CAST(item."ValorVenda" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
 		0.0000 as ValorItemUltimo, --decimal(18,4), --not null
 		CAST(car2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(car2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
@@ -179,11 +179,11 @@ insert into DocumentoItem
 		CAST(car2."totale" as decimal(18,4)) as ValorReal, --decimal(18,4) --not null
 		CAST(car2."totale" as decimal(18,4)) as ValorRealTotal, --decimal(18,4) --not null
 		0.0000 as ValorRealTotalImpostos, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCusto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoUltimo" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
-		COALESCE(CAST(mov."costo medio" as decimal(18,4)), CAST(item."ValorCustoMedio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
+		COALESCE(CAST(mov."costo medio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoReposicao" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
 		car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		car2."data" as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
@@ -571,7 +571,7 @@ insert into DocumentoItem
 		261 as CodigoCFOP, --int --null
 		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
 		CAST(car2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), CAST(item."ValorVenda" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
 		0.0000 as ValorItemUltimo, --decimal(18,4), --not null
 		CAST(car2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(car2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
@@ -592,11 +592,11 @@ insert into DocumentoItem
 		CAST(car2."totale" as decimal(18,4)) as ValorReal, --decimal(18,4) --not null
 		CAST(car2."totale" as decimal(18,4)) as ValorRealTotal, --decimal(18,4) --not null
 		0.0000 as ValorRealTotalImpostos, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCusto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoUltimo" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
-		COALESCE(CAST(mov."costo medio" as decimal(18,4)), CAST(item."ValorCustoMedio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
+		COALESCE(CAST(mov."costo medio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoReposicao" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
 		car2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		car2."data" as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
@@ -1467,7 +1467,7 @@ insert into DocumentoItem
 		261 as CodigoCFOP, --int --null
 		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
 		CAST(scar2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), CAST(item."ValorVenda" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
 		0.0000 as ValorItemUltimo, --decimal(18,4), --not null
 		CAST(scar2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
@@ -1488,11 +1488,11 @@ insert into DocumentoItem
 		CAST(scar2."totale" as decimal(18,4)) as ValorReal, --decimal(18,4) --not null
 		CAST(scar2."totale" as decimal(18,4)) as ValorRealTotal, --decimal(18,4) --not null
 		0.0000 as ValorRealTotalImpostos, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCusto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoUltimo" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
-		COALESCE(CAST(mov."costo medio" as decimal(18,4)), CAST(item."ValorCustoMedio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
+		COALESCE(CAST(mov."costo medio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoReposicao" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
 		scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		scar2."data" as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
@@ -1880,7 +1880,7 @@ insert into DocumentoItem
 		261 as CodigoCFOP, --int --null
 		CAST(NULL as varchar) as DescricaoAgrupamento, --varchar(255) --null
 		CAST(scar2."prezzo" as decimal(18,4)) as ValorItem, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), CAST(item."ValorVenda" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino vendita" as decimal(18,4)), 0.0000) as ValorOriginal, --decimal(18,4) --not null
 		0.0000 as ValorItemUltimo, --decimal(18,4), --not null
 		CAST(scar2."sconto" as decimal(18,4)) as DescontoItem, --decimal(18,4), --not null
 		CAST(scar2."sconto percentuale" as decimal(18,4)) as DescontoPercentualItem, --decimal(18,4), --not null
@@ -1901,11 +1901,11 @@ insert into DocumentoItem
 		CAST(scar2."totale" as decimal(18,4)) as ValorReal, --decimal(18,4) --not null
 		CAST(scar2."totale" as decimal(18,4)) as ValorRealTotal, --decimal(18,4) --not null
 		0.0000 as ValorRealTotalImpostos, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCusto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoUltimo" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
-		COALESCE(CAST(mov."costo medio" as decimal(18,4)), CAST(item."ValorCustoMedio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCusto, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoUltimo, --decimal(18,4) --not null
+		COALESCE(CAST(mov."costo medio" as decimal(18,4)), 0.0000) as ValorCustoMedio, --decimal(18,4) --not null
 		0.0000 as ValorCustoTerceiro, --decimal(18,4) --not null
-		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), CAST(item."ValorCustoReposicao" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
+		COALESCE(CAST(mov."prezzo listino acquisto" as decimal(18,4)), 0.0000) as ValorCustoReposicao, --decimal(18,4) --not null
 		scar2."data" as DataHoraEmissao, --datetime (datetime->date) --not null
 		scar2."data" as DataHoraFinalizado, --datetime (datetime->date) --null
 		CAST(NULL as int) as CodigoCST, --int --null
