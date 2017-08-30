@@ -1,3 +1,4 @@
+//NOSQLBDETOFF2
 drop table if exists ContatoEndereco;
 
 create table ContatoEndereco
