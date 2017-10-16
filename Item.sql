@@ -118,14 +118,14 @@ insert into Item
 						(CASE
 							WHEN( GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) = GetLinea(COALESCE(a."codice linea", t."codice linea")) )
 							THEN( GetLinea(COALESCE(a."codice linea", t."codice linea", '')) )
-							ELSE( COALESCE((GetLinea(COALESCE(a."codice linea", t."codice linea", ''))), (GetMarchio(COALESCE(a."codice marchio", t."codice marchio")))) )
+							ELSE( (GetLinea(COALESCE(a."codice linea", t."codice linea", ''))) + ' ' +(GetMarchio(COALESCE(a."codice marchio", t."codice marchio"))) )
 						END)
 					)
 				+ ' ' +COALESCE(a."modello", t."modello", '')
 				+ ' ' +COALESCE(a."colore", t."colore", '')
 				+ ' ' +CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
 			ELSE
-				(TRIM(COALESCE(a."modello", t."modello", '') + ' ' +GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' +COALESCE(a."descrizione", t."descrizione", '')))
+				(TRIM(GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) + ' ' +COALESCE(a."modello", t."modello", '') + ' ' +GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' +COALESCE(a."descrizione", t."descrizione", '')))
 		END) as Descricao, --[varchar](500) NOT NULL
 		(CASE COALESCE(a."magazzino", t."magazzino")
 			WHEN(0)
@@ -134,14 +134,14 @@ insert into Item
 						(CASE
 							WHEN( GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) = GetLinea(COALESCE(a."codice linea", t."codice linea")) )
 							THEN( GetLinea(COALESCE(a."codice linea", t."codice linea", '')) )
-							ELSE( COALESCE((GetLinea(COALESCE(a."codice linea", t."codice linea", ''))), (GetMarchio(COALESCE(a."codice marchio", t."codice marchio")))) )
+							ELSE( (GetLinea(COALESCE(a."codice linea", t."codice linea", ''))) + ' ' +(GetMarchio(COALESCE(a."codice marchio", t."codice marchio"))) )
 						END)
 					)
 				+ ' ' +COALESCE(a."modello", t."modello", '')
 				+ ' ' +COALESCE(a."colore", t."colore", '')
 				+ ' ' +CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
 			ELSE
-				(TRIM(COALESCE(a."modello", t."modello", '') + ' ' +GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' +COALESCE(a."descrizione", t."descrizione", '')))
+				(TRIM(GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) + ' ' +COALESCE(a."modello", t."modello", '') + ' ' +GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' +COALESCE(a."descrizione", t."descrizione", '')))
 		END) as DescricaoComercial, --[varchar](500) NOT NULL
 		CASE 
 			WHEN (COALESCE(a."magazzino", t."magazzino") = 0) and (GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti")) = 'vista') THEN 'Armação'
