@@ -3,7 +3,7 @@ DECLARE @id varchar(12);
 
 DECLARE @diametro varchar(10);
 
-DECLARE @input varchar(8000);
+DECLARE @input varchar(15000);
 
 DECLARE @delimiter_position, @cil_position, @i integer;
 

@@ -197,7 +197,7 @@ set doc."Status" =
 		where
 			docit."CodigoDocumento" = doc."CodigoDocumento" and
 			docit."Operacao" = 'Venda de Mercadoria'
-		group by docit."CodigoDocumento"
+		--group by docit."CodigoDocumento" --MD Retiramos devido ao erro de trazer dois registros (Murilo solicitou)
 	)
 where
 	doc."Tipo" IN ('Item Venda', 'Devolução');
@@ -214,7 +214,7 @@ set doc."Status" =
 			doc2."CodigoDocumentoAdicional" = doc."CodigoDocumento" and
 			doc2."Tipo" = 'Item Venda' and
 			docit."Operacao" = 'Venda de Mercadoria'
-		group by docit."CodigoDocumento"
+		--group by docit."CodigoDocumento" --MD Retiramos devido ao erro de trazer dois registros (Murilo solicitou)
 	)
 where
 	doc."Tipo" = 'Venda';
