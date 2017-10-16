@@ -258,7 +258,7 @@ update Documento
 set Documento."CodigoContatoResponsavel" = 
 (
     select
-        MAX(fc."codice azienda")
+        fc."codice azienda"
     from #temp_v as v //NOMODIFICA
     join transdet as td
         on (td."codice transazione" = v."codice transazione")

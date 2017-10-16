@@ -1800,7 +1800,7 @@ update Documento
 set Documento."Observacao" = 
 (
 	select
-		CAST( ((oc."controllato da")+' - '+ (oc."note")) as varchar(8000))
+		CAST(oc."note" as varchar(8000))
 	from occhiali as oc
 	where (Documento."CodigoDocumento" = 'occhiali.'+ oc."codice filiale")
 );
