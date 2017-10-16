@@ -1,7 +1,3 @@
-use Focus
-
-drop database Optisoul
-RESTORE DATABASE Optisoul FROM  DISK = N'C:\Geeks\SqlData\BaseLimpa.bkpsql.bak' WITH  FILE = 1,  MOVE N'Optisoul' TO N'C:\Geeks\SqlData\Optisoul.mdf',  MOVE N'Optisoul_log' TO N'C:\Geeks\SqlData\Optisoul_log.ldf',  NOUNLOAD,  REPLACE,  STATS = 5
 
 /*
 drop table if exists Contato;
@@ -324,25 +320,14 @@ insert into Optisoul..Contato
 		left join tipopagamento as tp
 		on (tp."codice filiale" = f."codice pagamento")
 
-
-Select f."montature" ,(f."lenti oftalmiche") ,(f."lac") ,(f."Liquidi e acc") ,(f."Servizi") 
-,CASE 
-			WHEN f."montature"='Sim' and NOT f."lenti oftalmiche"='Sim' and NOT f."lac"='Sim' and NOT f."Liquidi e acc"='Sim' and NOT f."Servizi"='Sim' THEN 'Armações'
-			else 'aaa'
-		END as Segmento
-from fornitor as f
-		left join tipopagamento as tp
-		on (tp."codice filiale" = f."codice pagamento")
-
-
-
 --CLIENTI
-insert into Contato
-(
+insert into Optisoul..Contato
+(CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
+
 	select
 		CAST(NULL as int) as CodigoContatoMatriz, --an."codice titolare" as CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
-		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
-		TRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Apelido, --[varchar](255) NULL,
+		lTRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Nome, --[varchar](255) NOT NULL,
+		lTRIM(COALESCE(c."nome", '') + ' ' + COALESCE(c."cognome", '')) as Apelido, --[varchar](255) NULL,
 		c."codfiva" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE
 			WHEN c."codfiva" IS NOT NULL and c."codfiva" <> ''
@@ -408,12 +393,11 @@ insert into Contato
 	from clienti as c
 		left join anag_ext5 as an
 		on (an."codice cliente" = c."codice personale")
-);
 
 
 --CLIENTE INGROSSO
-insert into Contato
-(
+insert into Optisoul..Contato
+
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		ci."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -473,7 +457,7 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from "clienti ingrosso" as ci
-);
+
 
 	/*
 --LABORATORIOEST
@@ -543,8 +527,10 @@ insert into Contato
 
 
 --OCULISTI
-insert into Contato
-(
+
+--oculisti
+insert into Optisoul..Contato
+
 	select
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		o."denominazione" as Nome, --[varchar](255) NOT NULL,
@@ -604,16 +590,15 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from oculisti as o
-);
-
+	
 
 --RUBRICA
-insert into Contato
-(
+insert into Optisoul..Contato
+
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
-		TRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Nome, --[varchar](255) NOT NULL,
-		TRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Apelido, --[varchar](255) NULL,
+		lTRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Nome, --[varchar](255) NOT NULL,
+		lTRIM(COALESCE(r."nome", '') + ' ' + COALESCE(r."cognome", '')) as Apelido, --[varchar](255) NULL,
 		r."codice fiscale" as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CASE 
 			WHEN r."codice fiscale" IS NOT NULL and r."codice fiscale" <> ''
@@ -669,12 +654,11 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from rubrica as r
-);
-
+	
 
 --VETTORI
-insert into Contato
-(
+insert into Optisoul..Contato
+
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		v."ragione sociale" as Nome, --[varchar](255) NOT NULL,
@@ -709,7 +693,7 @@ insert into Contato
 		'vettori.' + CAST(v."codice filiale" as varchar(12)) as CodigoAntigo, --[varchar](255) NULL,
 		CAST(NULL as varchar) as Imagem, --[varchar](max) NULL,
 		CAST(NULL as int) as CodigoGrupo, --[int] NULL,
-		CASE WHEN NOT(v."attivo") THEN 0 ELSE 1 END as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
+		CASE WHEN NOT v."attivo"='Sim' THEN 0 ELSE 1 END as Ativo, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
 		0 as Excluido, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
 		CAST(NULL as int) as CodigoContatoPlataforma, --[int] NULL,
 		CAST(NULL as varchar) as Regime, --[varchar](100) NULL,
@@ -734,12 +718,11 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from vettori as v
-);
-
+	
 
 --AGENTE
-insert into Contato
-(
+insert into Optisoul..Contato
+
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
 		ag."nome agente" as Nome, --[varchar](255) NOT NULL,
@@ -796,4 +779,3 @@ insert into Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from agente as ag
-);
