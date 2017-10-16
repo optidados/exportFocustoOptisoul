@@ -101,6 +101,7 @@ create table Item
 
 create index CodAntIdx on Item("CodigoAntigo");
 
+--ARTICOLI & ARTICOLI_FORNITORE (ESTOQUE & TAB PREÇOS)
 insert into Item
 (
 	select 
@@ -110,14 +111,38 @@ insert into Item
 		CAST(NULL as int) as CodigoNCM, --[int] NULL,
 		CAST(COALESCE(a."codice doganale", t."codice doganale") as varchar(8)) as NCM, --[varchar](8) NULL,
 		CAST(NULL as varchar) as CEST, --varchar NULL
-		CASE COALESCE(a."magazzino", t."magazzino")
-			WHEN 0 THEN TRIM(GetLinea(COALESCE(a."codice linea", t."codice linea", '')) + ' ' + COALESCE(a."modello", t."modello", '') + ' ' + COALESCE(a."colore", t."colore", '') + ' ' + CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
-			ELSE TRIM(COALESCE(a."modello", t."modello", '') + ' ' + GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' + COALESCE(a."descrizione", t."descrizione", ''))
-		END as Descricao, --[varchar](500) NOT NULL
-		CASE COALESCE(a."magazzino", t."magazzino")
-			WHEN 0 THEN TRIM(GetLinea(COALESCE(a."codice linea", t."codice linea", '')) + ' ' + COALESCE(a."modello", t."modello", '') + ' ' + COALESCE(a."colore", t."colore", '') + ' ' + CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
-			ELSE TRIM(COALESCE(a."modello", t."modello", '') + ' ' + GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' + COALESCE(a."descrizione", t."descrizione", ''))
-		END as DescricaoComercial, --[varchar](500) NOT NULL
+		(CASE COALESCE(a."magazzino", t."magazzino")
+			WHEN(0)
+			THEN 
+				(TRIM(
+						(CASE
+							WHEN( GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) = GetLinea(COALESCE(a."codice linea", t."codice linea")) )
+							THEN( GetLinea(COALESCE(a."codice linea", t."codice linea", '')) )
+							ELSE( COALESCE((GetLinea(COALESCE(a."codice linea", t."codice linea", ''))), (GetMarchio(COALESCE(a."codice marchio", t."codice marchio")))) )
+						END)
+					)
+				+ ' ' +COALESCE(a."modello", t."modello", '')
+				+ ' ' +COALESCE(a."colore", t."colore", '')
+				+ ' ' +CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
+			ELSE
+				(TRIM(COALESCE(a."modello", t."modello", '') + ' ' +GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' +COALESCE(a."descrizione", t."descrizione", '')))
+		END) as Descricao, --[varchar](500) NOT NULL
+		(CASE COALESCE(a."magazzino", t."magazzino")
+			WHEN(0)
+			THEN 
+				(TRIM(
+						(CASE
+							WHEN( GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) = GetLinea(COALESCE(a."codice linea", t."codice linea")) )
+							THEN( GetLinea(COALESCE(a."codice linea", t."codice linea", '')) )
+							ELSE( COALESCE((GetLinea(COALESCE(a."codice linea", t."codice linea", ''))), (GetMarchio(COALESCE(a."codice marchio", t."codice marchio")))) )
+						END)
+					)
+				+ ' ' +COALESCE(a."modello", t."modello", '')
+				+ ' ' +COALESCE(a."colore", t."colore", '')
+				+ ' ' +CAST(COALESCE(a."calibro", t."calibro", '') as varchar(100)))
+			ELSE
+				(TRIM(COALESCE(a."modello", t."modello", '') + ' ' +GetTrattamento(COALESCE(a."codice trattamento", t."codice trattamento", '')) + ' ' +COALESCE(a."descrizione", t."descrizione", '')))
+		END) as DescricaoComercial, --[varchar](500) NOT NULL
 		CASE 
 			WHEN (COALESCE(a."magazzino", t."magazzino") = 0) and (GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti")) = 'vista') THEN 'Armação'
 			WHEN (COALESCE(a."magazzino", t."magazzino") = 0) and ((GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti")) = 'solar') or (GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti")) = 'sol') or (GetTipoLenti(COALESCE(a."codice tipo lenti", t."codice tipo lenti")) = 'sole')) THEN 'Óculos Sol'
@@ -138,16 +163,16 @@ insert into Item
 		GetMarchio(COALESCE(a."codice marchio", t."codice marchio")) as Marca, --[varchar](50) NULL,
 		'Linha' as Status, --[varchar](20) NULL CONSTRAINT [DF_Item_Status]  DEFAULT ('Linha'),
 		CAST(NULL as varchar(20)) as "Local", --[varchar](20) NULL,
-		COALESCE(am."prezzo listino acquisto", t."prezzo listino acquisto") as ValorCusto, --[decimal](18, 2) NULL,
-		am."prezzo acquisto" as ValorCustoUltimo, --[decimal](18, 2) NULL,
-		am."costo medio" as ValorCustoMedio, --[decimal](18, 2) NULL,
-		COALESCE(am."prezzo listino acquisto", t."prezzo listino acquisto") as ValorCustoReposicao, --[decimal](18, 2) NULL,
-		COALESCE(af."prezzo vendita", t."prezzo consigliato") as ValorVenda, --[decimal](18, 2) NULL,
+		MAX(COALESCE(am."prezzo listino acquisto", t."prezzo listino acquisto")) as ValorCusto, --[decimal](18, 2) NULL,
+		MAX(am."prezzo acquisto") as ValorCustoUltimo, --[decimal](18, 2) NULL,
+		MAX(am."costo medio") as ValorCustoMedio, --[decimal](18, 2) NULL,
+		MAX(COALESCE(am."prezzo listino acquisto", t."prezzo listino acquisto")) as ValorCustoReposicao, --[decimal](18, 2) NULL,
+		MAX(COALESCE(af."prezzo vendita", t."prezzo consigliato")) as ValorVenda, --[decimal](18, 2) NULL,
 		CAST(NULL as decimal(18, 4)) as PercentualMarkup, --[decimal](18, 4) NULL,
 		CAST(NULL as decimal(18, 4)) as PercentualMarkupReal, --[decimal](18, 4) NULL,
 		COALESCE(a."UM", t."UM") as Unidade, --[varchar](10) NULL,
 		0 as QuantidadeDisponivel, --[decimal](18, 4) NULL CONSTRAINT [DF_Item_QuantidadeDisponivel]  DEFAULT ((0)),
-		am."scorta minima" as QuantidadeMinimaEstoque, --[decimal](18, 4) NULL,
+		MAX(am."scorta minima") as QuantidadeMinimaEstoque, --[decimal](18, 4) NULL,
 		CAST(NULL as decimal(18, 4)) as QuantidadeMinimaCompra, --[decimal](18, 4) NULL,
 		CAST(NULL as int) as TempoMedioReposicao, --[int] NULL,
 		CAST(NULL as int) as TempoMedioReposicaoReal, --[int] NULL,
@@ -301,11 +326,88 @@ insert into Item
 			on (am."codice articolo" = a."codice filiale")
 		left join articoli_fil as af
 			on (af."codice articolo" = am."codice articolo") and (af."filiale" = am."filiale")
-	where
-		(am."filiale" = GetFiliale) --PEGANDO SÓ DE UMA FILIAL PRA NÃO DAR PROBLEMA DE DUPLICAÇÃO
+			
+	group by
+		a."SKU",
+		t."SKU",
+		a."codice a barre",
+		t."codice a barre",
+		a."codice doganale",
+		t."codice doganale",
+		a."magazzino",
+		t."magazzino",
+		a."codice linea",
+		t."codice linea",
+		a."modello",
+		t."modello",
+		a."colore",
+		t."colore",
+		a."calibro",
+		t."calibro",
+		a."codice trattamento",
+		t."codice trattamento",
+		a."descrizione",
+		t."descrizione",
+		a."codice tipo lenti",
+		t."codice tipo lenti",
+		a."codice tipo prodotto",
+		t."codice tipo prodotto",
+		a."codice marchio",
+		t."codice marchio",
+		a."UM",
+		t."UM",
+		a."Note",
+		t."Note",
+		a."codice durata",
+		t."codice durata",
+		t."data inserimento",
+		a."campo_1",
+		t."campo_1",
+		a."nazionale estero",
+		t."nazionale estero",
+		a."codice filiale",
+		a."codice utente",
+		t."codice utente",
+		t."colore 2",
+		a."colore 2",
+		a."codice montaggio",
+		t."codice montaggio",
+		a."codice materiale",
+		t."codice materiale",
+		a."diametro",
+		t."diametro",
+		a."asse",
+		t."asse",
+		a."codice famiglia",
+		t."codice famiglia",
+		a."addizione",
+		t."addizione",
+		a."sfera",
+		t."sfera",
+		a."cilindro",
+		t."cilindro",
+		a."asta",
+		t."asta",
+		a."ponte",
+		t."ponte",
+		a."rb",
+		t."rb",
+		a."rb2",
+		t."rb2",
+		a."codice geometria",
+		t."codice geometria",
+		a."indice rifrazione",
+		t."indice rifrazione",
+		a."situazione tributaria",
+		t."situazione tributaria",
+		a."IAT",
+		t."IAT",
+		a."IPPT",
+		t."IPPT"
 );
 
 
+--CATALOGO
 insert into Item
 (
 	select 
@@ -450,6 +552,7 @@ insert into Item
 );
 
 
+--TRATAMENTO
 insert into Item
 (
 	select distinct 
@@ -558,6 +661,7 @@ insert into Item
 );
 
 
+--SUPLEMENTO
 insert into Item
 (
 	select distinct 

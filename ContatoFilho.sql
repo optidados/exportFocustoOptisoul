@@ -1,3 +1,4 @@
+//NOSQLBDETOFF2
 drop table if exists ContatoFilho;
 
 create table ContatoFilho
