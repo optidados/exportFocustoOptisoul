@@ -1,68 +1,8 @@
 
-/*
-drop table if exists Contato;
-create table Contato
-(	
-	CodigoContatoMatriz int, --an."codice titolare" CodigoContatoMatriz, --CÓDIGO DA MATRIZ, DO TITULAR [int] NULL,
-	Nome varchar(60), --[varchar](255) NOT NULL,
-	Apelido varchar(60), --[varchar](255) NULL,
-	NumeroDocumentoNacional varchar(18), --[varchar](150) NULL,
-	TipoDocumentoNacional varchar(4), --[varchar](4) NULL,
-	NumeroDocumentoEstadual varchar(20), --[varchar](150) NULL,
-	NumeroDocumentoMunicipal varchar,--[varchar](150) NULL,
-	Site varchar(40), --[varchar](255) NULL,
-	Email varchar(50), --[varchar](255) NULL,
-	EmailNFe varchar(50), --[varchar](255) NULL,
-	Sexo varchar(9), --[varchar](100) NULL,
-	Segmento varchar(21), --[varchar](100) NULL,
-	CondutaObservacao varchar(14), --ALERTNA HORA DO PEDIDO -- JOGAR O COM PENDENCIA, NÃO CONSULTADO [varchar](255) NULL,
-	CondutaRestricao varchar(9), --RESTRINGE O PEDIDO -- JOGAR O BLOQUEADO SPC AQUI [varchar](255) NULL,
-	Observacao varchar(8000), --[varchar](max) NULL,
-	ObservacaoConsulta varchar(8000), --[varchar](max) NULL,
-	DataAbertura datetime, --[datetime] NULL,
-	DataCadastro datetime, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
-	DataAlteracao datetime, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
-	DataConsulta datetime, --[datetime] NULL,
-	CodigoContatoVendedor int, --[int] NULL,
-	CodigoContatoAssistente int, --[int] NULL,
-	CodigoContatoIndicacao int, --[int] NULL,
-	CodigoContatoTransportadora int, --[int] NULL,
-	CodigoItemTabelaPreco int, --[int] NULL,
-	CodigoFormaPagamento int, --[int] NULL,
-	CondicaoPagamento varchar(50), --[varchar](50) NULL,
-	CodigoAntigo varchar(30), --[varchar](255) NULL,
-	Imagem varchar, --[varchar](max) NULL,
-	CodigoGrupo int, --[int] NULL,
-	Ativo int, --[bit] NULL CONSTRAINT [DF_Contato_Ativo]  DEFAULT ((1)),
-	Excluido int, --[bit] NULL CONSTRAINT [DF_Contato_Excluido]  DEFAULT ((0)),
-	CodigoContatoPlataforma int, --[int] NULL,
-	Regime varchar, --[varchar](100) NULL,
-	ObservacaoNFE varchar, --[varchar](max) NULL,
-	LimiteCredito numeric(18, 2), --[numeric](18, 2) NULL,
-	NSerieCert varchar(100), --[varchar](100) NULL,
-	Logo varchar, --([dbo].[converteImagem]([Imagem])),
-	CodigoUsuario int, --[int] NULL,
-	CRMCurvaABC varchar(10), --[varchar](10) NULL,
-	CRMValorTotalVendasPeriodo varchar, --[numeric](18, 2) NULL,
-	CRMValorTotalOrcamentos varchar, --[numeric](18, 2) NULL,
-	CRMDataUltimoOrcamento date, --[datetime] NULL,
-	CRMValorTotalVendasMesAtual varchar, --[numeric](18, 2) NULL,
-	CRMMetaProximaVenda varchar, --[numeric](18, 2) NULL,
-	CRMMargem varchar, --[numeric](18, 2) NULL,
-	CRMDataPrimeraVenda date, --[datetime] NULL,
-	CRMDiasUltimaVenda int, --[int] NULL,
-	CRMFrequenciaVenda varchar, --[varchar](10) NULL,
-	CRMFrequenciaStatus varchar, --[varchar](50) NULL,
-	CRMStatusFinanceiro varchar, --[varchar](50) NULL,
-	CRMAcao varchar, --[varchar](50) NULL,
-	CRMDataUltimoContato date, --[datetime] NULL,
-	CobrancaDataPrevisao date --[date] NULL,
-);
-*/
+
+ALTER procedure B_sp_Importa_Contato as
 
 --SEDE
-
---Sede
 insert into Optisoul..Contato
 	(CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
 
@@ -352,7 +292,8 @@ insert into Optisoul..Contato
 		END as CondutaRestricao, --RESTRINGE O PEDIDO -- JOGAR O BLOQUEADO SPC AQUI [varchar](255) NULL,
 		CAST(c."note" as varchar(8000)) as Observacao, --[varchar](max) NULL,
 		CAST(c."note riservate" as varchar(8000)) as ObservacaoConsulta, --[varchar](max) NULL,
-		CAST(c."data nascita" as datetime) as DataAbertura, --[datetime] NULL,
+		--CAST(c."data nascita" as datetime) as DataAbertura, --[datetime] NULL,
+		case when isdate(c."data nascita")=1 then CAST(c."data nascita" as datetime) else null end as DataAbertura,
 		CAST(c."data inserimento" as datetime) as DataCadastro, --[datetime] NULL CONSTRAINT [DF_Contato_DataCadastro]  DEFAULT (getdate()),
 		CAST(NULL as datetime) as DataAlteracao, --[datetime] NULL CONSTRAINT [DF_Contato_DataAlteracao]  DEFAULT (getdate()),
 		CAST(NULL as datetime) as DataConsulta, --[datetime] NULL,
@@ -373,7 +314,6 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
 		c."credito" as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
 		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
 		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
@@ -397,6 +337,7 @@ insert into Optisoul..Contato
 
 --CLIENTE INGROSSO
 insert into Optisoul..Contato
+	(CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
 
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
@@ -439,7 +380,7 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		--CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
 		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
 		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
@@ -456,7 +397,7 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as CRMAcao, --[varchar](50) NULL,
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
-	from "clienti ingrosso" as ci
+	from "clienti_ingrosso" as ci
 
 
 	/*
@@ -524,12 +465,11 @@ insert into Contato
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from laboratorioest as l
 );*/
-
+select ''
 
 --OCULISTI
-
---oculisti
 insert into Optisoul..Contato
+	(CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
 
 	select
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
@@ -572,7 +512,7 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		--CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
 		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
 		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
@@ -590,10 +530,10 @@ insert into Optisoul..Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from oculisti as o
-	
+	/*
 
 --RUBRICA
-insert into Optisoul..Contato
+insert into Optisoul..Contato (CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
 
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
@@ -636,7 +576,7 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		--CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
 		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
 		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
@@ -654,10 +594,12 @@ insert into Optisoul..Contato
 		CAST(NULL as date) as CRMDataUltimoContato, --[datetime] NULL,
 		CAST(NULL as date) as CobrancaDataPrevisao --[date] NULL,
 	from rubrica as r
-	
+	*/
+	select ''
 
 --VETTORI
 insert into Optisoul..Contato
+	(CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
 
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
@@ -700,7 +642,7 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		--CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
 		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
 		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
@@ -722,10 +664,11 @@ insert into Optisoul..Contato
 
 --AGENTE
 insert into Optisoul..Contato
+	(CodigoContatoMatriz	,Nome	,Apelido	,NumeroDocumentoNacional	,TipoDocumentoNacional	,NumeroDocumentoEstadual	,NumeroDocumentoMunicipal	,Site	,Email	,EmailNFe	,Sexo	,Segmento	,CondutaObservacao	,CondutaRestricao	,Observacao	,ObservacaoConsulta	,DataAbertura	,DataCadastro	,DataAlteracao	,DataConsulta	,CodigoContatoVendedor	,CodigoContatoAssistente	,CodigoContatoIndicacao	,CodigoContatoTransportadora	,CodigoItemTabelaPreco	,CodigoFormaPagamento	,CondicaoPagamento	,CodigoAntigo	,Imagem	,CodigoGrupo	,Ativo	,Excluido	,CodigoContatoPlataforma	,Regime	,ObservacaoNFE	,LimiteCredito	,NSerieCert	,CodigoUsuario	,CRMCurvaABC	,CRMValorTotalVendasPeriodo	,CRMValorTotalOrcamentos	,CRMDataUltimoOrcamento	,CRMValorTotalVendasMesAtual	,CRMMetaProximaVenda	,CRMMargem	,CRMDataPrimeraVenda	,CRMDiasUltimaVenda	,CRMFrequenciaVenda	,CRMFrequenciaStatus	,CRMStatusFinanceiro	,CRMAcao	,CRMDataUltimoContato	,CobrancaDataPrevisao)
 
 	select	
 		CAST(NULL as int) as CodigoContatoMatriz, --[int] NULL,
-		ag."nome agente" as Nome, --[varchar](255) NOT NULL,
+		isnull(ag."nome agente",'-') as Nome, --[varchar](255) NOT NULL,
 		ag."nome agente" as Apelido, --[varchar](255) NULL,
 		CAST(NULL as varchar) as NumeroDocumentoNacional, --[varchar](150) NULL,
 		CAST(NULL as varchar(4)) as TipoDocumentoNacional, --[varchar](4) NULL,
@@ -761,7 +704,7 @@ insert into Optisoul..Contato
 		CAST(NULL as varchar) as ObservacaoNFE, --[varchar](max) NULL,
 		CAST(NULL as numeric(18, 2)) as LimiteCredito, --[numeric](18, 2) NULL,
 		CAST(NULL as varchar) as NSerieCert, --[varchar](100) NULL,
-		CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
+		--CAST(NULL as varchar) as Logo, --AS ([dbo].[converteImagem]([Imagem])),
 		CAST(NULL as int) as CodigoUsuario, --[int] NULL,
 		CAST(NULL as varchar) as CRMCurvaABC, --[varchar](10) NULL,
 		CAST(NULL as varchar) as CRMValorTotalVendasPeriodo, --[numeric](18, 2) NULL,
