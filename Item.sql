@@ -1,4 +1,27 @@
 //NOSQLBDETOFF2
+--FUNCTION ISNUMERIC (Verifica se é número)
+DROP FUNCTION IF EXISTS IsNumeric;
+CREATE FUNCTION IsNumeric(StrVal VarChar(15))
+	returns Boolean
+
+BEGIN
+	declare I, J Integer;
+	declare Bol Boolean;
+		SET Bol = True;
+		SET i = CHAR_LENGTH(StrVal);
+		SET j = 0;
+
+	while J < I do
+		SET j = j + 1;
+		IF SubString(StrVal from j for 1) NOT IN
+			('-','.',',','0','1','2','3','4','5','6','7','9','9') THEN SET Bol = False; END
+		IF;
+	END while;
+
+	Return Bol;
+END;
+
+--create table item
 drop table if exists Item;
 create table Item
 (
@@ -506,29 +529,25 @@ insert into Item
 		CAST(NULL as varchar) as Geometria, --[numeric](18, 4) NULL,
 		CAST
 		(
-			(
-				CASE 
-					WHEN (POSITION('.' in c."tipo lenti") <> 0)
-						THEN c."tipo lenti"
-					WHEN (c."tipo lenti" = '')
-						THEN CAST(NULL as varchar)
-						ELSE 
-							SUBSTRING
-							(
-								c."tipo lenti" from 0 for 
-								(
-									CASE WHEN POSITION(',' in c."tipo lenti") = 0 THEN CHAR_LENGTH(c."tipo lenti") ELSE POSITION(',' in c."tipo lenti")-1 END
-								)
-							) +
-							'.' + 
-							(
-								CASE WHEN POSITION(',' in c."tipo lenti") = 0 
-									THEN '0' 
-									ELSE SUBSTRING(c."tipo lenti" from POSITION(',' in c."tipo lenti")+1 for CHAR_LENGTH(c."tipo lenti") - POSITION(',' in c."tipo lenti")) 
-								END
-							) 
-				END
-			) as numeric(18, 4)
+			(CASE
+				WHEN NOT(IsNumeric(c."tipo lenti"))
+					THEN(CAST(NULL as varchar))
+				WHEN (POSITION('.' in c."tipo lenti") <> 0)
+					THEN(c."tipo lenti")
+				ELSE 
+					SUBSTRING
+					(
+						c."tipo lenti" from 0 for 
+						( CASE WHEN POSITION(',' in c."tipo lenti") = 0 THEN CHAR_LENGTH(c."tipo lenti") ELSE POSITION(',' in c."tipo lenti")-1 END )
+					)
+					+ '.' + 
+					(
+						CASE WHEN POSITION(',' in c."tipo lenti") = 0 
+							THEN '0' 
+							ELSE SUBSTRING(c."tipo lenti" from POSITION(',' in c."tipo lenti")+1 for CHAR_LENGTH(c."tipo lenti") - POSITION(',' in c."tipo lenti")) 
+						END
+					) 
+			END) as numeric(18, 4)
 		) as IndiceRefracao, --[numeric](18, 4) NULL,
 		CAST(NULL as varchar(30)) as PAF_SituacaoTributaria, --[varchar](30) NULL,
 		CAST(NULL as varchar(1)) as PAF_IAT, --[varchar](1) NULL,
