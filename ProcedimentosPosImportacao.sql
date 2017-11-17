@@ -110,7 +110,7 @@ set
 	)
 where
 	Tipo IN ('Item Venda', 'Prescrição');
-
+/*
 --DOCUMENTOENDERECO
 update DocumentoEndereco as de
 set 
@@ -186,4 +186,4 @@ set
 			ce."CodigoContato" = de."CodigoContato" and
 			ce."Grupo" = 'Principal'
 	),
-	Grupo = 'Principal'
+	Grupo = 'Principal'*/
