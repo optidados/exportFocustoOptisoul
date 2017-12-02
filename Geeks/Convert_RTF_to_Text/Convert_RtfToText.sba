@@ -1,0 +1,40 @@
+'#Reference {3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0#C:\Geeks\vb6\RICHTX32.OCX#Microsoft Rich Textbox Control 6.0 (SP6)
+
+Sub main()
+
+
+BancoDados = "Brotas"
+
+Conexao = Replace("Provider=SQLOLEDB.1;Persist Security Info=False;User ID=Optidados;Password=orlando99;Initial Catalog=BancoDeDados;Data Source=127.0.0.1","BancoDeDados",BancoDados)
+
+Set rs = CreateObject("ADODB.Recordset")
+Set rs2 = CreateObject("ADODB.Recordset")
+Set ortf = CreateObject("RichText.RichTextCtrl")
+
+
+sql = "Select t.Name As tabela,c.Name As coluna from sys.tables t inner Join sys.schemas sc On sc.schema_id = t.schema_id And sc.Name ='Focus' inner Join sys.columns c On t.object_id = c.object_id inner Join INFORMATION_SCHEMA.COLUMNS i On i.TABLE_NAME = t.Name And i.column_name = c.Name And  i.CHARACTER_MAXIMUM_LENGTH Is Not Null where i.CHARACTER_MAXIMUM_LENGTH = -1 And i.Data_Type = 'varchar' "
+
+rs2.open sql,Conexao,3,3
+While Not rs2.EOF
+
+    x=0
+    tabela =rs2.fields("tabela")
+    coluna = rs2.fields("coluna")
+    Debug.Print tabela & " " & coluna & "   " & x
+
+    rs.Open "SELECT ["&coluna&"] FROM [focus].["&tabela&"] where ["&coluna&"] is not null", Conexao, 3, 3
+    While Not rs.EOF
+        ortf.TextRTF = rs.fields(coluna) & ""
+        rs.fields(coluna) = ortf.Text
+        rs.Update
+        rs.movenext
+        Debug.Print tabela & " " & coluna & "   " & x
+        x=x+1
+    Wend
+    rs.Close
+
+    rs2.movenext
+Wend
+rs2.Close
+
+End Sub
