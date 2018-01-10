@@ -1,0 +1,39 @@
+ 
+
+Checklist de IMPLANTAÇÃO : Focus -> Optisoul
+·         Colocar a Empresa (Tela 70 - Acesso Usuários)
+·         CPF dos Usuários e Perfis (Tela 70 - Acesso Usuários)
+·         Logo da loja (Tela 85 - Contatos)
+·         Endereço e Telefone da Loja (Tela 85 - Contatos)
+·         Configuração das Aliquotas dos Cartões e aproveitar para checar as Formas de Pagamento (Tela 140 - Formas de Pgto)
+·         Configuração de Impostos  (Tela 127 - Configuração NFe ou  155 - Config. Cupom)
+·         Subir tabela IBPT (Fazer download específico para o cliente) (Tela  152 - Tabela Ibpt)
+·         Conf. Juros e Multa (Carnê) (Tela  158 - Banco)
+·         Configurar Caixa (se é SAT, NFe, etc) (Tela 230 - Caixas)
+·         Mudar parametro Consumidor (Tela  206 - Configurações)
+·         Comissão (Qual metodo a Loja usa) (Tela 267 - Comissão Simples)
+·         Relatórios que o diretor usa
+·         Imprimir uma Etiqueta com o Cliente para ajustar as margens, etc.
+
+ 
+
+Alguns testes que fizemos na Elis:
+·         Fazer inventário
+·         Fazer um ajuste de estoque
+·         Renegociação de carne
+·         Fazer Venda de Oculos de Grau
+·         Emitir Cupom/NFCe/SAT
+
+
+
+MURILO MELHORAR:
+
+   Sem Fatura não consigo reimprimir um Carne, em renegociação podemos colocar a reimpressão
+
+   DescricaoEmpresa trocar pela razão
+
+   Juros e Multa dos Carnes
+
+   Dar continuidade no recebimento de uma fatura com sinal (recebi mais uma parte a movimentação ficou junta com outra de anos atras - anexo - Veronica Pinto Nasr, o título do sinal mudou a emissão e a competência, pq?),
+
+ 
